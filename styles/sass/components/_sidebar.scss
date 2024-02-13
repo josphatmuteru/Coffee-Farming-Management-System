@@ -1,0 +1,49 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  // border-right: 1px solid #000;
+  align-items: center;
+  padding: 1rem;
+}
+
+.main-nav {
+  display: flex;
+  margin-top: 16rem;
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &--link {
+    &:link,
+    &:visited {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding: 1rem 2rem;
+      color: #333;
+      font-weight: 500;
+      background-color: transparent;
+      border-radius: 12px;
+
+      & ion-icon {
+        font-size: 2rem;
+      }
+
+      & span {
+        font-size: 1.8rem;
+      }
+    }
+
+    &:hover,
+    &:active {
+      color: green;
+    }
+
+    &.active {
+      background-color: #b4fdda;
+    }
+  }
+}

@@ -1,0 +1,33 @@
+.aside {
+  display: flex;
+  flex-direction: column;
+  // border-left: 1px solid #000;
+}
+
+.weather-box {
+  height: 27rem;
+  background: linear-gradient(#136ec2, rgba(19, 109, 194, 0.2));
+  // background-color: #136ec2;
+  padding: 3.2rem 1.6rem 2rem 1.6rem;
+
+  &--big {
+    height: 12rem;
+
+    background-color: #d9d9d9;
+    border-radius: 8px;
+  }
+  &--small {
+    height: 8rem;
+
+    margin-top: 1.4rem;
+    background-color: #d9d9d9;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
+      rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+    border-radius: 5px;
+  }
+}
+
+.buttons {
+  background-color: #207d40;
+  height: 100%;
+}

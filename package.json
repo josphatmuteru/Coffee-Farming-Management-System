@@ -1,0 +1,11 @@
+{
+  "name": "coffee-farming-management-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "sass:watch": "sass --watch styles/sass/main.scss:style.css"
+  },
+  "author": "Josphat Muteru",
+  "license": "ISC"
+}

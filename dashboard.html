@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Rubik:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Dashboard</title>
+  </head>
+  <div class="app-layout grid">
+    <body>
+      <nav class="sidebar">
+        <div class="logo">Coffee Farming Management System</div>
+        <div class="main-nav">
+          <ul class="list">
+            <li class="list-item">
+              <a href="" class="main-nav--link active">
+                <ion-icon name="home-outline"></ion-icon>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li class="list-item">
+              <a href="" class="main-nav--link">
+                <ion-icon name="wallet-outline"></ion-icon>
+                <span>Finances</span>
+              </a>
+            </li>
+            <li class="list-item">
+              <a href="" class="main-nav--link">
+                <ion-icon name="book-outline"></ion-icon>
+                <span>Farm guide</span>
+              </a>
+            </li>
+            <li class="list-item">
+              <a href="" class="main-nav--link">
+                <ion-icon name="clipboard-outline"></ion-icon>
+                <span>Farm profile</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <main class="main">
+        <div class="container">
+          <div>
+            <div class="dashboard-graph dashboard-graph--yield-stats">
+              <h3>Harvest Stats</h3>
+            </div>
+          </div>
+          <div class="dashboard-graph dashboard-graph--costs-stats"></div>
+        </div>
+      </main>
+      <aside class="aside">
+        <div class="weather-box">
+          <div class="weather-box--big"></div>
+          <div class="weather-box--small"></div>
+        </div>
+        <div class="buttons">Schedule</div>
+      </aside>
+      <script
+        type="module"
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+      ></script>
+      <script
+        nomodule
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+      ></script>
+    </body>
+  </div>
+</html>
