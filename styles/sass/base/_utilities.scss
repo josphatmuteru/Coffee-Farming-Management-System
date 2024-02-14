@@ -22,6 +22,9 @@
 .align-center {
   align-items: center;
 }
+.align-bottom {
+  align-items: bottom;
+}
 
 .justify-center {
   justify-content: center;
@@ -30,9 +33,15 @@
 .ml-auto {
   margin-left: auto;
 }
+.mt-auto {
+  margin-top: auto;
+}
 
 .width-max {
   width: 100%;
+}
+.height-max {
+  height: 100%;
 }
 ul {
   list-style: none;
