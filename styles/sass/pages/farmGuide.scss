@@ -1,0 +1,53 @@
+.farm-guide {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: $border-radius-md;
+
+  height: 100%;
+
+  & p {
+    font-size: 1.6rem;
+    font-weight: 500;
+  }
+
+  &_menu {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .menu_item {
+    &:link,
+    &:visited {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      font-size: 2rem;
+      padding: 1.4rem;
+      font-weight: 500;
+      color: #222;
+      box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+        rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+      background-color: #fdfdfd;
+
+      & .icon {
+        padding: 0.5rem;
+        height: 5rem;
+        width: 5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #a6afcb;
+
+        border-radius: 50%;
+      }
+    }
+
+    &:hover,
+    &:active {
+      color: $color-green-700;
+      background-color: #fff;
+    }
+  }
+}

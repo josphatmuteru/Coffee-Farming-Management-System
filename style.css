@@ -310,6 +310,48 @@ a {
   width: calc(100% - 2rem);
 }
 
+.farm-guide {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 7px;
+  height: 100%;
+}
+.farm-guide p {
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+.farm-guide_menu {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.farm-guide .menu_item:link, .farm-guide .menu_item:visited {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  font-size: 2rem;
+  padding: 1.4rem;
+  font-weight: 500;
+  color: #222;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  background-color: #fdfdfd;
+}
+.farm-guide .menu_item:link .icon, .farm-guide .menu_item:visited .icon {
+  padding: 0.5rem;
+  height: 5rem;
+  width: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #a6afcb;
+  border-radius: 50%;
+}
+.farm-guide .menu_item:hover, .farm-guide .menu_item:active {
+  color: #207d40;
+  background-color: #fff;
+}
+
 .sidebar {
   display: flex;
   flex-direction: column;
