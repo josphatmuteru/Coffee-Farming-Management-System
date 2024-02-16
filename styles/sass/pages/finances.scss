@@ -1,0 +1,245 @@
+.section {
+  display: flex;
+  flex-direction: column;
+
+  &-expenses {
+    flex-grow: 5;
+  }
+  &-budget {
+    flex-grow: 5;
+  }
+}
+
+.row {
+  display: flex;
+  margin-top: 2rem;
+  &-widgets {
+    flex-direction: row;
+    gap: 2rem;
+
+    .widget {
+      border-radius: $border-radius-sm;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      box-shadow: $shadow-md;
+
+      &-label {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #f2f2f2;
+      }
+      &-value {
+        font-weight: 400;
+        font-size: 1.4rem;
+        color: #f2f2f2;
+      }
+
+      &-details {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+        gap: 1rem;
+        padding: 0.5rem 2.8rem;
+      }
+
+      &--income {
+        background-color: $color-green-700;
+      }
+
+      &--expenses {
+        background-color: $color-brown-700;
+      }
+      &--profit {
+        background-color: $color-blue-700;
+      }
+      &--budget {
+        background-color: $color-purple-700;
+      }
+    }
+  }
+
+  &-income {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    padding: 1rem 1.8rem;
+    border-radius: $border-radius-sm;
+
+    .sales-details {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      justify-content: center;
+
+      padding: 1.4rem;
+    }
+
+    .sales-detail {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.4rem;
+
+      padding: 0 4.8rem;
+
+      .label {
+        font-size: 1.8rem;
+        font-weight: 500;
+      }
+
+      .value {
+        font-size: 1.6rem;
+        font-weight: 600;
+      }
+    }
+
+    .sales-detail:nth-child(even) {
+      border-left: 1px solid #111;
+      border-right: 1px solid #111;
+    }
+  }
+
+  &-expenses {
+    flex-direction: column;
+    gap: 1rem;
+    .expense {
+      display: flex;
+      flex-direction: column;
+
+      padding: 1rem 1.4rem;
+      background-color: #fff;
+      box-shadow: $shadow-md;
+      border-radius: $border-radius-sm;
+      gap: 1.4rem;
+
+      &_header {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      &_body {
+        &.hidden {
+          display: none;
+        }
+      }
+
+      &_name {
+        font-size: 1.8rem;
+        font-weight: 600;
+      }
+      &_status {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: green;
+      }
+      &_cost {
+        display: flex;
+        margin-left: auto;
+        gap: 1rem;
+        font-size: 1.4rem;
+
+        font-weight: 600;
+      }
+
+      &_icon {
+        padding: 0.5rem;
+        height: 5rem;
+        width: 5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #d8c2bc;
+        border-radius: 50%;
+      }
+
+      &_list {
+        display: flex;
+        flex-direction: column;
+        margin-top: 0.5rem;
+        border: 1px solid #777;
+        border-radius: $border-radius-sm;
+
+        & li {
+          display: grid;
+
+          gap: 0.4rem;
+        }
+
+        &--labor {
+          & li {
+            grid-template-columns: repeat(6, 1fr);
+          }
+        }
+        &--fertilizer {
+          & li {
+            grid-template-columns: repeat(5, 1fr);
+          }
+        }
+
+        .header-row,
+        .values-row {
+          padding: 0.5rem 1rem;
+        }
+
+        .header-row {
+          background-color: #bcd8c6;
+
+          overflow: hidden;
+          border-bottom: 1px solid #777;
+
+          & span {
+            display: flex;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #222;
+          }
+        }
+
+        .values-row {
+          & span {
+            display: flex;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 500;
+
+            color: #111;
+          }
+        }
+
+        .values-row:nth-child(odd) {
+          background-color: #e9f2ec;
+        }
+
+        .values-row:not(:last-of-type) {
+          border-bottom: 1px solid #888;
+        }
+      }
+    }
+  }
+  &-budget {
+    flex-direction: column;
+    background-color: #fff;
+    padding: 0 2rem;
+    height: 100%;
+    width: 100%;
+    box-shadow: $shadow-sm;
+    border-radius: $border-radius-md;
+    position: relative;
+
+    & .btn {
+      position: absolute;
+      background-color: $color-blue-700;
+      padding: 0.8rem 1rem;
+      color: #fff;
+      bottom: 0;
+      left: 0;
+      margin-left: 1rem;
+      margin-bottom: 1rem;
+      width: calc(100% - 2rem);
+    }
+  }
+}

@@ -22,6 +22,11 @@ html {
   font-weight: 400;
 }
 
+.image-icon {
+  width: 4rem;
+  height: 4rem;
+}
+
 .flex {
   display: flex;
 }
@@ -49,6 +54,10 @@ html {
 
 .align-bottom {
   align-items: bottom;
+}
+
+.gap-md {
+  gap: 2.4rem;
 }
 
 .justify-center {
@@ -81,7 +90,7 @@ a {
 
 .app-layout {
   display: grid;
-  grid-template-columns: 23rem auto 32rem;
+  grid-template-columns: 23rem auto;
   height: 100vh;
 }
 
@@ -94,6 +103,211 @@ a {
 .dashboard-graph--yield-stats {
   margin-top: 16rem;
   margin-bottom: 4rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+}
+.section-expenses {
+  flex-grow: 5;
+}
+.section-budget {
+  flex-grow: 5;
+}
+
+.row {
+  display: flex;
+  margin-top: 2rem;
+}
+.row-widgets {
+  flex-direction: row;
+  gap: 2rem;
+}
+.row-widgets .widget {
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  box-shadow: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
+}
+.row-widgets .widget-label {
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #f2f2f2;
+}
+.row-widgets .widget-value {
+  font-weight: 400;
+  font-size: 1.4rem;
+  color: #f2f2f2;
+}
+.row-widgets .widget-details {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.5rem 2.8rem;
+}
+.row-widgets .widget--income {
+  background-color: #207d40;
+}
+.row-widgets .widget--expenses {
+  background-color: #7d3320;
+}
+.row-widgets .widget--profit {
+  background-color: #20377d;
+}
+.row-widgets .widget--budget {
+  background-color: #7d207d;
+}
+.row-income {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  padding: 1rem 1.8rem;
+  border-radius: 5px;
+}
+.row-income .sales-details {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  padding: 1.4rem;
+}
+.row-income .sales-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  padding: 0 4.8rem;
+}
+.row-income .sales-detail .label {
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+.row-income .sales-detail .value {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+.row-income .sales-detail:nth-child(even) {
+  border-left: 1px solid #111;
+  border-right: 1px solid #111;
+}
+.row-expenses {
+  flex-direction: column;
+  gap: 1rem;
+}
+.row-expenses .expense {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.4rem;
+  background-color: #fff;
+  box-shadow: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
+  border-radius: 5px;
+  gap: 1.4rem;
+}
+.row-expenses .expense_header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.row-expenses .expense_body.hidden {
+  display: none;
+}
+.row-expenses .expense_name {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+.row-expenses .expense_status {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: green;
+}
+.row-expenses .expense_cost {
+  display: flex;
+  margin-left: auto;
+  gap: 1rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.row-expenses .expense_icon {
+  padding: 0.5rem;
+  height: 5rem;
+  width: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d8c2bc;
+  border-radius: 50%;
+}
+.row-expenses .expense_list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.5rem;
+  border: 1px solid #777;
+  border-radius: 5px;
+}
+.row-expenses .expense_list li {
+  display: grid;
+  gap: 0.4rem;
+}
+.row-expenses .expense_list--labor li {
+  grid-template-columns: repeat(6, 1fr);
+}
+.row-expenses .expense_list--fertilizer li {
+  grid-template-columns: repeat(5, 1fr);
+}
+.row-expenses .expense_list .header-row,
+.row-expenses .expense_list .values-row {
+  padding: 0.5rem 1rem;
+}
+.row-expenses .expense_list .header-row {
+  background-color: #bcd8c6;
+  overflow: hidden;
+  border-bottom: 1px solid #777;
+}
+.row-expenses .expense_list .header-row span {
+  display: flex;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #222;
+}
+.row-expenses .expense_list .values-row span {
+  display: flex;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #111;
+}
+.row-expenses .expense_list .values-row:nth-child(odd) {
+  background-color: #e9f2ec;
+}
+.row-expenses .expense_list .values-row:not(:last-of-type) {
+  border-bottom: 1px solid #888;
+}
+.row-budget {
+  flex-direction: column;
+  background-color: #fff;
+  padding: 0 2rem;
+  height: 100%;
+  width: 100%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: 7px;
+  position: relative;
+}
+.row-budget .btn {
+  position: absolute;
+  background-color: #20377d;
+  padding: 0.8rem 1rem;
+  color: #fff;
+  bottom: 0;
+  left: 0;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  width: calc(100% - 2rem);
 }
 
 .sidebar {
@@ -313,6 +527,13 @@ a {
 }
 .btn-icon ion-icon {
   font-size: 1.6rem;
+}
+.btn-icon-only {
+  background: none;
+  cursor: pointer;
+}
+.btn-icon-only ion-icon {
+  font-size: 2.4rem;
 }
 
 /*# sourceMappingURL=style.css.map */

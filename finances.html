@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;900&family=Rubik:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Dashboard</title>
+  </head>
+  <div class="app-layout grid">
+    <body>
+      <nav class="sidebar">
+        <div class="logo">Coffee Farming Management System</div>
+        <div class="main-nav">
+          <ul class="list">
+            <li class="list-item">
+              <a href="" class="main-nav--link active">
+                <ion-icon name="home-outline"></ion-icon>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li class="list-item">
+              <a href="" class="main-nav--link">
+                <ion-icon name="wallet-outline"></ion-icon>
+                <span>Finances</span>
+              </a>
+            </li>
+            <li class="list-item">
+              <a href="" class="main-nav--link">
+                <ion-icon name="book-outline"></ion-icon>
+                <span>Farm guide</span>
+              </a>
+            </li>
+            <li class="list-item">
+              <a href="" class="main-nav--link">
+                <ion-icon name="clipboard-outline"></ion-icon>
+                <span>Farm profile</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <main class="main">
+        <div class="container">
+          <div class="flex flex-dc gap-md">
+            <div class="section">
+              <h2 class="heading-secondary">Overview</h2>
+              <div class="row row-widgets">
+                <div class="widget widget--income">
+                  <span class="widget-label">Income</span>
+                  <div class="widget-details">
+                    <span class="widget-value">KSH. 500000</span>
+                  </div>
+                </div>
+                <div class="widget widget--expenses">
+                  <span class="widget-label">Expenses</span>
+                  <div class="widget-details">
+                    <span class="widget-value">KSH. 500000</span>
+                  </div>
+                </div>
+                <div class="widget widget--profit">
+                  <span class="widget-label">Profit</span>
+                  <div class="widget-details">
+                    <span class="widget-value">KSH 500000</span>
+                  </div>
+                </div>
+                <div class="widget widget--budget">
+                  <span class="widget-label">Budget</span>
+                  <div class="widget-details">
+                    <span class="widget-value">Yearly budget: KSH. 500000</span>
+                    <span class="widget-value"
+                      >Remaining Amount: KSH. 500000</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="section">
+              <h2 class="heading-secondary">Income</h2>
+              <div class="row row-income">
+                <h3 class="sub-heading">Coffee Sales</h3>
+                <div class="sales-details">
+                  <div class="sales-detail sales-detail--price">
+                    <span class="label label-price">Price per Kg</span>
+                    <span class="value value-price">KSH 100</span>
+                  </div>
+
+                  <div class="sales-detail sales-detail--yield">
+                    <span class="label label-yield">Total Yield</span>
+                    <span class="value value-yield">1000 kg</span>
+                  </div>
+
+                  <div class="sales-detail sales-detail--amount">
+                    <span class="label label-amount">Expected revenue</span>
+                    <span class="value value-amount">KSH 500, 000</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex width-max gap-md">
+              <div class="section section-expenses">
+                <h2 class="heading-secondary">Expenses</h2>
+                <div class="row row-expenses">
+                  <div class="expense expense-labour">
+                    <div class="expense_header">
+                      <span class="expense_icon">
+                        <img
+                          class="image-icon"
+                          src="src/farmer.png"
+                          alt="farmer-icon"
+                        />
+                      </span>
+                      <div class="flex flex-dc width-max">
+                        <div class="flex">
+                          <span class="expense_name">Labour</span>
+                          <button class="btn btn-icon-only ml-auto">
+                            <ion-icon name="chevron-down-outline"></ion-icon>
+                          </button>
+                        </div>
+                        <div class="flex allocated-amounmt align-center">
+                          <span class="expense_status">On-budget</span>
+
+                          <div class="expense_cost">
+                            <span class="expense_cost-label">Total cost</span>
+                            <span class="expense_cost-value">60,000</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="expense_body hidden">
+                      <h4 class="">Details</h4>
+                      <ul class="list expense_list expense_list--labor">
+                        <li class="expense_list-item header-row">
+                          <span>Date</span>
+                          <span>Description</span>
+                          <span>Laborers</span>
+                          <span>Pay Rate</span>
+                          <span>Hours worked</span>
+                          <span>Total</span>
+                        </li>
+                        <li class="expense_list-item values-row">
+                          <span>15 Dec 2023</span>
+                          <span>Picking</span>
+                          <span>15</span>
+                          <span>10</span>
+                          <span>150</span>
+                          <span>15000</span>
+                        </li>
+                        <li class="expense_list-item values-row">
+                          <span>15 Dec 2023</span>
+                          <span>Picking</span>
+                          <span>15</span>
+                          <span>10</span>
+                          <span>150</span>
+                          <span>15000</span>
+                        </li>
+                        <li class="expense_list-item values-row">
+                          <span>15 Dec 2023</span>
+                          <span>Picking</span>
+                          <span>15</span>
+                          <span>10</span>
+                          <span>150</span>
+                          <span>15000</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="expense expense-Fertilizer">
+                    <div class="expense_header">
+                      <span class="expense_icon">
+                        <img
+                          class="image-icon"
+                          src="src/fertilizer.png"
+                          alt="farmer-icon"
+                        />
+                      </span>
+                      <div class="flex flex-dc width-max">
+                        <div class="flex">
+                          <span class="expense_name">Fertilizer</span>
+                          <button class="btn btn-icon-only ml-auto">
+                            <ion-icon name="chevron-down-outline"></ion-icon>
+                          </button>
+                        </div>
+                        <div class="flex allocated-amounmt align-center">
+                          <span class="expense_status">On-budget</span>
+
+                          <div class="expense_cost">
+                            <span class="expense_cost-label">Total cost</span>
+                            <span class="expense_cost-value">60,000</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="expense_body hidden">
+                      <h4 class="">Details</h4>
+                      <ul class="list expense_list expense_list--fertilizer">
+                        <li class="expense_list-item header-row">
+                          <span>Date</span>
+                          <span>Description</span>
+                          <span>Cost per unit</span>
+                          <span>Quantity</span>
+
+                          <span>Total</span>
+                        </li>
+                        <li class="expense_list-item values-row">
+                          <span>15 Dec 2023</span>
+                          <span>Picking</span>
+                          <span>15</span>
+                          <span>10</span>
+                          <span>150</span>
+                        </li>
+                        <li class="expense_list-item values-row">
+                          <span>15 Dec 2023</span>
+                          <span>Picking</span>
+                          <span>15</span>
+                          <span>10</span>
+                          <span>150</span>
+                        </li>
+                        <li class="expense_list-item values-row">
+                          <span>15 Dec 2023</span>
+                          <span>Picking</span>
+                          <span>15</span>
+                          <span>10</span>
+                          <span>150</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="expense expense-pesticide">
+                    <div class="expense_header">
+                      <span class="expense_icon">
+                        <img
+                          class="image-icon"
+                          src="src/pesticide.png"
+                          alt="farmer-icon"
+                        />
+                      </span>
+                      <div class="flex flex-dc width-max">
+                        <div class="flex">
+                          <span class="expense_name">Pesticide</span>
+                          <button class="btn btn-icon-only ml-auto">
+                            <ion-icon name="chevron-down-outline"></ion-icon>
+                          </button>
+                        </div>
+                        <div class="flex allocated-amounmt align-center">
+                          <span class="expense_status">On-budget</span>
+
+                          <div class="expense_cost">
+                            <span class="expense_cost-label">Total cost</span>
+                            <span class="expense_cost-value">60,000</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="expense_body hidden">
+                      <h4 class="">Details</h4>
+                      <ul class="list expense_list expense_list--fertilizer">
+                        <li class="expense_list-item header-row">
+                          <span>Date</span>
+                          <span>Description</span>
+                          <span>Cost per unit</span>
+                          <span>Quantity</span>
+
+                          <span>Total</span>
+                        </li>
+                        <li class="expense_list-item values-row">
+                          <span>15 Dec 2023</span>
+                          <span>Picking</span>
+                          <span>15</span>
+                          <span>10</span>
+                          <span>150</span>
+                        </li>
+                        <li class="expense_list-item values-row">
+                          <span>15 Dec 2023</span>
+                          <span>Picking</span>
+                          <span>15</span>
+                          <span>10</span>
+                          <span>150</span>
+                        </li>
+                        <li class="expense_list-item values-row">
+                          <span>15 Dec 2023</span>
+                          <span>Picking</span>
+                          <span>15</span>
+                          <span>10</span>
+                          <span>150</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="expense expense-miscelleneous">
+                    <div class="expense_header">
+                      <span class="expense_icon">
+                        <img
+                          class="image-icon"
+                          src="src/income.png"
+                          alt="farmer-icon"
+                        />
+                      </span>
+                      <div class="flex flex-dc width-max">
+                        <div class="flex">
+                          <span class="expense_name">Miscellaneous</span>
+                          <button class="btn btn-icon-only ml-auto">
+                            <ion-icon name="chevron-down-outline"></ion-icon>
+                          </button>
+                        </div>
+                        <div class="flex allocated-amounmt align-center">
+                          <span class="expense_status">On-budget</span>
+
+                          <div class="expense_cost">
+                            <span class="expense_cost-label">Total cost</span>
+                            <span class="expense_cost-value">60,000</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="expense_body hidden">
+                      <h4 class="">Details</h4>
+                      <ul class="list expense_list expense_list--fertilizer">
+                        <li class="expense_list-item header-row">
+                          <span>Date</span>
+                          <span>Description</span>
+                          <span>Cost per unit</span>
+                          <span>Quantity</span>
+
+                          <span>Total</span>
+                        </li>
+                        <li class="expense_list-item values-row">
+                          <span>15 Dec 2023</span>
+                          <span>Picking</span>
+                          <span>15</span>
+                          <span>10</span>
+                          <span>150</span>
+                        </li>
+                        <li class="expense_list-item values-row">
+                          <span>15 Dec 2023</span>
+                          <span>Picking</span>
+                          <span>15</span>
+                          <span>10</span>
+                          <span>150</span>
+                        </li>
+                        <li class="expense_list-item values-row">
+                          <span>15 Dec 2023</span>
+                          <span>Picking</span>
+                          <span>15</span>
+                          <span>10</span>
+                          <span>150</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="section">
+                <h2 class="heading-secondary">Budget overview</h2>
+                <div class="row row-budget">
+                  <div>
+                    <canvas id="myChart"></canvas>
+                  </div>
+                  <button class="btn btn-primary btn-md">Edit budget</button>
+                </div>
+
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+                <script>
+                  const ctx = document.getElementById("myChart");
+
+                  new Chart(ctx, {
+                    type: "doughnut",
+                    data: {
+                      labels: [
+                        "Labour",
+                        "Fertilizer",
+                        "Pesticides",
+                        "Miscellaneous",
+                      ],
+                      datasets: [
+                        {
+                          label: "# of Votes",
+                          data: [12, 19, 3, 4],
+                          borderWidth: 1,
+                        },
+                      ],
+                    },
+                    options: {
+                      plugins: {
+                        legend: {
+                          position: "right",
+                        },
+                      },
+                      // scales: {
+                      //   y: {
+                      //     beginAtZero: true,
+                      //   },
+                      // },
+                    },
+                  });
+                </script>
+
+                <div class="budget-overview"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <script
+        type="module"
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+      ></script>
+      <script
+        nomodule
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+      ></script>
+    </body>
+  </div>
+</html>
