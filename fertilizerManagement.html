@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Rubik:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Dashboard</title>
+  </head>
+  <div class="app-layout grid">
+    <body>
+      <nav class="sidebar">
+        <div class="logo">Coffee Farming Management System</div>
+        <div class="main-nav">
+          <ul class="list">
+            <li class="list-item">
+              <a href="" class="main-nav--link active">
+                <ion-icon name="home-outline"></ion-icon>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li class="list-item">
+              <a href="" class="main-nav--link">
+                <ion-icon name="wallet-outline"></ion-icon>
+                <span>Finances</span>
+              </a>
+            </li>
+            <li class="list-item">
+              <a href="" class="main-nav--link">
+                <ion-icon name="book-outline"></ion-icon>
+                <span>Farm guide</span>
+              </a>
+            </li>
+            <li class="list-item">
+              <a href="" class="main-nav--link">
+                <ion-icon name="clipboard-outline"></ion-icon>
+                <span>Farm profile</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <main class="main">
+        <div class="container">
+          <div class="fertilizer-management">
+            <section class="section section-fertilizers">
+              <h2 class="heading-tertiary">
+                Fertilizers to be applied this month
+              </h2>
+              <div class="row row-fertilizers">
+                <ul class="list list-fertilizers">
+                  <li class="fertilizer">
+                    <span class="fertilizer_name"
+                      >Calcium Ammonium Nitrate (CAN)</span
+                    >
+                    <div class="flex align-center">
+                      <span class="fertilizer_nutrient"
+                        >Nutrient -
+                        <span class="value"> Nitrogen </span>
+                      </span>
+                      <span class="fertilizer_amount ml-auto">
+                        Total required amount -
+
+                        <span class="value"> 100 Kg </span>
+                      </span>
+                    </div>
+                  </li>
+                  <li class="fertilizer">
+                    <span class="fertilizer_name"
+                      >Calcium Ammonium Nitrate (CAN)</span
+                    >
+                    <div class="flex align-center">
+                      <span class="fertilizer_nutrient"
+                        >Nutrient -
+                        <span class="value"> Nitrogen </span>
+                      </span>
+                      <span class="fertilizer_amount ml-auto">
+                        Total required amount -
+
+                        <span class="value"> 100 Kg </span>
+                      </span>
+                    </div>
+                  </li>
+                  <li class="fertilizer">
+                    <span class="fertilizer_name"
+                      >Calcium Ammonium Nitrate (CAN)</span
+                    >
+                    <div class="flex align-center">
+                      <span class="fertilizer_nutrient"
+                        >Nutrient -
+                        <span class="value"> Nitrogen </span>
+                      </span>
+                      <span class="fertilizer_amount ml-auto">
+                        Total required amount -
+
+                        <span class="value"> 100 Kg </span>
+                      </span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </section>
+
+            <section class="section section-instructions">
+              <h2 class="heading-secondary">
+                Fertilizer Application instructions
+              </h2>
+              <div class="row row-instructions">
+                <div class="fertilizer-instructions">
+                  <div class="fertilizer-instructions_text">
+                    <div class="flex flex-dc gap-sm">
+                      <p class="instruction_detail">
+                        <span> Fertilizer - </span>
+                        <span> CAN </span>
+                      </p>
+                      <p class="instruction_detail">
+                        <span>Amount per tree - </span>
+                        <span> 150g </span>
+                      </p>
+                      <p class="instruction_detail">
+                        <span> Tools - </span>
+                        <span> Measuring can </span>
+                      </p>
+                    </div>
+
+                    <div
+                      class="instruction_detail instruction_detail-procedure"
+                    >
+                      <h4>Application Procedure</h4>
+                      <p>
+                        Spread fertiliser evenly on the soil around the drip
+                        line (the outside edge of the canopy) of the coffee
+                        tree. Keep fertiliser at least 100 mm from the stem of
+                        the plant; fertiliser applied closer than this can
+                        damage the coffee tree.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="fertilizer-instructions_image">
+                    <img
+                      src="src/fertilizer-application-methods/ring-method.jpg"
+                      alt=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <script
+        type="module"
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+      ></script>
+      <script
+        nomodule
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+      ></script>
+    </body>
+  </div>
+</html>
