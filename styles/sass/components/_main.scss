@@ -1,4 +1,12 @@
 .main {
   padding: 4rem;
   background-color: darken($color: #f6f8fd, $amount: 4);
+
+  &--authentication {
+    display: flex;
+    justify-content: center;
+
+    // height: max-content;
+    height: 100vh;
+  }
 }

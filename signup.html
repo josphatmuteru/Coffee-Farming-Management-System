@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700;900&family=Rubik:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Dashboard</title>
+  </head>
+  <div class="app-layout">
+    <body>
+      <main class="main main--authentication">
+        <form
+          action=""
+          class="form form--authentication authentication--signup"
+        >
+          <h1>Coffee Farming Management System</h1>
+          <h2>Create your account</h2>
+          <div class="input-group">
+            <label for="name">Name</label>
+            <input id="name" required placeholder="F" type="text" />
+          </div>
+          <div class="input-group">
+            <label for="email">Email</label>
+            <input
+              id="email"
+              required
+              placeholder="example@email.com"
+              type="email"
+            />
+          </div>
+          <div class="input-group">
+            <label for="password">Password</label>
+            <input id="password" minlength="8" required type="password" />
+          </div>
+          <div class="input-group">
+            <label for="password">Confirm Password</label>
+            <input id="password" minlength="8" required type="password" />
+          </div>
+
+          <div>
+            <button class="btn btn-primary btn-large">Signup</button>
+          </div>
+          <div class="input-group">
+            <p>
+              Already have have an account?
+              <a href="">Login</a>
+            </p>
+          </div>
+        </form>
+      </main>
+
+      <script
+        type="module"
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+      ></script>
+      <script
+        nomodule
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+      ></script>
+    </body>
+  </div>
+</html>

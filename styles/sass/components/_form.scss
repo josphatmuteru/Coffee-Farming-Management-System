@@ -1,0 +1,30 @@
+.form {
+  padding: 4.8rem 4rem;
+  background-color: $color-white-500;
+  display: flex;
+  flex-direction: column;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-md;
+  gap: 2rem;
+
+  &--authentication {
+    width: 100%;
+    max-width: 56rem;
+    margin: auto;
+    & button {
+      margin-top: 1rem;
+    }
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    font-size: 1.6rem;
+
+    & input {
+      padding: 1rem 2rem;
+      border-radius: $border-radius-sm;
+    }
+  }
+}

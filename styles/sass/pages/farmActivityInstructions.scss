@@ -1,0 +1,24 @@
+.activity-instructions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  .row {
+    padding: 2rem;
+    background-color: #fbfbfb;
+  }
+
+  .procedure_steps {
+    padding: 0 2rem;
+    list-style: none; /* Remove default list-style */
+    counter-reset: step-counter; /* Reset the counter */
+  }
+
+  .procedure_steps li {
+    counter-increment: step-counter; /* Increment the counter for each list item */
+  }
+
+  .procedure_steps li:before {
+    content: "Step " counter(step-counter) ": "; /* Add the word "Step" and the counter value before each list item */
+    font-weight: bold; /* Optional: Make the step number bold */
+  }
+}

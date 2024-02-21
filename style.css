@@ -22,6 +22,27 @@ html {
   font-weight: 400;
 }
 
+.instruction_detail {
+  display: flex;
+  gap: 1.4rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+.instruction_detail span:first-child {
+  color: #222;
+  font-weight: 600;
+}
+.instruction_detail-procedure {
+  flex-direction: column;
+  gap: 1rem;
+}
+.instruction_detail-procedure p {
+  font-weight: normal;
+  letter-spacing: normal;
+  line-height: 1.4;
+  max-width: 64rem;
+}
+
 .image-icon {
   width: 4rem;
   height: 4rem;
@@ -90,12 +111,6 @@ ul {
 
 a {
   text-decoration: none;
-}
-
-.app-layout {
-  display: grid;
-  grid-template-columns: 23rem auto;
-  height: 100vh;
 }
 
 .dashboard-graph {
@@ -515,26 +530,6 @@ a {
   border: 1px solid #111;
   max-height: 32rem;
 }
-.fertilizer-management .fertilizer-instructions .instruction_detail {
-  display: flex;
-  gap: 1.4rem;
-  font-size: 1.4rem;
-  font-weight: 500;
-}
-.fertilizer-management .fertilizer-instructions .instruction_detail span:first-child {
-  color: #222;
-  font-weight: 600;
-}
-.fertilizer-management .fertilizer-instructions .instruction_detail-procedure {
-  flex-direction: column;
-  gap: 1rem;
-}
-.fertilizer-management .fertilizer-instructions .instruction_detail-procedure p {
-  font-weight: normal;
-  letter-spacing: normal;
-  line-height: 1.4;
-  max-width: 64rem;
-}
 .fertilizer-management .row-instructions {
   width: fit-content;
   padding: 2rem;
@@ -543,6 +538,59 @@ a {
   box-shadow: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
 }
 
+.activity-instructions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+.activity-instructions .row {
+  padding: 2rem;
+  background-color: #fbfbfb;
+}
+.activity-instructions .procedure_steps {
+  padding: 0 2rem;
+  list-style: none; /* Remove default list-style */
+  counter-reset: step-counter; /* Reset the counter */
+}
+.activity-instructions .procedure_steps li {
+  counter-increment: step-counter; /* Increment the counter for each list item */
+}
+.activity-instructions .procedure_steps li:before {
+  content: "Step " counter(step-counter) ": "; /* Add the word "Step" and the counter value before each list item */
+  font-weight: bold; /* Optional: Make the step number bold */
+}
+
+.farm-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+.farm-profile .row {
+  padding: 2rem;
+  background-color: #fbfbfb;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.farm-profile .profile_detail {
+  font-size: 1.6rem;
+  display: grid;
+  grid-template-columns: 16rem auto;
+  align-items: center;
+  gap: 1rem;
+}
+.farm-profile .profile_detail span:first-child {
+  color: #222;
+  font-weight: 600;
+}
+.farm-profile .profile_detail span:last-child {
+  width: 16rem;
+  padding: 1rem;
+  background-color: #34d466;
+  border-radius: 5px;
+}
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -585,6 +633,11 @@ a {
 .main {
   padding: 4rem;
   background-color: #e5ebf9;
+}
+.main--authentication {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
 }
 
 .aside {
@@ -751,6 +804,11 @@ a {
   font-size: 1.6rem;
   padding: 1.2rem 2.4rem;
   font-weight: 500;
+  width: 100%;
+}
+.btn-primary {
+  background: #207d40;
+  color: #fff;
 }
 .btn-icon {
   display: flex;
@@ -767,6 +825,34 @@ a {
 }
 .btn-icon-only ion-icon {
   font-size: 2.4rem;
+}
+
+.form {
+  padding: 4.8rem 4rem;
+  background-color: #fbfbfb;
+  display: flex;
+  flex-direction: column;
+  border-radius: 7px;
+  box-shadow: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
+  gap: 2rem;
+}
+.form--authentication {
+  width: 100%;
+  max-width: 56rem;
+  margin: auto;
+}
+.form--authentication button {
+  margin-top: 1rem;
+}
+.form .input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  font-size: 1.6rem;
+}
+.form .input-group input {
+  padding: 1rem 2rem;
+  border-radius: 5px;
 }
 
 /*# sourceMappingURL=style.css.map */
