@@ -1,0 +1,14 @@
+{
+  "verbose": true,
+  "ignore": ["node_modules/"],
+  "watch": [
+    "server.js",
+    "app.js",
+    "public/",
+    "controllers/",
+    "routes/",
+    "models/",
+    "utils/"
+  ],
+  "exec": "node -r dotenv/config server.js"
+}

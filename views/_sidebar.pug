@@ -1,0 +1,32 @@
+nav.sidebar
+
+  -const navbarLinks = [{url: '/', icon: 'home-outline', label: "Dashboard"}, {url: '/finances', icon: 'wallet-outline', label: 'Finances'}, {url: '/farm-guide', icon: 'book-outline', label: 'Farm Guide'}, {url: '/farm-profile', icon: 'clipboard-outline', label: 'Farm Profile'}]
+
+  .logo Coffee Farming Management System
+  .main-nav
+    ul.list
+      each link in navbarLinks 
+        -const isDashboard = currentPageUrl  === '/' && link.url === '/'
+   
+
+        -const isActive = currentPageUrl.startsWith(link.url)  && link.url !== '/'
+            
+        li.list-item(class=isDashboard ? 'active' : isActive ? 'active' : '' )
+          a.main-nav--link(href=`${link.url}`) 
+            ion-icon(name=`${link.icon}`)
+            span=link.label
+
+
+            
+      //- li.list-item
+      //-   a.main-nav--link(href='')
+      //-     ion-icon(name='wallet-outline')
+      //-     span Finances
+      //- li.list-item
+      //-   a.main-nav--link(href='')
+      //-     ion-icon(name='book-outline')
+      //-     span Farm guide
+      //- li.list-item
+      //-   a.main-nav--link(href='')
+      //-     ion-icon(name='clipboard-outline')
+      //-     span Farm profile

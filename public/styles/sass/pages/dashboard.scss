@@ -1,0 +1,33 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  padding: 4rem;
+  width: 100%;
+  gap: 4rem;
+
+  &_graph {
+    gap: 2rem;
+    // width: 64rem;
+    display: grid;
+    grid-template-columns: 8fr 2fr;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 4rem;
+
+    &--yield-stats {
+      margin-top: 16rem;
+      margin-bottom: 4rem;
+    }
+  }
+  &_legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    &-rectangle {
+      background-color: $color-blue-700;
+      width: 2rem;
+      height: 1rem;
+    }
+  }
+}

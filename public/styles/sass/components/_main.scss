@@ -1,6 +1,13 @@
 .main {
   padding: 4rem;
   background-color: darken($color: #f6f8fd, $amount: 4);
+  overflow-y: auto;
+
+  &--dashboard {
+    padding: 0;
+    display: grid;
+    grid-template-columns: auto 32rem;
+  }
 
   &--authentication {
     display: flex;

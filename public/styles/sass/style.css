@@ -123,20 +123,11 @@ a {
   grid-template-columns: 1fr;
 }
 
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  /* background-color: #20377d; */
-  width: 100%;
-  padding: 4rem;
-}
-
 .dashboard-graph {
-  width: 100%;
-  padding: 4rem;
-  background-color: #fbfbfb;
+  height: 24rem;
+  width: 64rem;
+  background-color: #fff;
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 .dashboard-graph--yield-stats {
   margin-top: 16rem;
@@ -364,8 +355,7 @@ a {
   flex-direction: column;
   gap: 0.2rem;
 }
-.farm-guide .menu_item:link,
-.farm-guide .menu_item:visited {
+.farm-guide .menu_item:link, .farm-guide .menu_item:visited {
   display: flex;
   gap: 2rem;
   align-items: center;
@@ -373,12 +363,10 @@ a {
   padding: 1.4rem;
   font-weight: 500;
   color: #222;
-  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
   background-color: #fdfdfd;
 }
-.farm-guide .menu_item:link .icon,
-.farm-guide .menu_item:visited .icon {
+.farm-guide .menu_item:link .icon, .farm-guide .menu_item:visited .icon {
   padding: 0.5rem;
   height: 5rem;
   width: 5rem;
@@ -388,8 +376,7 @@ a {
   background-color: #a6afcb;
   border-radius: 50%;
 }
-.farm-guide .menu_item:hover,
-.farm-guide .menu_item:active {
+.farm-guide .menu_item:hover, .farm-guide .menu_item:active {
   color: #207d40;
   background-color: #fff;
 }
@@ -511,8 +498,7 @@ a {
 }
 .fertilizer-management .list-fertilizers li {
   border-radius: 7px;
-  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
-    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
   background-color: #fdfdfd;
 }
 .fertilizer-management .fertilizer {
@@ -526,14 +512,12 @@ a {
   font-size: 1.6rem;
   font-weight: 500;
 }
-.fertilizer-management .fertilizer_nutrient,
-.fertilizer-management .fertilizer_amount {
+.fertilizer-management .fertilizer_nutrient, .fertilizer-management .fertilizer_amount {
   font-size: 1.3rem;
   color: #222;
   font-weight: 600;
 }
-.fertilizer-management .fertilizer_nutrient span,
-.fertilizer-management .fertilizer_amount span {
+.fertilizer-management .fertilizer_nutrient span, .fertilizer-management .fertilizer_amount span {
   font-weight: 500;
   color: #000;
 }
@@ -632,6 +616,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  display: none;
 }
 .main-nav ul li {
   background-color: #b4fdda;
@@ -639,8 +624,7 @@ a {
 .main-nav ul li.active {
   background-color: #b4fdda;
 }
-.main-nav--link:link,
-.main-nav--link:visited {
+.main-nav--link:link, .main-nav--link:visited {
   display: flex;
   align-items: center;
   gap: 2rem;
@@ -650,16 +634,13 @@ a {
   background-color: transparent;
   border-radius: 12px;
 }
-.main-nav--link:link ion-icon,
-.main-nav--link:visited ion-icon {
+.main-nav--link:link ion-icon, .main-nav--link:visited ion-icon {
   font-size: 2rem;
 }
-.main-nav--link:link span,
-.main-nav--link:visited span {
+.main-nav--link:link span, .main-nav--link:visited span {
   font-size: 1.8rem;
 }
-.main-nav--link:hover,
-.main-nav--link:active {
+.main-nav--link:hover, .main-nav--link:active {
   color: green;
 }
 
@@ -706,12 +687,10 @@ a {
   gap: 1rem;
   margin-top: 1.4rem;
   background-color: #d9d9d9;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px,
-    rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
   border-radius: 5px;
 }
-.weather-box--current-condition,
-.weather-box--current-day {
+.weather-box--current-condition, .weather-box--current-day {
   font-size: 1.6rem;
   font-weight: 400;
   grid-row: 1/2;
@@ -731,8 +710,7 @@ a {
   margin-top: -1rem;
   font-size: 6.4rem;
 }
-.weather-box--current-condition,
-.weather-box--current-symbol {
+.weather-box--current-condition, .weather-box--current-symbol {
   border-right: 1px solid #222;
 }
 .weather-box--current-temperature {
@@ -809,8 +787,7 @@ a {
   font-weight: 600;
   color: #222;
 }
-.section-actions .schedule_activity-date,
-.section-actions .schedule_activity-time {
+.section-actions .schedule_activity-date, .section-actions .schedule_activity-time {
   font-size: 1.2rem;
   margin-top: 0.8rem;
   font-weight: 600;
