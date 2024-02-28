@@ -1,4 +1,15 @@
-exports.getDashboard = (req, res) => {
+export function getSignupPage(req, res) {
+  const currentPageUrl = req.originalUrl;
+
+  res.render("signup", { currentPageUrl });
+}
+export function getLoginPage(req, res) {
+  const currentPageUrl = req.originalUrl;
+
+  res.render("login", { currentPageUrl });
+}
+
+export function getDashboard(req, res) {
   const currentPageUrl = req.originalUrl;
   console.log("currentPageUrl", currentPageUrl);
 
@@ -6,21 +17,21 @@ exports.getDashboard = (req, res) => {
   console.log(isDashboard);
 
   res.render("dashboard", { currentPageUrl });
-};
+}
 
-exports.getFinances = (req, res) => {
+export function getFinances(req, res) {
   const currentPageUrl = req.originalUrl;
   console.log("currentPageUrl", currentPageUrl);
 
   res.render("finances", { currentPageUrl });
-};
-exports.getFarmGuide = (req, res) => {
+}
+export function getFarmGuide(req, res) {
   const currentPageUrl = req.originalUrl;
   console.log("currentPageUrl", currentPageUrl);
   res.render("farmGuide", { currentPageUrl });
-};
-exports.getFarmProfile = (req, res) => {
+}
+export function getFarmProfile(req, res) {
   const currentPageUrl = req.originalUrl;
   console.log("currentPageUrl", currentPageUrl);
   res.render("farmProfile", { currentPageUrl });
-};
+}

@@ -9,12 +9,22 @@ html(lang='en')
     link(rel='stylesheet', href='/styles/style.css')
     title Dashboard
   body
+
+  -if( currentPageUrl.includes('signup') || currentPageUrl.includes('login'))
+   
+    .app-layout.app-layout--authentication 
+      block content    
+
+  -else 
     .app-layout.grid
       include _sidebar
+      
 
       block content
 
 
-      
-      script(type='module', src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
-      script(nomodule='', src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')
+
+
+  script(type='module', src='/js/index.js')
+  script(type='module', src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
+  script(nomodule='', src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')

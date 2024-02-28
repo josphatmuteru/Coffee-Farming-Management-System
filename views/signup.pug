@@ -1,0 +1,25 @@
+extends base
+
+block content
+  main.main.main--authentication
+    form.form.form--authentication.authentication--signup(action='')
+      h1 Coffee Farming Management System
+      h2 Create your account
+      .input-group
+        label(for='name') Name
+        input#name(required='', placeholder='Josphat',  value='Josphat' type='text')
+      .input-group
+        label(for='email') Email
+        input#email(required='', placeholder='example@email.com', value='example@email.com' type='email')
+      .input-group
+        label(for='password') Password
+        input#password(minlength='8', required='', value='pass1234' type='password')
+      .input-group
+        label(for='password') Confirm Password
+        input#passwordConfirm(minlength='8', required='',  value='pass1234' type='password')
+      div
+        button.btn.btn-primary.btn-large Signup
+      .input-group
+        p
+          | Already have have an account?
+          a(href='/login') Login

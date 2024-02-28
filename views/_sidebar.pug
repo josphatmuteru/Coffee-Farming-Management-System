@@ -9,7 +9,7 @@ nav.sidebar
         -const isDashboard = currentPageUrl  === '/' && link.url === '/'
    
 
-        -const isActive = currentPageUrl.startsWith(link.url)  && link.url !== '/'
+        -const isActive = currentPageUrl?.startsWith(link.url)  && link.url !== '/'
             
         li.list-item(class=isDashboard ? 'active' : isActive ? 'active' : '' )
           a.main-nav--link(href=`${link.url}`) 

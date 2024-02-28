@@ -8,7 +8,8 @@
     "controllers/",
     "routes/",
     "models/",
-    "utils/"
+    "utils/",
+    "api/"
   ],
   "exec": "node -r dotenv/config server.js"
 }

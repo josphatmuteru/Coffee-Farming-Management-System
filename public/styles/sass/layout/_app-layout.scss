@@ -3,6 +3,7 @@
   grid-template-columns: 23rem auto;
   height: 100vh;
   overflow-y: hidden;
+  position: relative;
 
   &--authentication {
     grid-template-columns: 1fr;

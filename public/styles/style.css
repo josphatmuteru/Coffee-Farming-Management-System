@@ -118,6 +118,7 @@ a {
   grid-template-columns: 23rem auto;
   height: 100vh;
   overflow-y: hidden;
+  position: relative;
 }
 .app-layout--authentication {
   grid-template-columns: 1fr;
@@ -668,6 +669,7 @@ a {
   padding: 4rem;
   background-color: #e5ebf9;
   overflow-y: auto;
+  position: relative;
 }
 .main--dashboard {
   padding: 0;
@@ -921,6 +923,65 @@ a {
 .form .input-group input {
   padding: 1rem 2rem;
   border-radius: 5px;
+}
+
+.status-box {
+  position: absolute;
+  background-color: #fbfbfb;
+  padding: 1.6rem 1.4rem;
+  box-shadow: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
+  left: 50%;
+  z-index: 100;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  top: 2rem;
+  transform: translateX(-50%);
+  border-radius: 8px;
+  font-size: 1.6rem;
+}
+.status-box ion-icon {
+  border-radius: 50%;
+  width: 2.4rem;
+  height: 2.4rem;
+  color: #fff;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.status-box svg {
+  width: 2.4rem;
+  height: 2.4rem;
+  animation: spin infinite linear 750ms;
+}
+.status-box--success .icon-error,
+.status-box--success .icon-loading {
+  display: none;
+}
+.status-box--success ion-icon {
+  background-color: #207d40;
+}
+.status-box--loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.status-box--loading .icon-success,
+.status-box--loading .icon-error {
+  display: none;
+}
+.status-box--error .icon-success,
+.status-box--error .icon-loading {
+  display: none;
+}
+.status-box--error ion-icon {
+  background-color: #c32121;
 }
 
 /*# sourceMappingURL=style.css.map */

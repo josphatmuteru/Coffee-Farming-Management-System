@@ -1,0 +1,22 @@
+extends base
+
+block content 
+
+    main.main.main--authentication
+      form.form.form--authentication.authentication--login(action='')
+        h1 Coffee Farming Management System
+        h2 Login to your account
+        .input-group
+          label(for='email') Email
+          input#email(required='', placeholder='example@email.com', value='example@email.com' type='email')
+        .input-group
+          label(for='password') Password
+          input#password(minlength='8', required='', value='pass12n34'  type='password')
+          p
+            a(href='') Forgot password?
+        div
+          button.btn.btn-primary.btn-large Login
+        .input-group
+          p
+            | Don&apos;t have an account?
+            a(href='/signup') Sign-up

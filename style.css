@@ -142,6 +142,16 @@ a {
   margin-top: 16rem;
   margin-bottom: 4rem;
 }
+.status-box {
+  width: 24rem;
+  height: 12rem;
+  position: absolute;
+  background-color: #fbfbfb;
+  padding: 2rem 4rem;
+  border-radius: 12px;
+
+  font-size: 1.6rem;
+}
 
 .section {
   display: flex;
@@ -667,6 +677,7 @@ a {
   padding: 4rem;
   background-color: #e5ebf9;
   overflow-y: auto;
+  position: relative;
 }
 .main--dashboard {
   padding: 0;

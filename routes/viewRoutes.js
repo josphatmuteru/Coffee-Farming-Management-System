@@ -1,12 +1,21 @@
-const express = require("express");
-const viewsController = require("../controllers/viewsController");
+import { Router } from "express";
+import {
+  getDashboard,
+  getSignupPage,
+  getFinances,
+  getFarmGuide,
+  getFarmProfile,
+  getLoginPage,
+} from "../controllers/viewsController.js";
 
-const router = express.Router();
+const router = Router();
 
-router.get("/", viewsController.getDashboard);
+router.get("/", getDashboard);
+router.get("/signup", getSignupPage);
+router.get("/login", getLoginPage);
 
-router.get("/finances", viewsController.getFinances);
-router.get("/farm-guide", viewsController.getFarmGuide);
-router.get("/farm-profile", viewsController.getFarmProfile);
+router.get("/finances", getFinances);
+router.get("/farm-guide", getFarmGuide);
+router.get("/farm-profile", getFarmProfile);
 
-module.exports = router;
+export default router;
