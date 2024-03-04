@@ -8,77 +8,26 @@ block content
           div.flex.flex-dc.gap-md
             .dashboard_graph.dashboard_graph-yield-stats
               //- h3 Harvest Stats
-              div
+              div#harvestChart(data-harvest-data=harvestData)
                 canvas#myChart
+              script(src='https://cdn.jsdelivr.net/npm/chart.js')
               script(src='https://cdn.jsdelivr.net/npm/chart.js')
               script.
                 const ctx = document.getElementById("myChart");
+                let harvestData = document.getElementById("harvestChart").getAttribute('data-harvest-data');
+               harvestData =JSON.parse(harvestData)
+                const labels = harvestData.map(item => item.month);
+                const yieldAmount = harvestData.map(item => item.total_yield_amount)
                 new Chart(ctx, {
                 type: "bar",
                 data: {
-                labels: [
-                "Red",
-                "Blue",
-                "Yellow",
-                "Green",
-                "Purple",
-                "Orange",
-                "Red",
-                "Blue",
-                "Yellow",
-                "Green",
-                "Purple",
-                "Orange",
-                ],
+                  labels,
+               
                 datasets: [
                 {
-                label: "# of Votes",
-                data: [12, 19, 3, 5, 2, 3, 12, 19, 3, 5, 2, 3],
-                borderWidth: 1,
-                },
-                ],
-                },
-                options: {
-                scales: {
-                y: {
-                beginAtZero: true,
-                },
-                },
-                
-                },
-                });
-              .dashboard_legend 
-                span.dashboard_legend-rectangle
-                span.dashboard_legend-text Weight of coffee
-
-                
-            .dashboard_graph.dashboard_graph--costs-stats
-              div
-                canvas#myChart
-              script(src='https://cdn.jsdelivr.net/npm/chart.js')
-              script.
-                const ctx = document.getElementById("myChart");
-                new Chart(ctx, {
-                type: "bar",
-                data: {
-                labels: [
-                "Red",
-                "Blue",
-                "Yellow",
-                "Green",
-                "Purple",
-                "Orange",
-                "Red",
-                "Blue",
-                "Yellow",
-                "Green",
-                "Purple",
-                "Orange",
-                ],
-                datasets: [
-                {
-                label: "# of Votes",
-                data: [12, 19, 3, 5, 2, 3, 12, 19, 3, 5, 2, 3],
+                label: "Amount by Weight",
+                data: yieldAmount,
+              
                 borderWidth: 1,
                 },
                 ],
@@ -98,13 +47,14 @@ block content
         .aside
           .weather-box
             .weather-box--big
-              span.weather-box--current-condition  Sunny 
+              span.weather-box--current-condition=weatherData.generalWeatherCondition
+              -console.log(weatherData.generalWeatherCondition) 
               .right-border
                 .weather-box--current-symbol
-                  ion-icon(name='cloudy-outline')
-              span.weather-box--current-day  Saturday 
+                  ion-icon(name=`${weatherData.generalWeatherConditionIcon}-outline`)
+              span.weather-box--current-day=weatherData.weekday 
               .flex.flex-dc
-                span.weather-box--current-date  February 10 
+                span.weather-box--current-date=weatherData.currentDate
                 span.weather-box--current-temperature  28 &deg;C
             .weather-box--small
               .weather_detail.weather-detail--wind
@@ -120,7 +70,7 @@ block content
                     c0,0.26,0.09,0.47,0.26,0.63c0.17,0.16,0.38,0.24,0.63,0.24c0.24,0,0.45-0.08,0.63-0.24c0.19-0.21,0.42-0.31,0.7-0.31\
                     c0.29,0,0.53,0.1,0.73,0.3c0.2,0.2,0.3,0.44,0.3,0.73c0,0.29-0.1,0.53-0.3,0.72c-0.2,0.19-0.44,0.29-0.73,0.29H4.01\
                     c-0.25,0-0.46,0.09-0.64,0.26C3.19,13.23,3.1,13.44,3.1,13.69z')
-                span.weather_detail-value 20 Km/h
+                span.weather_detail-value=`${weatherData.windSpeedMax} KM/h`
                 span.weather_detail-label Wind speed
               .weather_detail.weather-detail--wind
                 span.weather_detail-icon
@@ -178,16 +128,49 @@ block content
                     c0.08,0,0.17,0.01,0.26,0.03c0.21,0.06,0.36,0.16,0.46,0.31c0.1,0.15,0.15,0.31,0.15,0.47c0,0.03-0.01,0.08-0.02,0.14\
                     s-0.02,0.1-0.02,0.12l-1.63,5.73c-0.04,0.19-0.13,0.35-0.28,0.46s-0.32,0.17-0.51,0.17l-0.24-0.05c-0.2-0.06-0.35-0.16-0.46-0.32\
                     C16.79,23.94,16.74,23.78,16.74,23.62z')
-                span.weather_detail-value 0 mm
+                span.weather_detail-value=`${weatherData.rainfallSum} mm`
                 span.weather_detail-label Rainfall
           .section-actions
             .data-recording
               h4.heading-tertiary Data recording
               span.instructional-text Enter details about:
-              button.btn.btn-medium.btn-primary.btn-primary--light  
-                span Coffee Yield
-              button.btn.btn-medium.btn-primary.btn-primary--light 
-                span An Expense
+              button.btn.btn-medium.btn-primary--light.btn-primary.showHarvestDialog
+                | Coffee Yield
+              button.btn.btn-medium.btn-primary.btn-primary--light.showExpenseDialog
+                | An Expense
+              dialog#harvest-dialog.dialog
+                form.form
+                  h2 Enter Coffee Harvest Details
+                  .form-row.form-row--horizontal
+                    label(for='date') Harvest Date
+                    input.input(type='date')
+                  .form-row.form-row--horizontal
+                    label(for='date') Coffee quantity (Kg)
+                    input.input(type='number')
+                  .btns-row
+                    button.btn.btn-secondary.btn-large Cancel
+                    button.btn.btn-primary.btn-large Submit
+              dialog#expense-dialog.dialog
+                .dialog_content
+                  .form.dialog_content--select-expense
+                    h2 Choose the type of expense
+                    .flex.flex-dc.gap-sm.width-max
+                      button.btn.btn-icon.btn-icon--lg.btn-large.btn-open-expense-form.btn-open-expense-form(data-opens='labour')
+                        span.icon
+                          img.image-icon(src='../src/farmer.png', alt='farmer-icon')
+                        span Labour
+                      button.btn.btn-icon.btn-icon--lg.btn-large.btn-open-expense-form(data-opens='pesticides')
+                        span.icon
+                          img.image-icon(src='../src/pesticide.png', alt='farmer-icon')
+                        span Pesticide purchase
+                      button.btn.btn-icon.btn-icon--lg.btn-large.btn-open-expense-form(data-opens='fertilizer')
+                        span.icon
+                          img.image-icon(src='../src/fertilizer.png', alt='farmer-icon')
+                        span Fertilizer purchase
+                      button.btn.btn-icon.btn-icon--lg.btn-large.btn-open-expense-form(data-opens='miscelleneous')
+                        span.icon
+                          img.image-icon(src='../src/income.png', alt='farmer-icon')
+                        span Miscelleneous
             .scheduling
               h4.heading-tertiary Schedule
               .schedule_activities

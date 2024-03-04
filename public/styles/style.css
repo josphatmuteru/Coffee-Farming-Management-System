@@ -880,6 +880,9 @@ a {
   box-sizing: border-box;
   font-weight: 400;
 }
+.btn-secondary {
+  border: 1px solid #d1d5db;
+}
 .btn-icon {
   display: flex;
   align-items: center;
@@ -888,6 +891,28 @@ a {
 }
 .btn-icon ion-icon {
   font-size: 1.6rem;
+}
+.btn-icon--lg {
+  padding: 0.6rem 1rem;
+  gap: 2rem;
+  justify-content: start;
+  box-shadow: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
+  border: 1px solid #d1d5db;
+}
+.btn-icon--lg .icon {
+  align-self: flex-start;
+  padding: 0.5rem;
+  height: 4.8rem;
+  width: 4.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d8c2bc;
+  border-radius: 50%;
+}
+.btn-icon--lg .icon img {
+  height: 3.6rem;
+  width: 3.6rem;
 }
 .btn-icon-only {
   background: none;
@@ -904,7 +929,6 @@ a {
   flex-direction: column;
   border-radius: 7px;
   box-shadow: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
-  gap: 2rem;
 }
 .form--authentication {
   width: 100%;
@@ -924,6 +948,35 @@ a {
   padding: 1rem 2rem;
   border-radius: 5px;
 }
+.form .form-row--horizontal {
+  display: grid;
+  grid-template-columns: 2fr 2fr 2fr;
+  font-size: 1.4rem;
+  gap: 2.4rem;
+  padding: 1.2rem 0;
+  align-items: center;
+}
+.form .form-row--horizontal:not(:last-child) {
+  border-bottom: 1px solid #d1d5db;
+}
+.form .form-row--horizontal label {
+  font-weight: 500;
+}
+.form .form-row--horizontal input, .form .form-row--horizontal select {
+  border: solid 1px #d1d5db;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: 5px;
+  padding: 0.8rem 1.2rem;
+}
+.form .btns-row {
+  margin-top: 4rem;
+  display: flex;
+  gap: 1.4rem;
+  justify-content: flex-end;
+}
+.form .btns-row button {
+  width: fit-content;
+}
 
 .status-box {
   position: absolute;
@@ -931,7 +984,7 @@ a {
   padding: 1.6rem 1.4rem;
   box-shadow: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
   left: 50%;
-  z-index: 100;
+  z-index: 1000;
   display: flex;
   gap: 1rem;
   align-items: center;
@@ -982,6 +1035,28 @@ a {
 }
 .status-box--error ion-icon {
   background-color: #c32121;
+}
+
+.dialog {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 0.5px solid #222;
+  border-radius: 5px;
+  box-shadow: 0 2.4rem 3.2rem rgba(0, 0, 0, 0.12);
+}
+.dialog form,
+.dialog .form {
+  padding: 4rem;
+}
+.dialog form h2,
+.dialog .form h2 {
+  margin-left: -1rem;
+  margin-right: -1rem;
+  margin-bottom: 2rem;
+  padding: 2rem 1rem 1rem 1rem;
+  background-color: #b1bfeb;
+  border-bottom: 1px solid #d1d5db;
 }
 
 /*# sourceMappingURL=style.css.map */

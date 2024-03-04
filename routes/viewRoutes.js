@@ -7,10 +7,11 @@ import {
   getFarmProfile,
   getLoginPage,
 } from "../controllers/viewsController.js";
+import { getHarvestData } from "../controllers/yieldController.js";
 
 const router = Router();
 
-router.get("/", getDashboard);
+router.get("/", getHarvestData, getDashboard);
 router.get("/signup", getSignupPage);
 router.get("/login", getLoginPage);
 

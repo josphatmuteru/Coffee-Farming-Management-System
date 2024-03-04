@@ -10,7 +10,7 @@
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="style.css" />
     <title>Dashboard</title>
   </head>
   <div class="app-layout grid">
@@ -262,33 +262,377 @@
             <div class="data-recording">
               <h4 class="heading-tertiary">Data recording</h4>
               <span class="instructional-text">Enter details about:</span>
-              <button class="btn btn-medium btn-primary showHarvestDialog">
+              <button
+                class="btn btn-medium btn-primary--light btn-primary showHarvestDialog"
+              >
                 Coffee Yield
               </button>
-              <button class="btn btn-medium btn-primary">An Expense</button>
-              <dialog id="harvest-dialog">
-                <div class="form">
-                  <h2>Coffee Harvest Details</h2>
+
+              <button
+                class="btn btn-medium btn-primary btn-primary--light showExpenseDialog"
+              >
+                An Expense
+              </button>
+              <dialog class="dialog" id="harvest-dialog">
+                <form class="form">
+                  <h2>Enter Coffee Harvest Details</h2>
                   <div class="form-row form-row--horizontal">
                     <label for="date">Harvest Date</label>
                     <input class="input" type="date" />
                   </div>
                   <div class="form-row form-row--horizontal">
-                    <label for="date">Quantity (Kg)</label>
+                    <label for="date">Coffee quantity (Kg)</label>
                     <input class="input" type="number" />
                   </div>
                   <div class="btns-row">
-                    <button class="btn btn-primary btn-medium">Submit</button>
-                    <button class="btn btn-secondary btn-medium">Cancle</button>
+                    <button class="btn btn-secondary btn-large">Cancel</button>
+                    <button class="btn btn-primary btn-large">Submit</button>
+                  </div>
+                </form>
+              </dialog>
+
+              <dialog id="expense-dialog" class="dialog">
+                <div class="dialog_content">
+                  <div class="form dialog_content--select-expense">
+                    <h2>Choose the type of expense</h2>
+                    <div class="flex flex-dc gap-sm width-max">
+                      <button
+                        class="btn btn-icon btn-icon--lg btn-large btn-open-expense-form btn-open-expense-form"
+                        data-opens="labour"
+                      >
+                        <span class="icon">
+                          <img
+                            class="image-icon"
+                            src="../src/farmer.png"
+                            alt="farmer-icon"
+                          />
+                        </span>
+                        <span>Labour</span>
+                      </button>
+                      <button
+                        class="btn btn-icon btn-icon--lg btn-large btn-open-expense-form"
+                        data-opens="pesticides"
+                      >
+                        <span class="icon">
+                          <img
+                            class="image-icon"
+                            src="../src/pesticide.png"
+                            alt="farmer-icon"
+                          />
+                        </span>
+                        <span>Pesticide purchase</span>
+                      </button>
+                      <button
+                        class="btn btn-icon btn-icon--lg btn-large btn-open-expense-form"
+                        data-opens="fertilizer"
+                      >
+                        <span class="icon">
+                          <img
+                            class="image-icon"
+                            src="../src/fertilizer.png"
+                            alt="farmer-icon"
+                          />
+                        </span>
+                        <span>Fertilizer purchase</span>
+                      </button>
+                      <button
+                        class="btn btn-icon btn-icon--lg btn-large btn-open-expense-form"
+                        data-opens="miscelleneous"
+                      >
+                        <span class="icon">
+                          <img
+                            class="image-icon"
+                            src="../src/income.png"
+                            alt="farmer-icon"
+                          />
+                        </span>
+                        <span>Miscelleneous</span>
+                      </button>
+                    </div>
+
+                    <!-- <div class="form-row form-row--horizontal">
+                      <label for="date">Transaction Date</label>
+                      <input class="input" type="date" />
+                    </div>
+                    <div class="form-row form-row--horizontal">
+                      <label for="date">Expense Type</label>
+                      <select class="input">
+                        <option value="">--Please choose an option--</option>
+                        <option value="labour">Labour</option>
+                        <option value="Pesticide">Pesticide</option>
+                        <option value="Fertilizer">Fertilizer</option>
+                        <option value="labour">Miscelleneous</option>
+                      </select>
+                    </div>
+                    <div class="form-row form-row--horizontal">
+                      <label for="date">Description</label>
+                      <select class="input">
+                        <option value="">--Please choose an option--</option>
+                        <option value="labour">Picking</option>
+                        <option value="Pesticide">Pesticide Application</option>
+                        <option value="Fertilizer">Fertilizer Application</option>
+                        <option value="labour">Pruning</option>
+                        <option value="labour">Other</option>
+                      </select>
+                    </div>
+                    <div class="form-row form-row--horizontal">
+                      <label for="date">Number of laborers</label>
+                      <input class="input" type="number" />
+                    </div>
+                    <div class="form-row form-row--horizontal">
+                      <label for="date">Pay rate</label>
+                      <input class="input" type="number" />
+                    </div>
+                    <div class="form-row form-row--horizontal">
+                      <label for="date">Hours worked</label>
+                      <input class="input" type="number" />
+                    </div>
+                    <div class="form-row form-row--horizontal">
+                      <label for="date">Total</label>
+                      <input class="input" type="number" />
+                    </div>
+                    -->
                   </div>
                 </div>
               </dialog>
               <script>
                 const showHarvestDialogBtn =
                   document.querySelector(".showHarvestDialog");
+                const showExpenseDialogBtn =
+                  document.querySelector(".showExpenseDialog");
                 const harvestDialog = document.getElementById("harvest-dialog");
+                const expenseDialog = document.getElementById("expense-dialog");
+                const dialogContentEl =
+                  document.querySelector(".dialog_content");
+                const selectExpenseForm = document.querySelector(
+                  ".dialog_content--select-expense"
+                );
+                const inputExpenseDetailsForm = document.querySelector(
+                  ".dialog_content--input-expense-details"
+                );
+                const openExpenseFormBtns = document.querySelectorAll(
+                  ".btn-open-expense-form"
+                );
+
+                // const openExpenseSelectionFormBtn = document.querySelector(
+                //   ".open-select-expense-form"
+                // );
+
                 showHarvestDialogBtn.addEventListener("click", () => {
                   harvestDialog.showModal();
+                });
+                showExpenseDialogBtn.addEventListener("click", () => {
+                  expenseDialog.showModal();
+                });
+
+                const expenseForms = {
+                  labour: [
+                    {
+                      id: "description",
+                      label: "Description",
+
+                      type: "select",
+                      options: [
+                        "Picking",
+                        "Fertilizer Application",
+                        "Pesticide Application",
+                        "Pruning",
+                      ],
+                    },
+                    {
+                      id: "numberOfLaborers",
+                      label: "Number of Laborers",
+                      type: "number",
+                    },
+                    { id: "payRate", label: "Pay Rate", type: "number" },
+                    {
+                      id: "hoursWorked",
+                      label: "Hours worked",
+                      type: "number",
+                    },
+                  ],
+                  pesticides: [
+                    {
+                      id: "description",
+                      label: "Description",
+
+                      type: "select",
+                      options: [
+                        "Picking",
+                        "Fertilizer Application",
+                        "Pesticide Application",
+                        "Pruning",
+                      ],
+                    },
+                    {
+                      id: "costPerUnit",
+                      label: "Cost per unit",
+                      type: "number",
+                    },
+                    {
+                      id: "quantity",
+                      label: "Quantity purchased",
+                      type: "number",
+                    },
+                  ],
+                  fertilizer: [
+                    {
+                      id: "description",
+                      label: "Description",
+
+                      type: "select",
+                      options: [
+                        "Picking",
+                        "Fertilizer Application",
+                        "Pesticide Application",
+                        "Pruning",
+                      ],
+                    },
+                    {
+                      id: "costPerUnit",
+                      label: "Cost per unit",
+                      type: "number",
+                    },
+                    {
+                      id: "quantity",
+                      label: "Quantity purchased",
+                      type: "number",
+                    },
+                  ],
+                  miscelleneous: [
+                    {
+                      id: "description",
+                      label: "Description",
+                    },
+                    {
+                      id: "cost",
+                      label: "Cost",
+                      type: "number",
+                    },
+                  ],
+                };
+
+                function openExpenseSelectionForm() {
+                  console.log("hello");
+                  openExpenseSelectionFormBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    // dialogContentEl.removeChild(inputExpenseDetailsForm);
+
+                    dialogContentEl.appendChild(selectExpenseForm);
+                  });
+                }
+
+                function handleFormOpen() {
+                  const openExpenseSelectionFormBtn = document.querySelector(
+                    ".open-select-expense-form"
+                  );
+
+                  const inputExpenseDetailsForm = document.querySelector(
+                    ".dialog_content--input-expense-details"
+                  );
+
+                  if (inputExpenseDetailsForm) {
+                    const inputElements =
+                      inputExpenseDetailsForm.querySelectorAll(".input");
+
+                    const formData = [];
+
+                    function parseValue(value, type) {
+                      switch (type) {
+                        case "number":
+                          return parseFloat(value);
+
+                        default:
+                          return value.toString();
+                      }
+                    }
+
+                    inputElements.forEach((el) => {
+                      el.addEventListener("change", (e) => {
+                        const key = el.getAttribute("id");
+                        const type = el.getAttribute("type");
+
+                        const value = e.target.value;
+                        formData.push({ [key]: parseValue(value, type) });
+                      });
+                    });
+
+                    inputExpenseDetailsForm.addEventListener("submit", (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("submitted");
+
+                      console.log(formData);
+                    });
+
+                    openExpenseSelectionFormBtn.addEventListener(
+                      "click",
+                      (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        dialogContentEl.removeChild(inputExpenseDetailsForm);
+                        dialogContentEl.appendChild(selectExpenseForm);
+                      }
+                    );
+                  }
+                }
+
+                function openExpenseForm(formDetails, expenseType) {
+                  const elements = formDetails.map((el) => {
+                    const label = `<label for=${el.id}>${el.label}</label>`;
+                    let input;
+                    if (el.type !== "select") {
+                      input = `<input id=${el.id} class="input" type=${el.type} required />`;
+                    } else {
+                      input = `<select id=${el.id} class="input" required>
+                        <option value="">--Please choose an option--</option>`;
+                      el.options.forEach(
+                        (option) =>
+                          (input += `<option value=${option}>${option}</option>`)
+                      );
+                      input += `</select>`;
+                    }
+
+                    return `<div class="form-row form-row--horizontal">${label}${input}</div>`;
+                  });
+
+                  let markup = `
+                  <form class='form dialog_content--input-expense-details'>
+                  <h2>Enter ${expenseType} expense Details</h2>
+                    <div class="form-row form-row--horizontal">
+                      <label for="date">Transaction Date</label>
+                      <input id='transactionDate' class="input" required type="date" />
+                    </div>
+                  `;
+                  elements.forEach((el) => (markup += el));
+
+                  markup += `
+                  <div class="form-row form-row--horizontal">
+                      <label for="total">Total</label>
+                      <input id='total' class="input" type="number" />
+                    </div>
+                  <div class="btns-row">
+                    <button class="btn btn-secondary btn-large open-select-expense-form" type='button' >Back</button>
+                    <button class="btn btn-secondary btn-large">Cancel</button>
+                    <button class="btn btn-primary btn-large">Submit</button>
+                  </div>
+                  </form>`;
+
+                  dialogContentEl.removeChild(selectExpenseForm);
+
+                  dialogContentEl.insertAdjacentHTML("beforeEnd", markup);
+                  // formContainerEl.insertAdjacentHTML("afterBegin", markup);
+                }
+
+                openExpenseFormBtns.forEach((btn) => {
+                  btn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const formToOpen = btn.getAttribute("data-opens");
+                    console.log(expenseForms[formToOpen]);
+                    openExpenseForm(expenseForms[formToOpen], formToOpen);
+                    handleFormOpen();
+                  });
                 });
               </script>
             </div>

@@ -5,7 +5,7 @@
   flex-direction: column;
   border-radius: $border-radius-md;
   box-shadow: $shadow-md;
-  gap: 2rem;
+  // gap: 2rem;
 
   &--authentication {
     width: 100%;
@@ -25,6 +25,42 @@
     & input {
       padding: 1rem 2rem;
       border-radius: $border-radius-sm;
+    }
+  }
+
+  .form-row--horizontal {
+    display: grid;
+    grid-template-columns: 2fr 2fr 2fr;
+    font-size: 1.4rem;
+    gap: 2.4rem;
+    padding: 1.2rem 0;
+    align-items: center;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #d1d5db;
+    }
+
+    & label {
+      font-weight: 500;
+    }
+
+    & input,
+    & select {
+      border: solid 1px #d1d5db;
+      box-shadow: $shadow-sm;
+      border-radius: $border-radius-sm;
+      padding: 0.8rem 1.2rem;
+    }
+  }
+
+  .btns-row {
+    margin-top: 4rem;
+    display: flex;
+    gap: 1.4rem;
+    justify-content: flex-end;
+
+    & button {
+      width: fit-content;
     }
   }
 }

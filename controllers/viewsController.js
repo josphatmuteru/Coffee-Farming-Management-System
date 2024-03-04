@@ -1,3 +1,5 @@
+import { fetchWeather } from "../api/weatherApi.js";
+
 export function getSignupPage(req, res) {
   const currentPageUrl = req.originalUrl;
 
@@ -9,14 +11,15 @@ export function getLoginPage(req, res) {
   res.render("login", { currentPageUrl });
 }
 
-export function getDashboard(req, res) {
+export async function getDashboard(req, res) {
   const currentPageUrl = req.originalUrl;
-  console.log("currentPageUrl", currentPageUrl);
+  const harvestData = req.harvestData;
+
+  const weatherData = await fetchWeather();
 
   const isDashboard = currentPageUrl === "/";
-  console.log(isDashboard);
 
-  res.render("dashboard", { currentPageUrl });
+  res.render("dashboard", { currentPageUrl, weatherData, harvestData });
 }
 
 export function getFinances(req, res) {
