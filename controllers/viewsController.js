@@ -24,9 +24,12 @@ export async function getDashboard(req, res) {
 
 export function getFinances(req, res) {
   const currentPageUrl = req.originalUrl;
-  console.log("currentPageUrl", currentPageUrl);
+  const expenses = res.expenses;
+  const budget = res.budget;
+  const financesData = { expenses, budget };
+  console.log(financesData);
 
-  res.render("finances", { currentPageUrl });
+  res.render("finances", { currentPageUrl, financesData });
 }
 export function getFarmGuide(req, res) {
   const currentPageUrl = req.originalUrl;

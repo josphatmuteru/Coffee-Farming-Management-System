@@ -133,7 +133,7 @@ export function handleExpenseAndYieldInput() {
       const inputElements = inputExpenseDetailsForm.querySelectorAll(".input");
 
       let formData = {
-        expenseDetails: [],
+        expenseDetails: {},
       };
 
       function parseValue(value, type) {
@@ -154,9 +154,12 @@ export function handleExpenseAndYieldInput() {
           const value = e.target.value;
           if (key === "transactionDate" || key === "expenseTotal") {
             formData[key] = parseValue(value, type);
-          } else {
-            formData.expenseDetails.push({ [key]: parseValue(value, type) });
           }
+          // formData.expenseDetails.push({ [key]: parseValue(value, type) });
+          formData.expenseDetails = {
+            ...formData.expenseDetails,
+            [key]: parseValue(value, type),
+          };
         });
       });
 
@@ -169,12 +172,12 @@ export function handleExpenseAndYieldInput() {
           expense_type: expenseType,
           transaction_date: formData.transactionDate,
           expense_total: formData.expenseTotal,
-          expense_details: formData.expenseDetails,
+          expense_details: [formData.expenseDetails],
         };
 
         console.log(data);
         const req = {
-          url: "/api/v1/expenses/",
+          url: "expenses/",
           data,
           loadingMessage: "Creating expense...",
           successMessage: "Expense created successfully",

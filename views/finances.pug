@@ -2,7 +2,7 @@ extends base
 
 
 block content 
-  main.main
+  main.main.main--finances
         .container
           .flex.flex-dc.gap-md
             .section
@@ -40,7 +40,10 @@ block content
                     span.label.label-amount Expected revenue
                     span.value.value-amount KSH 500, 000
             .flex.width-max.gap-md
-              .section.section-expenses
+              -const {expenses, budget } = financesData
+              -console.log(budget)
+              -function formatDate(date){return new Date(date).toLocaleDateString('en-us', {day: 'numeric', month: 'short', year: 'numeric'})}
+              .section.section-expenses(data-expenses={expenses}, data-financesData={financesData})
                 h2.heading-secondary Expenses
                 .row.row-expenses
                   .expense.expense-labour
@@ -50,13 +53,16 @@ block content
                       .flex.flex-dc.width-max
                         .flex
                           span.expense_name Labour
-                          button.btn.btn-icon-only.ml-auto
+                          button.btn.btn-icon-only.ml-auto.btn-toggle--expense-details
                             ion-icon(name='chevron-down-outline')
                         .flex.allocated-amounmt.align-center
                           span.expense_status On-budget
                           .expense_cost
                             span.expense_cost-label Total cost
-                            span.expense_cost-value 60,000
+                            -if(expenses.labour?.length > 0) 
+                              span.expense_cost-value=`KSH. ${ expenses.labour[0].expense_total_cost}`
+                            -else
+                              span.expense_cost-value=`KSH. 0.00`
                     .expense_body.hidden
                       h4 Details
                       ul.list.expense_list.expense_list--labor
@@ -67,82 +73,77 @@ block content
                           span Pay Rate
                           span Hours worked
                           span Total
-                        li.expense_list-item.values-row
-                          span 15 Dec 2023
-                          span Picking
-                          span 15
-                          span 10
-                          span 150
-                          span 15000
-                        li.expense_list-item.values-row
-                          span 15 Dec 2023
-                          span Picking
-                          span 15
-                          span 10
-                          span 150
-                          span 15000
-                        li.expense_list-item.values-row
-                          span 15 Dec 2023
-                          span Picking
-                          span 15
-                          span 10
-                          span 150
-                          span 15000
-                  .expense.expense-Fertilizer
-                    .expense_header
-                      span.expense_icon
-                        img.image-icon(src='src/fertilizer.png', alt='farmer-icon')
-                      .flex.flex-dc.width-max
-                        .flex
-                          span.expense_name Fertilizer
-                          button.btn.btn-icon-only.ml-auto
-                            ion-icon(name='chevron-down-outline')
-                        .flex.allocated-amounmt.align-center
-                          span.expense_status On-budget
-                          .expense_cost
-                            span.expense_cost-label Total cost
-                            span.expense_cost-value 60,000
-                    .expense_body.hidden
-                      h4 Details
-                      ul.list.expense_list.expense_list--fertilizer
-                        li.expense_list-item.header-row
-                          span Date
-                          span Description
-                          span Cost per unit
-                          span Quantity
-                          span Total
-                        li.expense_list-item.values-row
-                          span 15 Dec 2023
-                          span Picking
-                          span 15
-                          span 10
-                          span 150
-                        li.expense_list-item.values-row
-                          span 15 Dec 2023
-                          span Picking
-                          span 15
-                          span 10
-                          span 150
-                        li.expense_list-item.values-row
-                          span 15 Dec 2023
-                          span Picking
-                          span 15
-                          span 10
-                          span 150
-                  .expense.expense-pesticide
+
+                      
+
+                        each item in expenses.labour[0].expense_particulars
+                           
+                           
+                          li.expense_list-item.values-row
+                              
+                              
+                              span=formatDate(item.transaction_date)
+                              span=item.expense_details[0].description 
+                              span=item.expense_details[0].numberOfLaborers 
+                              span=item.expense_details[0].payRate 
+                              span=item.expense_details[0].hoursWorked 
+                              span=item.expense_total 
+                          
+                      
+                  .expense.expense-Pesticide
                     .expense_header
                       span.expense_icon
                         img.image-icon(src='src/pesticide.png', alt='farmer-icon')
                       .flex.flex-dc.width-max
                         .flex
                           span.expense_name Pesticide
-                          button.btn.btn-icon-only.ml-auto
+                          button.btn.btn-icon-only.ml-auto.btn-toggle--expense-details
                             ion-icon(name='chevron-down-outline')
                         .flex.allocated-amounmt.align-center
                           span.expense_status On-budget
                           .expense_cost
                             span.expense_cost-label Total cost
-                            span.expense_cost-value 60,000
+                            -if(expenses.pesticide?.length > 0) 
+                              span.expense_cost-value=`KSH. ${ expenses.pesticide[0].expense_total_cost}`
+                            -else 
+                              span.expense_cost-value=`KSH. 0.00`
+                    .expense_body.hidden
+                      h4 Details
+                      ul.list.expense_list.expense_list--pesticide
+                        li.expense_list-item.header-row
+                          span Date
+                          span Description
+                          span Cost per unit
+                          span Quantity
+                          span Total
+                          
+                        -if(expenses.pesticide?.length > 0) 
+                          each item in expenses.pesticide[0].expense_particulars       
+                            li.expense_list-item.values-row
+                              span=formatDate(item.transaction_date)
+                              span=item.expense_details[0].description 
+                              span=item.expense_details[0].quantity 
+                              span=item.expense_details[0].costPerUnit 
+                            
+                              span=item.expense_total 
+
+                  .expense.expense-fertilizer
+                    .expense_header
+                      span.expense_icon
+                        img.image-icon(src='src/fertilizer.png', alt='farmer-icon')
+                      .flex.flex-dc.width-max
+                        .flex
+                          span.expense_name Fertilizer
+                          button.btn.btn-icon-only.ml-auto.btn-toggle--expense-details
+                            ion-icon(name='chevron-down-outline')
+                        .flex.allocated-amounmt.align-center
+                          span.expense_status On-budget
+                          .expense_cost
+                            span.expense_cost-label Total cost
+                            -if(expenses.fertilizer?.length > 0) 
+                              span.expense_cost-value=`KSH. ${ expenses.fertilizer[0].expense_total_cost}`
+                            -else
+                              span.expense_cost-value=`KSH. 0.00`
                     .expense_body.hidden
                       h4 Details
                       ul.list.expense_list.expense_list--fertilizer
@@ -152,87 +153,108 @@ block content
                           span Cost per unit
                           span Quantity
                           span Total
-                        li.expense_list-item.values-row
-                          span 15 Dec 2023
-                          span Picking
-                          span 15
-                          span 10
-                          span 150
-                        li.expense_list-item.values-row
-                          span 15 Dec 2023
-                          span Picking
-                          span 15
-                          span 10
-                          span 150
-                        li.expense_list-item.values-row
-                          span 15 Dec 2023
-                          span Picking
-                          span 15
-                          span 10
-                          span 150
+
+                        -if(expenses.fertilizer?.length > 0) 
+                          each item in expenses.fertilizer[0].expense_particulars
+      
+                            li.expense_list-item.values-row   
+                              span=formatDate(item.transaction_date)
+                              span=item.expense_details[0].description 
+                              span=item.expense_details[0].quantity 
+                              span=item.expense_details[0].costPerUnit 
+                            
+                              span=item.expense_total 
                   .expense.expense-miscelleneous
                     .expense_header
                       span.expense_icon
                         img.image-icon(src='src/income.png', alt='farmer-icon')
                       .flex.flex-dc.width-max
                         .flex
-                          span.expense_name Miscellaneous
-                          button.btn.btn-icon-only.ml-auto
+                          span.expense_name Miscelleneous
+                          button.btn.btn-icon-only.ml-auto.btn-toggle--expense-details
                             ion-icon(name='chevron-down-outline')
                         .flex.allocated-amounmt.align-center
                           span.expense_status On-budget
                           .expense_cost
                             span.expense_cost-label Total cost
-                            span.expense_cost-value 60,000
+                            -if(expenses.miscelleneous?.length > 0) 
+                              span.expense_cost-value=`KSH. ${ expenses.miscelleneous[0].expense_total_cost}`
+                            -else
+                              span.expense_cost-value=`KSH. 0.00`
                     .expense_body.hidden
                       h4 Details
-                      ul.list.expense_list.expense_list--fertilizer
+                      ul.list.expense_list.expense_list--miscelleneous
                         li.expense_list-item.header-row
                           span Date
                           span Description
-                          span Cost per unit
-                          span Quantity
+                          span Cost
                           span Total
-                        li.expense_list-item.values-row
-                          span 15 Dec 2023
-                          span Picking
-                          span 15
-                          span 10
-                          span 150
-                        li.expense_list-item.values-row
-                          span 15 Dec 2023
-                          span Picking
-                          span 15
-                          span 10
-                          span 150
-                        li.expense_list-item.values-row
-                          span 15 Dec 2023
-                          span Picking
-                          span 15
-                          span 10
-                          span 150
-              .section
+
+                        -if(expenses.miscelleneous?.length > 0) 
+                          each item in expenses.miscelleneous[0].expense_particulars
+      
+                            li.expense_list-item.values-row   
+                              span=formatDate(item.transaction_date)
+                              span=item.expense_details[0].description 
+                              span=item.expense_details[0].cost 
+                          
+                            
+                              span=item.expense_total 
+
+              .section.section-budget(data-budget={budget})
                 h2.heading-secondary Budget overview
                 .row.row-budget
                   div
                     canvas#myChart
-                  button.btn.btn-primary.btn-md Edit budget
+                  dialog.dialog.dialog-budget
+                    form.form.form--budget(action='')
+                      h2 Create Budget
+                      .form-row--horizontal
+                        label(for='budget') Available funds
+                        input#budget_amount.input(type='number')
+                      p.instruction-text
+                        | Enter the amount of money to allocate each expense
+                      .form-row--horizontal
+                        label(for='labour') Labour
+                        input#labour.input(type='number')
+                      .form-row--horizontal
+                        label(for='pesticide') Pesticides
+                        input#pesticide.input(type='number')
+                      .form-row--horizontal
+                        label(for='fertilizer') Fertilizer
+                        input#fertilizer.input(type='number')
+                      .form-row--horizontal
+                        label(for='fertilizer') Miscelleneous
+                        input#fertilizer.input(type='number')
+                      .btns-row
+                        button.btn.btn-large.btn-secondary(type='button')
+                          | Cancel
+                        button.btn.btn-primary.btn-large(type='submit')
+                          | Submit
+                  button.btn.btn-primary.btn-md.btn-open-budget-form
+                    | Edit budget
                 script(src='https://cdn.jsdelivr.net/npm/chart.js')
                 script.
+                  const budgetSection = document.querySelector('.section-budget')
+                  const budgetData = JSON.parse(budgetSection.getAttribute('data-budget'))
+                  const budgetChartData = [budgetData.budget[0].fertilizer, budgetData.budget[0].labour, budgetData.budget[0].pesticide, budgetData.budget[0].miscelleneous]
+                  
+
+
                   const ctx = document.getElementById("myChart");
                   new Chart(ctx, {
                   type: "doughnut",
                   data: {
                   labels: [
-                  "Labour",
                   "Fertilizer",
+                  "Labour",
                   "Pesticides",
                   "Miscellaneous",
                   ],
                   datasets: [
                   {
-                  label: "# of Votes",
-                  data: [12, 19, 3, 4],
+                  label: "Allocated amount",
+                  data: budgetChartData,
                   borderWidth: 1,
                   },
                   ],

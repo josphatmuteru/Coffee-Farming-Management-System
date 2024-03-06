@@ -5,7 +5,7 @@ export async function post(req) {
 
   try {
     showAlert("loading", req.loadingMessage);
-    const res = await fetch(`${req.url}`, {
+    const res = await fetch(`/api/v1/${req.url}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

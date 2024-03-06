@@ -162,8 +162,8 @@ a {
 .section-expenses {
   flex-grow: 5;
 }
-.section-budget {
-  flex-grow: 5;
+.section-budgett {
+  flex-grow: 2;
 }
 
 .row {
@@ -306,8 +306,11 @@ a {
 .row-expenses .expense_list--labor li {
   grid-template-columns: repeat(6, 1fr);
 }
-.row-expenses .expense_list--fertilizer li {
+.row-expenses .expense_list--fertilizer li, .row-expenses .expense_list--pesticide li {
   grid-template-columns: repeat(5, 1fr);
+}
+.row-expenses .expense_list--miscelleneous li {
+  grid-template-columns: repeat(4, 1fr);
 }
 .row-expenses .expense_list .header-row,
 .row-expenses .expense_list .values-row {
@@ -348,7 +351,7 @@ a {
   border-radius: 7px;
   position: relative;
 }
-.row-budget .btn {
+.row-budget .btn-open-budget-form {
   position: absolute;
   background-color: #20377d;
   padding: 0.8rem 1rem;
@@ -937,6 +940,11 @@ a {
 }
 .form--authentication button {
   margin-top: 1rem;
+}
+.form--budget .instruction-text {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
 }
 .form .input-group {
   display: flex;

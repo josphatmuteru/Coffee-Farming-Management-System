@@ -5,8 +5,8 @@
   &-expenses {
     flex-grow: 5;
   }
-  &-budget {
-    flex-grow: 5;
+  &-budgett {
+    flex-grow: 2;
   }
 }
 
@@ -173,9 +173,15 @@
             grid-template-columns: repeat(6, 1fr);
           }
         }
-        &--fertilizer {
+        &--fertilizer,
+        &--pesticide {
           & li {
             grid-template-columns: repeat(5, 1fr);
+          }
+        }
+        &--miscelleneous {
+          & li {
+            grid-template-columns: repeat(4, 1fr);
           }
         }
 
@@ -230,7 +236,7 @@
     border-radius: $border-radius-md;
     position: relative;
 
-    & .btn {
+    & .btn-open-budget-form {
       position: absolute;
       background-color: $color-blue-700;
       padding: 0.8rem 1rem;

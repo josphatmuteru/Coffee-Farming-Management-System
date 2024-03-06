@@ -10,7 +10,7 @@
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="style.css" />
     <title>Dashboard</title>
   </head>
   <div class="app-layout grid">
@@ -112,7 +112,7 @@
                       <span class="expense_icon">
                         <img
                           class="image-icon"
-                          src="src/farmer.png"
+                          src="../src/farmer.png"
                           alt="farmer-icon"
                         />
                       </span>
@@ -176,7 +176,7 @@
                       <span class="expense_icon">
                         <img
                           class="image-icon"
-                          src="src/fertilizer.png"
+                          src="../src/fertilizer.png"
                           alt="farmer-icon"
                         />
                       </span>
@@ -237,7 +237,7 @@
                       <span class="expense_icon">
                         <img
                           class="image-icon"
-                          src="src/pesticide.png"
+                          src="../src/pesticide.png"
                           alt="farmer-icon"
                         />
                       </span>
@@ -298,7 +298,7 @@
                       <span class="expense_icon">
                         <img
                           class="image-icon"
-                          src="src/income.png"
+                          src="../src/income.png"
                           alt="farmer-icon"
                         />
                       </span>
@@ -362,18 +362,80 @@
                   <div>
                     <canvas id="myChart"></canvas>
                   </div>
-                  <dialog class="dialog">
-                    <form action="" class="form">
+                  <dialog class="dialog dialog-budget">
+                    <form action="" class="form form--budget">
                       <h2>Create Budget</h2>
+
+                      <div class="form-row--horizontal">
+                        <label for="budget">Available funds</label>
+                        <input id="budget" type="number" class="input" />
+                      </div>
+                      <p class="instruction-text">
+                        Enter the amount of money to allocate each expense
+                      </p>
                       <div class="form-row--horizontal">
                         <label for="labour">Labour</label>
                         <input id="labour" type="number" class="input" />
                       </div>
+                      <div class="form-row--horizontal">
+                        <label for="pesticide">Pesticides</label>
+                        <input id="pesticide" type="number" class="input" />
+                      </div>
+                      <div class="form-row--horizontal">
+                        <label for="fertilizer">Fertilizer</label>
+                        <input id="fertilizer" type="number" class="input" />
+                      </div>
+                      <div class="form-row--horizontal">
+                        <label for="fertilizer">Miscelleneous</label>
+                        <input id="fertilizer" type="number" class="input" />
+                      </div>
+                      <div class="btns-row">
+                        <button
+                          class="btn btn-large btn-secondary"
+                          type="button"
+                        >
+                          Cancel
+                        </button>
+                        <button class="btn btn-primary btn-large" type="submit">
+                          Submit
+                        </button>
+                      </div>
                     </form>
                   </dialog>
-                  <button class="btn btn-primary btn-md">Edit budget</button>
+                  <button class="btn btn-primary btn-md btn-open-budget-form">
+                    Edit budget
+                  </button>
                 </div>
+                <script>
+                  const budgetDialog = document.querySelector(".dialog-budget");
+                  const budgetForm = document.querySelector(".form--budget");
+                  const inputEls = document.querySelectorAll(".input");
+                  const openBudgetDialogBtn = document.querySelector(
+                    ".btn-open-budget-form"
+                  );
+                  openBudgetDialogBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    budgetDialog.showModal();
+                  });
 
+                  let formData = {};
+                  inputEls.forEach((el) => {
+                    el.addEventListener("change", (e) => {
+                      const key = el.getAttribute("id");
+                      const type = el.getAttribute("type");
+                      const value =
+                        type === "number" ? parseFloat(e.target.value) : value;
+
+                      formData[key] = value;
+                    });
+                  });
+
+                  budgetForm.addEventListener("submit", (e) => {
+                    e.preventDefault();
+
+                    console.log(formData);
+                  });
+                </script>
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
                 <script>

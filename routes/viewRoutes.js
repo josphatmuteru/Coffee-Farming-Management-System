@@ -8,6 +8,10 @@ import {
   getLoginPage,
 } from "../controllers/viewsController.js";
 import { getHarvestData } from "../controllers/yieldController.js";
+import {
+  getAllExpenses,
+  getBudget,
+} from "../controllers/expensesController.js";
 
 const router = Router();
 
@@ -15,7 +19,7 @@ router.get("/", getHarvestData, getDashboard);
 router.get("/signup", getSignupPage);
 router.get("/login", getLoginPage);
 
-router.get("/finances", getFinances);
+router.get("/finances", getAllExpenses, getBudget, getFinances);
 router.get("/farm-guide", getFarmGuide);
 router.get("/farm-profile", getFarmProfile);
 

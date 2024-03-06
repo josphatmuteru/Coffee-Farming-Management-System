@@ -581,15 +581,18 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 },{}],"f2QDv":[function(require,module,exports) {
 var _authenticationJs = require("./authentication.js");
 var _expenseAndYieldInputHandlerJs = require("./expenseAndYieldInputHandler.js");
+var _financesJs = require("./finances.js");
 const signupForm = document.querySelector(".authentication--signup");
 const loginForm = document.querySelector(".authentication--login");
 const dashboard = document.querySelector(".main--dashboard");
+const financesPage = document.querySelector(".main--finances");
 console.log("hello");
 if (signupForm) (0, _authenticationJs.handleSignup)(signupForm);
 if (loginForm) (0, _authenticationJs.handleLogin)(loginForm);
 if (dashboard) (0, _expenseAndYieldInputHandlerJs.handleExpenseAndYieldInput)();
+if (financesPage) (0, _financesJs.handleFinancesPage)();
 
-},{"./authentication.js":"4WnuJ","./expenseAndYieldInputHandler.js":"h1yDZ"}],"4WnuJ":[function(require,module,exports) {
+},{"./authentication.js":"4WnuJ","./expenseAndYieldInputHandler.js":"h1yDZ","./finances.js":"hFxMF"}],"4WnuJ":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "handleSignup", ()=>handleSignup);
@@ -841,7 +844,7 @@ function handleExpenseAndYieldInput() {
         if (inputExpenseDetailsForm) {
             const inputElements = inputExpenseDetailsForm.querySelectorAll(".input");
             let formData = {
-                expenseDetails: []
+                expenseDetails: {}
             };
             function parseValue(value, type) {
                 switch(type){
@@ -857,9 +860,11 @@ function handleExpenseAndYieldInput() {
                     const type = el.getAttribute("type");
                     const value = e.target.value;
                     if (key === "transactionDate" || key === "expenseTotal") formData[key] = parseValue(value, type);
-                    else formData.expenseDetails.push({
+                    // formData.expenseDetails.push({ [key]: parseValue(value, type) });
+                    formData.expenseDetails = {
+                        ...formData.expenseDetails,
                         [key]: parseValue(value, type)
-                    });
+                    };
                 });
             });
             inputExpenseDetailsForm.addEventListener("submit", (e)=>{
@@ -870,7 +875,9 @@ function handleExpenseAndYieldInput() {
                     expense_type: expenseType,
                     transaction_date: formData.transactionDate,
                     expense_total: formData.expenseTotal,
-                    expense_details: formData.expenseDetails
+                    expense_details: [
+                        formData.expenseDetails
+                    ]
                 };
                 console.log(data);
                 const req = {
@@ -938,7 +945,7 @@ function handleExpenseAndYieldInput() {
     });
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./crudOperations.js":"2nPvR"}],"2nPvR":[function(require,module,exports) {
+},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2nPvR":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "post", ()=>post);
@@ -960,6 +967,32 @@ async function post(req) {
     } catch (err) {
         console.log("err", err);
     }
+}
+
+},{"./alert.js":"kxdiQ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hFxMF":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "handleFinancesPage", ()=>handleFinancesPage);
+function handleFinancesPage() {
+    const toggleExpenseDetailsBtns = document.querySelectorAll(".btn-toggle--expense-details");
+    const expensesSectionEl = document.querySelector(".section-expenses");
+    let financesData = JSON.parse(expensesSectionEl.getAttribute("data-financesData"));
+    const { expenses, budget } = financesData;
+    console.log(financesData);
+    function toggleExpenseDetails() {
+        toggleExpenseDetailsBtns.forEach((btn)=>{
+            btn.addEventListener("click", (e)=>{
+                e.preventDefault();
+                console.log("clicked");
+                if (btn.style.transform.includes("rotate(180deg)")) btn.style.transform = "";
+                else btn.style.transform = "rotate(180deg)";
+                const expenseParentEl = btn.closest(".expense");
+                const expenseBodyEl = expenseParentEl.querySelector(".expense_body");
+                expenseBodyEl.classList.toggle("hidden");
+            });
+        });
+    }
+    toggleExpenseDetails();
 }
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["1jZC8","f2QDv"], "f2QDv", "parcelRequiref6bb")

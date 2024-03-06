@@ -1,8 +1,11 @@
 const signupForm = document.querySelector(".authentication--signup");
 const loginForm = document.querySelector(".authentication--login");
 const dashboard = document.querySelector(".main--dashboard");
+const financesPage = document.querySelector(".main--finances");
+
 import { handleSignup, handleLogin } from "./authentication.js";
 import { handleExpenseAndYieldInput } from "./expenseAndYieldInputHandler.js";
+import { handleFinancesPage } from "./finances.js";
 
 console.log("hello");
 
@@ -16,4 +19,8 @@ if (loginForm) {
 
 if (dashboard) {
   handleExpenseAndYieldInput();
+}
+
+if (financesPage) {
+  handleFinancesPage();
 }
