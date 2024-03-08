@@ -78,6 +78,7 @@
                           <button
                             class="btn btn-small btn-primary btn-icon btn-open-expense-dialog-and-form"
                             data-opens="pesticides"
+                            data-farmInputData='{pesticide: "SomePesticide", quantity: "5"}'
                           >
                             <ion-icon name="add-outline"></ion-icon>
                             <span>Add More</span>
@@ -90,14 +91,15 @@
                           <span>Pesticide</span>
                           <span>5L</span>
                           <button
-                            class="btn btn-small btn-primary btn-icon btn-open-expense-form"
+                            class="btn btn-small btn-primary btn-icon btn-open-expense-dialog-and-form"
                             data-opens="pesticides"
                           >
                             <ion-icon name="add-outline"></ion-icon>
                             <span>Add More</span>
                           </button>
                           <button
-                            class="btn btn-icon-only btn-open-expense-form"
+                            class="btn btn-icon-only btn-open-expense-dialog-and-form"
+                            data-opens="pesticides"
                           >
                             <ion-icon name="trash-outline"></ion-icon>
                           </button>
@@ -125,7 +127,10 @@
                       <span>- CAN</span>
                     </div>
 
-                    <button class="btn btn-small btn-primary">
+                    <button
+                      class="btn btn-small btn-primary btn-open-schedule-dialog-and-form"
+                      data-opens="fertilizerApplication"
+                    >
                       Add to schedule
                     </button>
                   </li>
@@ -142,7 +147,10 @@
                       <span>&nbsp;</span>
                     </div>
 
-                    <button class="btn btn-small btn-primary">
+                    <button
+                      class="btn btn-small btn-primary btn-open-schedule-dialog-and-form"
+                      data-opens="pruning"
+                    >
                       Add to schedule
                     </button>
                   </li>
@@ -159,7 +167,10 @@
                       <span>- Some pesticide</span>
                     </div>
 
-                    <button class="btn btn-small btn-primary">
+                    <button
+                      class="btn btn-small btn-primary btn-open-schedule-dialog-and-form"
+                      data-opens="fertilizerApplication"
+                    >
                       Add to schedule
                     </button>
                   </li>
@@ -367,20 +378,28 @@
           </div>
           <div class="section-actions">
             <div class="data-recording">
-              <h4 class="heading-tertiary">Data recording</h4>
-              <span class="instructional-text">Enter details about:</span>
-              <button
-                class="btn btn-medium btn-primary--light btn-primary showHarvestDialog"
-              >
-                Coffee Yield
-              </button>
+              <h4 class="heading-tertiary">Planning & Data Recording</h4>
+              <span class="instructional-text">Enter details to:</span>
 
               <button
-                class="btn btn-medium btn-primary btn-primary--light showExpenseDialog"
+                class="btn btn-medium btn-primary btn-primary--light btn-open-dialog"
+                data-opens="dialog--schedule"
               >
-                An Expense
+                Schedule an Activity
               </button>
-              <dialog class="dialog" id="harvest-dialog">
+              <button
+                class="btn btn-medium btn-primary--light btn-primary btn-open-dialog"
+                data-opens="dialog--harvest"
+              >
+                Record Coffee Yield
+              </button>
+              <button
+                class="btn btn-medium btn-primary--light btn-primary btn-open-dialog"
+                data-opens="dialog--expenses"
+              >
+                Record An Expense
+              </button>
+              <dialog class="dialog" id="dialog--harvest">
                 <form class="form">
                   <h2>Enter Coffee Harvest Details</h2>
                   <div class="form-row form-row--horizontal">
@@ -398,13 +417,15 @@
                 </form>
               </dialog>
 
-              <dialog id="expense-dialog" class="dialog">
+              <dialog id="dialog--expenses" class="dialog">
                 <div class="dialog_content">
-                  <div class="form dialog_content--select-expense">
+                  <div
+                    class="form dialog_content-select dialog_content-select--expense"
+                  >
                     <h2>Choose the type of expense</h2>
                     <div class="flex flex-dc gap-sm width-max">
-                      <button
-                        class="btn btn-icon btn-icon--lg btn-large btn-open-expense-form btn-open-expense-form"
+                      <!-- <button
+                        class="btn btn-icon btn-icon--lg btn-large btn-open-expense-form"
                         data-opens="labour"
                       >
                         <span class="icon">
@@ -415,7 +436,7 @@
                           />
                         </span>
                         <span>Labour</span>
-                      </button>
+                      </button> -->
                       <button
                         class="btn btn-icon btn-icon--lg btn-large btn-open-expense-form"
                         data-opens="pesticides"
@@ -551,37 +572,87 @@
                   </li>
                 </ul>
                 <div class="schedule_add-activity">
-                  <dialog id="schedule-dialog" class="dialog dialog--schedule">
-                    <!-- <form action="" class="form form--schedule">
-                      <h2>Create your schedule</h2>
-                      <div class="form-row--horizontal">
-                        <label for="activity">Activity</label>
-                        <input id="activity" class="input" />
-                      </div>
-                      <div class="form-row--horizontal">
-                        <label for="date">Activity Date</label>
-                        <input id="date" type="date" class="input" />
-                      </div>
-                      <div class="form-row--horizontal">
-                        <label for="time">Time</label>
-                        <input id="activity" type="time" class="input" />
-                      </div>
-                      <div class="btns-row">
-                        <button class="btn btn-secondary btn-large">
-                          Cancel
-                        </button>
-                        <button class="btn btn-primary btn-large">
-                          Submit
-                        </button>
+                  <dialog id="dialog--schedule" class="dialog">
+                    <!-- <form class="dialog_content dialog_content-confirm">
+                      <h2>Confirm Activity Expenses</h2>
+
+                      <div class="activity_expenses flex flex-dc gap-md">
+                        <div>
+                          <ul class="list expense_list expense_list--labor">
+                            <li class="expense_list-item header-row">
+                              <span>Expense</span>
+                              <span>Description</span>
+                              <span>Total</span>
+                              <span>&nbsp;</span>
+                            </li>
+                            <li class="expense_list-item values-row">
+                              <span class="item_detail">Labour</span>
+                              <div class="item_detail item_detail-description">
+                                <div>
+                                  <span>Activity</span>
+                                  <span>Fertilizer Application</span>
+                                </div>
+                                <div>
+                                  <span>Labourers</span>
+                                  <span>15</span>
+                                </div>
+                                <div>
+                                  <span>Pay Rate</span>
+                                  <span> 150</span>
+                                </div>
+                                <div>
+                                  <span>Hours</span>
+                                  <span> 150</span>
+                                </div>
+                              </div>
+                              <span class="item_detail">15000</span>
+                              <div class="item_detail flex gap-sm">
+                                
+                                <button class="btn btn-small btn-primary">
+                                  Edit
+                                </button>
+                              </div>
+                            </li>
+                            <li class="expense_list-item values-row">
+                              <span class="item_detail"
+                                >Fertilizer Purchase</span
+                              >
+                              <div class="item_detail item_detail-description">
+                                <div>
+                                  <span>Fertilizer</span>
+                                  <span>CAN</span>
+                                </div>
+                                <div>
+                                  <span>Quantity</span>
+                                  <span>15</span>
+                                </div>
+                                <div>
+                                  <span>Cost/unit</span>
+                                  <span> 150</span>
+                                </div>
+                              </div>
+                              <span class="item_detail">15000</span>
+                              <div class="item_detail flex gap-sm">
+                           
+                                <button class="btn btn-small btn-primary">
+                                  Edit
+                                </button>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
                       </div>
                     </form> -->
+
                     <div class="dialog_content">
-                      <div class="form dialog_content--select-expense">
+                      <div
+                        class="form dialog_content-select dialog_content-select--activity"
+                      >
                         <h2>Choose the type of Activity</h2>
                         <div class="flex flex-dc gap-sm width-max">
                           <button
-                            class="btn btn-icon btn-icon--lg btn-large btn-open-expense-form btn-open-expense-form"
-                            data-opens="labour"
+                            class="btn btn-icon btn-icon--lg btn-large btn-open-activity-form"
+                            data-opens="pruning"
                           >
                             <span class="icon">
                               <img
@@ -593,8 +664,8 @@
                             <span>Pruning</span>
                           </button>
                           <button
-                            class="btn btn-icon btn-icon--lg btn-large btn-open-expense-form"
-                            data-opens="pesticides"
+                            class="btn btn-icon btn-icon--lg btn-large btn-open-activity-form"
+                            data-opens="pesticideApplication"
                           >
                             <span class="icon">
                               <img
@@ -606,8 +677,8 @@
                             <span>Pesticide Application</span>
                           </button>
                           <button
-                            class="btn btn-icon btn-icon--lg btn-large btn-open-expense-form"
-                            data-opens="fertilizer"
+                            class="btn btn-icon btn-icon--lg btn-large btn-open-activity-form"
+                            data-opens="fertilizerApplication"
                           >
                             <span class="icon">
                               <img
@@ -619,8 +690,8 @@
                             <span>Fertilizer Application</span>
                           </button>
                           <button
-                            class="btn btn-icon btn-icon--lg btn-large btn-open-expense-form"
-                            data-opens="miscelleneous"
+                            class="btn btn-icon btn-icon--lg btn-large btn-open-activity-form"
+                            data-opens="picking"
                           >
                             <span class="icon">
                               <img
@@ -635,59 +706,36 @@
                       </div>
                     </div>
                   </dialog>
-                  <button
-                    class="btn btn-medium btn-primary--lightbtn-icon btn-open-schedule-dialog"
+                  <!-- <button
+                    class="btn btn-medium btn-primary--lightbtn-icon btn-open-dialog"
+                    data-opens="dialog--schedule"
                   >
                     <ion-icon name="add-outline"></ion-icon>
                     <span> Add activity </span>
-                  </button>
+                  </button> -->
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <!-- <div class="status-box status-success">
-          <span>You are loggined in successfully</span>
-        </div> -->
       </main>
       <script>
-        const showHarvestDialogBtn =
-          document.querySelector(".showHarvestDialog");
-        const showExpenseDialogBtn =
-          document.querySelector(".showExpenseDialog");
-        const showScheduleDialogBtn = document.querySelector(
-          ".btn-open-schedule-dialog"
+        const expenseDialog = document.getElementById("dialog--expenses");
+        const scheduleDialog = document.getElementById("dialog--schedule");
+        const openDialogBtns = document.querySelectorAll(".btn-open-dialog");
+        const openExpenseDialogAndFormBtns = document.querySelectorAll(
+          ".btn-open-expense-dialog-and-form"
         );
-        const harvestDialog = document.getElementById("harvest-dialog");
-        const expenseDialog = document.getElementById("expense-dialog");
-        const scheduleDialog = document.getElementById("schedule-dialog");
-        const dialogContentEl = document.querySelector(".dialog_content");
-        const selectExpenseForm = document.querySelector(
-          ".dialog_content--select-expense"
-        );
-        const inputExpenseDetailsForm = document.querySelector(
-          ".dialog_content--input-expense-details"
+        const openScheduleDialogAndFormBtns = document.querySelectorAll(
+          ".btn-open-schedule-dialog-and-form"
         );
         const openExpenseFormBtns = document.querySelectorAll(
           ".btn-open-expense-form"
         );
-        const openExpenseDialogAndFormBtns = document.querySelectorAll(
-          ".btn-open-expense-dialog-and-form"
+
+        const openActivityFormBtns = document.querySelectorAll(
+          ".btn-open-activity-form"
         );
-
-        // const openExpenseSelectionFormBtn = document.querySelector(
-        //   ".open-select-expense-form"
-        // );
-
-        showHarvestDialogBtn.addEventListener("click", () => {
-          harvestDialog.showModal();
-        });
-        showExpenseDialogBtn.addEventListener("click", () => {
-          expenseDialog.showModal();
-        });
-        showScheduleDialogBtn.addEventListener("click", () => {
-          scheduleDialog.showModal();
-        });
 
         const expenseForms = {
           labour: [
@@ -776,74 +824,95 @@
           ],
         };
 
-        function openExpenseSelectionForm() {
-          console.log("hello");
-          openExpenseSelectionFormBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            // dialogContentEl.removeChild(inputExpenseDetailsForm);
+        const activityForms = {
+          picking: [
+            { id: "activityDate", label: "Date", type: "date" },
+            { id: "activityTime", label: "Time to start", type: "time" },
+            {
+              id: "numberOfLaborers",
+              label: "Number of Laborers",
+              type: "number",
+            },
+            { id: "payRate", label: "Pay Rate", type: "number" },
+            {
+              id: "hoursRequired",
+              label: "Hours required",
+              type: "number",
+            },
+          ],
+          pruning: [
+            { id: "activityDate", label: "Date", type: "date" },
+            { id: "activityTime", label: "Time to start", type: "time" },
+            {
+              id: "numberOfLaborers",
+              label: "Number of Laborers",
+              type: "number",
+            },
+            { id: "payRate", label: "Pay Rate", type: "number" },
+            {
+              id: "hoursRequired",
+              label: "Hours required",
+              type: "number",
+            },
+          ],
+          pesticideApplication: [
+            { id: "activityDate", label: "Date", type: "date" },
+            { id: "activityTime", label: "Time to start", type: "time" },
+            {
+              id: "pesticide",
+              label: "Pesticide",
+              type: "select",
+              options: [
+                "Picking",
+                "Fertilizer Application",
+                "Pesticide Application",
+                "Pruning",
+              ],
+            },
+            { id: "quantity", label: "Quantity", type: "number" },
 
-            dialogContentEl.appendChild(selectExpenseForm);
-          });
-        }
+            {
+              id: "numberOfLaborers",
+              label: "Number of Laborers",
+              type: "number",
+            },
+            { id: "payRate", label: "Pay Rate", type: "number" },
+            {
+              id: "hoursRequired",
+              label: "Hours Required",
+              type: "number",
+            },
+          ],
+          fertilizerApplication: [
+            { id: "activityDate", label: "Date", type: "date" },
+            { id: "activityTime", label: "Time to start", type: "time" },
+            {
+              id: "fertilizer",
+              label: "Fertilizer",
+              type: "select",
+              options: [
+                "Picking",
+                "Fertilizer Application",
+                "Pesticide Application",
+                "Pruning",
+              ],
+            },
 
-        function openSelectionForm(form, parentElement) {
-          parentElement.appendChild(form);
-        }
+            {
+              id: "numberOfLaborers",
+              label: "Number of Laborers",
+              type: "number",
+            },
+            { id: "payRate", label: "Pay Rate", type: "number" },
+            {
+              id: "hoursRequired",
+              label: "Hours required",
+              type: "number",
+            },
+          ],
+        };
 
-        function handleFormOpen() {
-          const openExpenseSelectionFormBtn = document.querySelector(
-            ".open-select-expense-form"
-          );
-
-          const inputExpenseDetailsForm = document.querySelector(
-            ".dialog_content--input-expense-details"
-          );
-
-          if (inputExpenseDetailsForm) {
-            const inputElements =
-              inputExpenseDetailsForm.querySelectorAll(".input");
-
-            const formData = [];
-
-            function parseValue(value, type) {
-              switch (type) {
-                case "number":
-                  return parseFloat(value);
-
-                default:
-                  return value.toString();
-              }
-            }
-
-            inputElements.forEach((el) => {
-              el.addEventListener("change", (e) => {
-                const key = el.getAttribute("id");
-                const type = el.getAttribute("type");
-
-                const value = e.target.value;
-                formData.push({ [key]: parseValue(value, type) });
-              });
-            });
-
-            inputExpenseDetailsForm.addEventListener("submit", (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log("submitted");
-
-              console.log(formData);
-            });
-
-            openExpenseSelectionFormBtn.addEventListener("click", (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-
-              dialogContentEl.removeChild(inputExpenseDetailsForm);
-              dialogContentEl.appendChild(selectExpenseForm);
-            });
-          }
-        }
-
-        function openExpenseForm(formDetails, expenseType) {
+        function createMarkup(formDetails, formHeading, formType) {
           const elements = formDetails.map((el) => {
             const label = `<label for=${el.id}>${el.label}</label>`;
             let input;
@@ -851,7 +920,7 @@
               input = `<input id=${el.id} class="input" type=${el.type} required />`;
             } else {
               input = `<select id=${el.id} class="input" required>
-                <option value="">--Please choose an option--</option>`;
+                        <option value="">--Choose from available ${el.id}s--</option>`;
               el.options.forEach(
                 (option) =>
                   (input += `<option value=${option}>${option}</option>`)
@@ -863,41 +932,184 @@
           });
 
           let markup = `
-          <form class='form dialog_content--input-expense-details'>
-          <h2>Enter ${expenseType} expense Details</h2>
-            <div class="form-row form-row--horizontal">
-              <label for="date">Transaction Date</label>
-              <input id='transactionDate' class="input" required type="date" />
-            </div>
-          `;
+                  <form class='form dialog_content--input dialog_content--input-${formType}-details'>
+                    ${
+                      formType === "expense"
+                        ? `<h2>Enter ${formHeading} Expense Details</h2>
+                    <div class="form-row form-row--horizontal hidden">
+                      <label for="expense">Expense</label>
+                      <input id='expense' class="input input--expense " disabled value=${formHeading} required type="text" />
+                    </div>
+                    <div class="form-row form-row--horizontal">
+                      <label for="date">Transaction Date</label>
+                      <input id='transactionDate' class="input" required type="date" />
+                    </div>
+                    `
+                        : `<h2>Enter ${formHeading
+                            .replace(/([a-z])([A-Z])/g, "$1 $2")
+                            .split(" ")
+                            .map(
+                              (word) =>
+                                word.charAt(0).toUpperCase() + word.slice(1)
+                            )
+                            .join(",")
+                            .replace(",", " ")} Activity Details</h2>
+                            <div class="form-row form-row--horizontal hidden">
+                              <label for="activity">Activity</label>
+                              <input id='activity' class="input input--activity "  disabled value=${formHeading} required type="text" />
+                            </div>
+
+                            `
+                    }
+
+                  `;
           elements.forEach((el) => (markup += el));
 
+          if (formType === "expense") {
+            markup += `
+                  <div class="form-row form-row--horizontal">
+                      <label for="total">Total</label>
+                      <input id='total' class="input" type="number" />
+                    </div>
+                 `;
+          }
           markup += `
-          <div class="form-row form-row--horizontal">
-              <label for="total">Total</label>
-              <input id='total' class="input" type="number" />
-            </div>
-          <div class="btns-row">
-            <button class="btn btn-secondary btn-large open-select-expense-form" type='button' >Back</button>
-            <button class="btn btn-secondary btn-large">Cancel</button>
-            <button class="btn btn-primary btn-large">Submit</button>
-          </div>
-          </form>`;
 
-          dialogContentEl.removeChild(selectExpenseForm);
+                  <div class="btns-row">
+                    <button class="btn btn-secondary btn-large open-select-expense-form" type='button' >Back</button>
+                    <button class="btn btn-secondary btn-large">Cancel</button>
+                    <button class="btn btn-primary btn-large btn-open-confirm-expense-form">${
+                      formType === "expense" ? "Submit" : "Add to schedule"
+                    }</button>
+                  </div>
+                  </form>`;
 
-          dialogContentEl.insertAdjacentHTML("beforeEnd", markup);
-          // formContainerEl.insertAdjacentHTML("afterBegin", markup);
+          return markup;
         }
 
-        openExpenseFormBtns.forEach((btn) => {
+        const expenseDescriptionDetailValues = {
+          labour: {
+            activity: "Fertilizer Application",
+            laborers: 15,
+            payRate: 150,
+            hours: 10,
+            totalCost: 67500,
+          },
+          pesticidePurchase: {
+            pesticide: "Fertilizer Application",
+            quantity: 15,
+            cost: 150,
+            totalCost: 6750,
+          },
+          fertilizerPurchase: {
+            fertilizer: "Fertilizer Application",
+            quantity: 15,
+            cost: 150,
+            totalCost: 67500,
+          },
+        };
+        function createConfirmExpensesFormMarkup(
+          expenseDescriptionDetailValues
+        ) {
+          const expenseDescriptionDetailLabels = {
+            labour: [
+              { id: "activity", label: "Activity" },
+              { id: "laborers", label: "Laborers" },
+              { id: "payRate", label: "Pay Rate" },
+              { id: "hoursRequired", label: "Hours" },
+            ],
+            pesticidePurchase: [
+              { id: "pesticide", label: "Pesticide" },
+              { id: "quantity", label: "Quantity" },
+              { id: "cost", label: "Cost" },
+            ],
+            fertilizerPurchase: [
+              { id: "fertilizer", label: "Pesticide" },
+              { id: "quantity", label: "Quantity" },
+              { id: "cost", label: "Cost" },
+            ],
+          };
+
+          const expenses = Object.keys(expenseDescriptionDetailValues);
+          console.log(expenses);
+
+          let markup = `<form class="form dialog_content dialog_content-confirm">
+                              <h2>Confirm Activity Expenses</h2>
+                              <div class="activity_expenses flex flex-dc gap-md">
+                                <div>
+                                  <ul class="list expense_list expense_list--labor">
+
+                                    <li class="expense_list-item header-row">
+                                      <span>Expense</span>
+                                      <span>Description</span>
+                                      <span>Total</span>
+                                     
+                                    </li>
+                                `;
+
+          const expenseListItems = expenses.map((expense) => {
+            let listItemMarkup = ` <li class="expense_list-item values-row">
+                                      <span class="item_detail">${expense
+                                        .replace(/([a-z])([A-Z])/g, "$1 $2")
+                                        .split(" ")
+                                        .map(
+                                          (word) =>
+                                            word.charAt(0).toUpperCase() +
+                                            word.slice(1)
+                                        )
+                                        .join(",")
+                                        .replace(",", " ")}</span>
+                                      <div class="item_detail item_detail-description">`;
+            const descriptionDetails = expenseDescriptionDetailLabels[expense];
+            descriptionDetails.forEach((detail) => {
+              listItemMarkup += `   <div>
+                                            <span>${detail.label}</span>
+                                            <span>${
+                                              expenseDescriptionDetailValues[
+                                                expense
+                                              ][detail.id]
+                                            }</span>
+                                          </div>
+                                          `;
+            });
+            listItemMarkup += `       </div>
+                                        <span class="item_detail">KSH. ${expenseDescriptionDetailValues[expense].totalCost}</span>
+                                        
+                                  </li>`;
+            return listItemMarkup;
+          });
+
+          expenseListItems.forEach((item) => (markup += item));
+          markup += `         </ul>
+                        </div>
+                        </div>
+
+                  <div class="btns-row flex">
+                        <button class="btn btn-secondary btn-large">Cancel</button>
+                        <button class="btn btn-primary btn-large btn-open-confirm-expense-form">Edit</button>
+                        <button class="btn btn-primary btn-large btn-open-confirm-expense-form">Confirm</button>
+                  </div>
+                </form>`;
+
+          return markup;
+        }
+
+        openDialogBtns.forEach((btn) => {
           btn.addEventListener("click", (e) => {
             e.preventDefault();
-            const formToOpen = btn.getAttribute("data-opens");
-            console.log(expenseForms[formToOpen]);
-            openExpenseForm(expenseForms[formToOpen], formToOpen);
-            handleFormOpen();
+
+            const dialogName = btn.getAttribute("data-opens");
+            console.log(btn, dialogName);
+            const dialogElementToOpen = document.getElementById(dialogName);
+            dialogElementToOpen.showModal();
           });
+        });
+
+        openExpenseFormBtns.forEach((btn) => {
+          btn.addEventListener("click", (e) => openForm(e, btn, "expense"));
+        });
+        openActivityFormBtns.forEach((btn) => {
+          btn.addEventListener("click", (e) => openForm(e, btn, "activity"));
         });
 
         openExpenseDialogAndFormBtns.forEach((btn) => {
@@ -908,11 +1120,171 @@
             // dialogContentEl.removeChild(selectExpenseForm);
 
             console.log(expenseForms[formToOpen]);
-            openExpenseForm(expenseForms[formToOpen], formToOpen);
+            openForm(e, btn, "expense");
             handleFormOpen();
           });
         });
+        openScheduleDialogAndFormBtns.forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            const formToOpen = btn.getAttribute("data-opens");
+            scheduleDialog.showModal();
+            // dialogContentEl.removeChild(selectExpenseForm);
+
+            console.log(formToOpen);
+            openForm(e, btn, "activity");
+            handleFormOpen();
+          });
+        });
+
+        function openForm(e, btn, formType) {
+          e.preventDefault();
+          const formToOpen = btn.getAttribute("data-opens");
+
+          const formDetails =
+            formType === "expense"
+              ? expenseForms[formToOpen]
+              : activityForms[formToOpen];
+
+          console.log(formToOpen, formType);
+
+          const markup = createMarkup(formDetails, formToOpen, formType);
+
+          // const dialogContentEl =
+          //   btn.closest(".dialog_content") ??
+          //   document.querySelector(`.dialog_content`);
+          const selectionForm =
+            btn.closest(".dialog_content-select") ??
+            document.querySelector(`.dialog_content-select--${formType}`);
+
+          const dialogContentEl = selectionForm.closest(".dialog_content");
+
+          console.log(`.dialog_content-select--${formType}`);
+
+          dialogContentEl.removeChild(selectionForm);
+
+          dialogContentEl.insertAdjacentHTML("beforeEnd", markup);
+
+          handleFormOpen();
+        }
+
+        function getFormData(form) {
+          const inputElements = form.querySelectorAll(".input");
+
+          let formData = {};
+
+          inputElements.forEach((el) => {
+            el.addEventListener("change", (e) => {
+              const key = el.getAttribute("id");
+              const type = el.getAttribute("type");
+
+              const value = e.target.value;
+              formData[key] = type === "number" ? parseFloat(value) : value;
+            });
+          });
+
+          return formData;
+        }
+
+        function handleFormOpen() {
+          const expensesForm = document.querySelector(
+            ".dialog_content--input-expense-details"
+          );
+          const activityForm = document.querySelector(
+            ".dialog_content--input-activity-details"
+          );
+
+          if (activityForm) {
+            const activity = document.querySelector(".input--activity").value;
+            const openExpenseConfirmFormBtn = document.querySelector(
+              ".btn-open-confirm-expense-form"
+            );
+
+            let activityData = getFormData(activityForm);
+            activityData["activity"] = activity;
+
+            function generateActivityExpenses(activityData, activity) {
+              const labour = {
+                activity: activity
+                  .replace(/([a-z])([A-Z])/g, "$1 $2")
+                  .split(" ")
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(",")
+                  .replace(",", " "),
+                laborers: activityData.numberOfLaborers,
+                payRate: activityData.payRate,
+                hoursRequired: activityData.hoursRequired,
+
+                totalCost:
+                  activityData.numberOfLaborers *
+                  activityData.payRate *
+                  activityData.hoursRequired,
+              };
+
+              let activityExpenses = { labour };
+
+              function generatePurchaseExpenseDetails(purchasedItem) {
+                const purchaseExpenseData = {
+                  [purchasedItem]: activityData[purchasedItem],
+                  quantity: activityData.quantity,
+                  totalCost: activityData.cost,
+                };
+
+                return purchaseExpenseData;
+              }
+
+              if (activity === "pesticideApplication") {
+                const pesticidePurchase =
+                  generatePurchaseExpenseDetails("pesticide");
+
+                activityExpenses = { ...activityExpenses, pesticidePurchase };
+              }
+              if (activity === "fertilizerApplication") {
+                const fertilizerPurchase =
+                  generatePurchaseExpenseDetails("fertilizer");
+                activityExpenses = { ...activityExpenses, fertilizerPurchase };
+              }
+
+              return activityExpenses;
+            }
+            activityForm.addEventListener("submit", (e) => {
+              e.preventDefault();
+              const activityExpenses = generateActivityExpenses(
+                activityData,
+                activity
+              );
+              console.log(activityData);
+              console.log(activityExpenses);
+
+              openConfirmExpensesForm(activityExpenses);
+            });
+
+            function openConfirmExpensesForm(activityExpenses) {
+              const dialogContentEl = activityForm.closest(".dialog_content");
+
+              dialogContentEl.removeChild(activityForm);
+
+              const markup = dialogContentEl.insertAdjacentHTML(
+                "afterBegin",
+                createConfirmExpensesFormMarkup(activityExpenses)
+              );
+            }
+            openExpenseConfirmFormBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+
+              const dialogContentEl = activityForm.closest(".dialog_content");
+
+              dialogContentEl.removeChild(activityForm);
+
+              const markup = dialogContentEl.insertAdjacentHTML(
+                "afterBegin",
+                createConfirmExpensesFormMarkup(expenseDescriptionDetailValues)
+              );
+            });
+          }
+        }
       </script>
+
       <script></script>
       <script
         type="module"

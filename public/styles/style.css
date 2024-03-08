@@ -48,6 +48,11 @@ html {
   height: 4rem;
 }
 
+.image-icon-sm {
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
 .flex {
   display: flex;
 }
@@ -113,6 +118,10 @@ a {
   text-decoration: none;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .app-layout {
   display: grid;
   grid-template-columns: 23rem auto;
@@ -153,6 +162,107 @@ a {
   background-color: #20377d;
   width: 2rem;
   height: 1rem;
+}
+.dashboard .section {
+  background-color: #f9fafb;
+  padding: 2rem 2rem 2rem 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+  border-radius: 7px;
+  box-shadow: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
+  max-height: 32rem;
+  overflow: hidden;
+}
+.dashboard .section h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  counter-reset: #222;
+  margin-bottom: 1.4rem;
+}
+.dashboard .tab_body {
+  border: 0.5px solid #888;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.dashboard .tab_body .farm-input-inventory {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.dashboard .tab_body .row {
+  margin-top: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 0.5fr;
+  gap: 2rem;
+  align-items: center;
+  padding: 1rem;
+}
+.dashboard .tab_body .row--header {
+  font-size: 1.4rem;
+  font-weight: 600;
+  background-color: #dae0f5;
+  border-bottom: 0.5px solid #888;
+}
+.dashboard .tab_body .row--item {
+  padding: 0.64rem 1rem;
+  font-weight: 500;
+  font-size: 1.4rem;
+}
+.dashboard .tab_body .row--item:nth-child(even) {
+  background-color: #ecf4ef;
+}
+.dashboard .tab_body .row--item:not(:last-of-type) {
+  border-bottom: 0.5px solid #888;
+}
+.dashboard .section-recommended-activities {
+  flex-grow: 1;
+}
+.dashboard .section-recommended-activities .recommended-activities {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+}
+.dashboard .section-recommended-activities .activity {
+  display: grid;
+  display: flex;
+  grid-template-columns: 1fr 4fr 3fr;
+  padding: 1rem;
+  gap: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: 7px;
+  background-color: #f9f9f9;
+  align-items: center;
+  border: 1px solid #c7ccd5;
+}
+.dashboard .section-recommended-activities .activity .icon {
+  background-color: #20377d;
+  padding: 0.5rem;
+  height: 3.6rem;
+  width: 3.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #a6afcb;
+}
+.dashboard .section-recommended-activities .activity_details {
+  gap: 0.4rem;
+}
+.dashboard .section-recommended-activities .activity_details span:first-child {
+  font-size: 1.4rem;
+  color: #222;
+  font-weight: 600;
+}
+.dashboard .section-recommended-activities .activity_details span:last-child {
+  font-size: 1.2rem;
+  color: #333;
+  font-weight: 500;
+}
+.dashboard .section-recommended-activities .activity button {
+  height: fit-content;
+  margin-left: auto;
 }
 
 .section {
@@ -920,9 +1030,40 @@ a {
 .btn-icon-only {
   background: none;
   cursor: pointer;
+  box-shadow: none;
 }
 .btn-icon-only ion-icon {
-  font-size: 2.4rem;
+  font-size: 2rem;
+}
+
+.button-group {
+  border: 1px solid #e4e7eb;
+  background-color: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: 5px;
+  padding: 0.4rem;
+  display: flex;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+.button-group button {
+  background-color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-weight: 500;
+  font-size: 1.6rem;
+  padding: 0.44rem 0.8rem;
+  transition: all 0.3s ease 0s;
+  text-align: center;
+  line-height: 1.5;
+  padding-block: 1px;
+  display: inline-block;
+  padding-inline: 6px;
+}
+.button-group .disabled {
+  background-color: #20377d;
+  color: #d1d5db;
+  border-radius: 5px;
 }
 
 .form {
@@ -1065,6 +1206,69 @@ a {
   padding: 2rem 1rem 1rem 1rem;
   background-color: #b1bfeb;
   border-bottom: 1px solid #d1d5db;
+}
+.dialog .dialog_content .expense_list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.5rem;
+  border: 1px solid #777;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.dialog .dialog_content .expense_list li {
+  display: grid;
+  grid-template-columns: 2fr 4fr 2fr;
+}
+.dialog .dialog_content .expense_list li .item_detail {
+  padding: 0.5rem 1rem;
+}
+.dialog .dialog_content .expense_list li .item_detail:not(:first-child) {
+  border-left: 1px solid #777;
+}
+.dialog .dialog_content .expense_list li .item_detail-description {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.1rem;
+}
+.dialog .dialog_content .expense_list li .item_detail-description div {
+  display: grid;
+  grid-template-columns: 6.4rem 1fr;
+  gap: 0.8rem;
+}
+.dialog .dialog_content .expense_list li .item_detail-description div span:first-child {
+  font-weight: 600;
+}
+.dialog .dialog_content .expense_list li button {
+  height: fit-content;
+  align-self: center;
+}
+.dialog .dialog_content .expense_list .header-row {
+  background-color: #bcd8c6;
+  overflow: hidden;
+  border-bottom: 1px solid #777;
+}
+.dialog .dialog_content .expense_list .header-row span {
+  display: flex;
+  padding: 0.5rem 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #222;
+}
+.dialog .dialog_content .expense_list .header-row span:not(:first-child) {
+  border-left: 1px solid #777;
+}
+.dialog .dialog_content .expense_list .values-row span {
+  display: flex;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #111;
+}
+.dialog .dialog_content .expense_list .values-row:nth-child(odd) {
+  background-color: #e9f2ec;
+}
+.dialog .dialog_content .expense_list .values-row:not(:last-of-type) {
+  border-bottom: 1px solid #888;
 }
 
 /*# sourceMappingURL=style.css.map */
