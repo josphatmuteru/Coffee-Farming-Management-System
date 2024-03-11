@@ -881,7 +881,7 @@ function handleExpenseAndYieldInput() {
                 };
                 console.log(data);
                 const req = {
-                    url: "/api/v1/expenses/",
+                    url: "expenses/",
                     data,
                     loadingMessage: "Creating expense...",
                     successMessage: "Expense created successfully"
@@ -954,7 +954,7 @@ async function post(req) {
     const data = JSON.stringify(req.data);
     try {
         (0, _alertJs.showAlert)("loading", req.loadingMessage);
-        const res = await fetch(`${req.url}`, {
+        const res = await fetch(`/api/v1/${req.url}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -973,6 +973,7 @@ async function post(req) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "handleFinancesPage", ()=>handleFinancesPage);
+var _crudOperationsJs = require("./crudOperations.js");
 function handleFinancesPage() {
     const toggleExpenseDetailsBtns = document.querySelectorAll(".btn-toggle--expense-details");
     const expensesSectionEl = document.querySelector(".section-expenses");
@@ -992,9 +993,40 @@ function handleFinancesPage() {
             });
         });
     }
+    function handleEditCreateBudget() {
+        const budgetDialog = document.querySelector(".dialog-budget");
+        const budgetForm = document.querySelector(".form--budget");
+        const inputEls = document.querySelectorAll(".input");
+        const openBudgetDialogBtn = document.querySelector(".btn-open-budget-form");
+        openBudgetDialogBtn.addEventListener("click", (e)=>{
+            e.preventDefault();
+            budgetDialog.showModal();
+        });
+        let formData = {};
+        inputEls.forEach((el)=>{
+            el.addEventListener("change", (e)=>{
+                const key = el.getAttribute("id");
+                const type = el.getAttribute("type");
+                const value = type === "number" ? parseFloat(e.target.value) : value;
+                formData[key] = value;
+            });
+        });
+        budgetForm.addEventListener("submit", (e)=>{
+            e.preventDefault();
+            const req = {
+                url: "expenses/budget",
+                data: formData,
+                loadingMessage: "Creating budget...",
+                successMessage: "Budget created successfully"
+            };
+            (0, _crudOperationsJs.post)(req);
+            console.log(formData);
+        });
+    }
+    handleEditCreateBudget();
     toggleExpenseDetails();
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["1jZC8","f2QDv"], "f2QDv", "parcelRequiref6bb")
+},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["1jZC8","f2QDv"], "f2QDv", "parcelRequiref6bb")
 
 //# sourceMappingURL=index.js.map

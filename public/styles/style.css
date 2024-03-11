@@ -193,7 +193,7 @@ a {
 .dashboard .tab_body .row {
   margin-top: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 0.5fr;
+  grid-template-columns: 12rem 6rem 10rem 0.5fr;
   gap: 2rem;
   align-items: center;
   padding: 1rem;
@@ -1073,6 +1073,12 @@ a {
   flex-direction: column;
   border-radius: 7px;
   box-shadow: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
+}
+.form .sub-form {
+  border-bottom: 1px solid #d1d5db;
+}
+.form .sub-form .form-row--horizontal {
+  border-bottom: none !important;
 }
 .form--authentication {
   width: 100%;

@@ -7,6 +7,13 @@
   box-shadow: $shadow-md;
   // gap: 2rem;
 
+  .sub-form {
+    border-bottom: 1px solid #d1d5db;
+    .form-row--horizontal {
+      border-bottom: none !important;
+    }
+  }
+
   &--authentication {
     width: 100%;
     max-width: 56rem;
