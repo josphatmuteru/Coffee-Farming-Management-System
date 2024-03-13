@@ -103,6 +103,13 @@
     ion-icon {
       font-size: 2rem;
     }
+    &--sm {
+      background: none;
+
+      ion-icon {
+        font-size: 1.4rem;
+      }
+    }
   }
 }
 

@@ -72,7 +72,7 @@ block content
                           span Laborers
                           span Pay Rate
                           span Hours worked
-                          span Total
+                          span Cost
 
                       
 
@@ -113,17 +113,17 @@ block content
                         li.expense_list-item.header-row
                           span Date
                           span Description
-                          span Cost per unit
                           span Quantity
-                          span Total
+                          span Cost
                           
                         -if(expenses.pesticide?.length > 0) 
+                          
                           each item in expenses.pesticide[0].expense_particulars       
                             li.expense_list-item.values-row
                               span=formatDate(item.transaction_date)
                               span=item.expense_details[0].description 
-                              span=item.expense_details[0].quantity 
-                              span=item.expense_details[0].costPerUnit 
+                              span=`${item.expense_details[0].quantity} ${item.expense_details[0].measurementUnit}`
+                              
                             
                               span=item.expense_total 
 
@@ -150,9 +150,8 @@ block content
                         li.expense_list-item.header-row
                           span Date
                           span Description
-                          span Cost per unit
                           span Quantity
-                          span Total
+                          span Cost
 
                         -if(expenses.fertilizer?.length > 0) 
                           each item in expenses.fertilizer[0].expense_particulars
@@ -160,9 +159,7 @@ block content
                             li.expense_list-item.values-row   
                               span=formatDate(item.transaction_date)
                               span=item.expense_details[0].description 
-                              span=item.expense_details[0].quantity 
-                              span=item.expense_details[0].costPerUnit 
-                            
+                              span=item.expense_details[0].quantity                           
                               span=item.expense_total 
                   .expense.expense-miscelleneous
                     .expense_header
@@ -188,7 +185,7 @@ block content
                           span Date
                           span Description
                           span Cost
-                          span Total
+                          
 
                         -if(expenses.miscelleneous?.length > 0) 
                           each item in expenses.miscelleneous[0].expense_particulars
@@ -197,9 +194,7 @@ block content
                               span=formatDate(item.transaction_date)
                               span=item.expense_details[0].description 
                               span=item.expense_details[0].cost 
-                          
-                            
-                              span=item.expense_total 
+                        
 
               .section.section-budget(data-budget={budget})
                 h2.heading-secondary Budget overview

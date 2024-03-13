@@ -4,6 +4,7 @@ const dashboard = document.querySelector(".main--dashboard");
 const financesPage = document.querySelector(".main--finances");
 
 import { handleSignup, handleLogin } from "./authentication.js";
+import { HandleDashboardFunctions } from "./dashboard.js";
 import { handleExpenseAndYieldInput } from "./expenseAndYieldInputHandler.js";
 import { handleFinancesPage } from "./finances.js";
 
@@ -18,7 +19,8 @@ if (loginForm) {
 }
 
 if (dashboard) {
-  handleExpenseAndYieldInput();
+  // handleExpenseAndYieldInput();
+  HandleDashboardFunctions();
 }
 
 if (financesPage) {

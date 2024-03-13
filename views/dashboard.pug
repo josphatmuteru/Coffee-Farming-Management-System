@@ -5,7 +5,7 @@ block content
 
         .container.dashboard
           h2 Dashboard
-          div.flex.flex-dc.gap-md
+          .flex.flex-dc.gap-md
             .dashboard_graph.dashboard_graph-yield-stats
               //- h3 Harvest Stats
               div#harvestChart(data-harvest-data=harvestData)
@@ -44,11 +44,56 @@ block content
               .dashboard_legend 
                 span.dashboard_legend-rectangle
                 span.dashboard_legend-text Weight of coffee
+          .flex.gap-md.width-max
+            section.section.section-inventory
+              h3.heading-tertiary Available Farm inputs
+              .button-group
+                button.disabled.btn-show-farmInput(data-shows='pesticide')
+                  span Pesticide
+                button.btn-show-farmInput(data-shows='fertilizer')
+                  | Fertilizer
+              .availble-farm-inputs
+                .tab
+                  .tab_body
+                    .row.row--header
+                      span Description
+                      span Quantity
+                    ul.list.farm-input-inventory
+                      
+            section.section.section-recommended-activities
+              h3.heading-tertiary
+                | This Month&apos;s Recommended Farm Activities
+              ul.list.recommended-activities
+                li.activity
+                  span.icon
+                    img.image-icon-sm(src='../src/fertilizer.png', alt='')
+                  .activity_details.flex.flex-dc
+                    span Fertilizer Application
+                    span - CAN
+                  button.btn.btn-small.btn-primary.btn-open-schedule-dialog-and-form(data-opens='fertilizerApplication')
+                    | Add to schedule
+                li.activity
+                  span.icon
+                    img.image-icon-sm(src='../src/pruning.png', alt='')
+                  .activity_details.flex.flex-dc
+                    span Pruning
+                    span &nbsp;
+                  button.btn.btn-small.btn-primary.btn-open-schedule-dialog-and-form(data-opens='pruning')
+                    | Add to schedule
+                li.activity
+                  span.icon
+                    img.image-icon-sm(src='../src/pesticide.png', alt='')
+                  .activity_details.flex.flex-dc
+                    span Pesticide Application 
+                    span - Some pesticide
+                  button.btn.btn-small.btn-primary.btn-open-schedule-dialog-and-form(data-opens='pesticideApplication')
+                    | Add to schedule
+
         .aside
           .weather-box
             .weather-box--big
               span.weather-box--current-condition=weatherData.generalWeatherCondition
-              -console.log(weatherData.generalWeatherCondition) 
+              
               .right-border
                 .weather-box--current-symbol
                   ion-icon(name=`${weatherData.generalWeatherConditionIcon}-outline`)
@@ -132,13 +177,15 @@ block content
                 span.weather_detail-label Rainfall
           .section-actions
             .data-recording
-              h4.heading-tertiary Data recording
-              span.instructional-text Enter details about:
-              button.btn.btn-medium.btn-primary--light.btn-primary.showHarvestDialog
-                | Coffee Yield
-              button.btn.btn-medium.btn-primary.btn-primary--light.showExpenseDialog
-                | An Expense
-              dialog#harvest-dialog.dialog
+              h4.heading-tertiary Planning &amp; Data Recording
+              span.instructional-text Enter details to:
+              button.btn.btn-medium.btn-primary.btn-primary--light.btn-open-dialog(data-opens='dialog--schedule')
+                | Schedule an Activity
+              button.btn.btn-medium.btn-primary--light.btn-primary.btn-open-dialog(data-opens='dialog--harvest')
+                | Record Coffee Yield
+              button.btn.btn-medium.btn-primary--light.btn-primary.btn-open-dialog(data-opens='dialog--expenses')
+                | Record An Expense
+              dialog#dialog--harvest.dialog
                 form.form
                   h2 Enter Coffee Harvest Details
                   .form-row.form-row--horizontal
@@ -150,16 +197,13 @@ block content
                   .btns-row
                     button.btn.btn-secondary.btn-large Cancel
                     button.btn.btn-primary.btn-large Submit
-              dialog#expense-dialog.dialog
+              dialog#dialog--expenses.dialog
                 .dialog_content
-                  .form.dialog_content--select-expense
+                  .form.dialog_content-select.dialog_content-select--expense
                     h2 Choose the type of expense
                     .flex.flex-dc.gap-sm.width-max
-                      button.btn.btn-icon.btn-icon--lg.btn-large.btn-open-expense-form.btn-open-expense-form(data-opens='labour')
-                        span.icon
-                          img.image-icon(src='../src/farmer.png', alt='farmer-icon')
-                        span Labour
-                      button.btn.btn-icon.btn-icon--lg.btn-large.btn-open-expense-form(data-opens='pesticides')
+                    
+                      button.btn.btn-icon.btn-icon--lg.btn-large.btn-open-expense-form(data-opens='pesticide')
                         span.icon
                           img.image-icon(src='../src/pesticide.png', alt='farmer-icon')
                         span Pesticide purchase
@@ -171,35 +215,32 @@ block content
                         span.icon
                           img.image-icon(src='../src/income.png', alt='farmer-icon')
                         span Miscelleneous
+                
             .scheduling
               h4.heading-tertiary Schedule
               .schedule_activities
                 ul.list.activities_list
-                  li.list-item.schedule_activity
-                    span.schedule_activity-icon
-                      img.icon-image(src='src/picking.png', alt='')
-                    .flex.flex-dc
-                      span.schedule_activity-name Picking
-                      .flex.flex-dr.height-max
-                        span.schedule_activity-date Dec 15
-                        span.schedule_activity-time.ml-auto 09.00am
-                  li.list-item.schedule_activity
-                    span.schedule_activity-icon
-                      img.icon-image(src='src/picking.png', alt='')
-                    .flex.flex-dc
-                      span.schedule_activity-name Picking
-                      .flex.flex-dr.height-max
-                        span.schedule_activity-date Dec 15
-                        span.schedule_activity-time.ml-auto 09.00am
-                  li.list-item.schedule_activity
-                    span.schedule_activity-icon
-                      img.icon-image(src='src/picking.png', alt='')
-                    .flex.flex-dc
-                      span.schedule_activity-name Picking
-                      .flex.flex-dr.height-max
-                        span.schedule_activity-date Dec 15
-                        span.schedule_activity-time.ml-auto 09.00am
+              
                 .schedule_add-activity
-                  button.btn.btn-medium.btn-primary.btn-primary--light.btn-icon
-                    ion-icon(name='add-outline')
-                    span  Add activity 
+                  dialog#dialog--schedule.dialog
+                    
+                    .dialog_content
+                      .form.dialog_content-select.dialog_content-select--activity
+                        h2 Choose the type of Activity
+                        .flex.flex-dc.gap-sm.width-max
+                          button.btn.btn-icon.btn-icon--lg.btn-large.btn-open-activity-form(data-opens='pruning')
+                            span.icon
+                              img.image-icon(src='../src/pruning.png', alt='farmer-icon')
+                            span Pruning
+                          button.btn.btn-icon.btn-icon--lg.btn-large.btn-open-activity-form(data-opens='pesticideApplication')
+                            span.icon
+                              img.image-icon(src='../src/pesticide.png', alt='farmer-icon')
+                            span Pesticide Application
+                          button.btn.btn-icon.btn-icon--lg.btn-large.btn-open-activity-form(data-opens='fertilizerApplication')
+                            span.icon
+                              img.image-icon(src='../src/fertilizer.png', alt='farmer-icon')
+                            span Fertilizer Application
+                          button.btn.btn-icon.btn-icon--lg.btn-large.btn-open-activity-form(data-opens='picking')
+                            span.icon
+                              img.image-icon(src='../src/picking.png', alt='farmer-icon')
+                            span Picking

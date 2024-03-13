@@ -121,6 +121,7 @@
     flex-direction: column;
     gap: 1rem;
     margin-top: 0.8rem;
+    overflow-y: auto;
   }
 
   .schedule_activity {
@@ -132,29 +133,42 @@
     background-color: #a0ffd6;
     border-radius: 8px;
     box-shadow: $shadow-sm;
+    align-content: center;
 
     &-icon {
+      display: flex;
+      justify-content: center;
+      align-content: center;
       border-radius: 5px;
+      // height: fit-content;
+      // align-self: center;
       padding: 0.64rem;
       background-color: #136ec2;
       grid-row: 1 / -1;
 
       img {
-        height: 2.6rem;
-        width: 2.6rem;
+        height: 3rem;
+        width: 3rem;
       }
       object-fit: contain;
     }
 
     &-name {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: 600;
       color: #222;
     }
+    &-farmInput {
+      font-size: 1.1rem;
+      margin-top: 0.1rem;
+
+      color: #333;
+      font-weight: 500;
+    }
     &-date,
     &-time {
-      font-size: 1.2rem;
-      margin-top: 0.8rem;
+      font-size: 1.1rem;
+      // margin-top: 0.4rem;
       font-weight: 600;
       color: #333;
     }

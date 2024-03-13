@@ -42,6 +42,7 @@ const __dirname = path.dirname(__filename);
 import authenticationRouter from "./routes/authenticationRoutes.js";
 import viewRouter from "./routes/viewRoutes.js";
 import expenseRouter from "./routes/expenseRoutes.js";
+import farmInputRouter from "./routes/farmInputRoutes.js";
 
 app.set("view engine", "pug");
 
@@ -53,5 +54,6 @@ app.set("views", path.join(__dirname, "/views"));
 app.use("/", viewRouter);
 app.use("/api/v1/authentication", authenticationRouter);
 app.use("/api/v1/expenses", expenseRouter);
+app.use("/api/v1/farmInputs", farmInputRouter);
 
 export default app;

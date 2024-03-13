@@ -535,7 +535,7 @@
               <h4 class="heading-tertiary">Schedule</h4>
               <div class="schedule_activities">
                 <ul class="list activities_list">
-                  <li class="list-item schedule_activity">
+                  <!-- <li class="list-item schedule_activity">
                     <span class="schedule_activity-icon">
                       <img class="icon-image" src="src/picking.png" alt="" />
                     </span>
@@ -576,7 +576,7 @@
                         >
                       </div>
                     </div>
-                  </li>
+                  </li> -->
                 </ul>
                 <div class="schedule_add-activity">
                   <dialog id="dialog--schedule" class="dialog">
@@ -1048,7 +1048,7 @@
           return listItemsMarkup;
         }
 
-        showFarmInputBtns.forEach((btn) => {
+        function renderAvailableFarmInput(btn) {
           btn.addEventListener("click", (e) => {
             e.preventDefault();
             const farmInputToShow = btn.getAttribute("data-shows");
@@ -1112,7 +1112,14 @@
 
             handleFarmInputInventory();
           });
+        }
+
+        showFarmInputBtns.forEach((btn) => {
+          renderAvailableFarmInput(btn);
         });
+        showFarmInputBtns[0].removeAttribute("disabled");
+        showFarmInputBtns[0].click();
+        console.log("btn", showFarmInputBtns[0]);
 
         function createMarkup2(formDetails, formHeading, formType) {
           console.log(formDetails);
@@ -1434,6 +1441,89 @@
             totalCost: 67500,
           },
         };
+
+        function formatCamelCaseToNormal(word) {
+          const formattedWord = word
+            .replace(/([a-z])([A-Z])/g, "$1 $2")
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(",")
+            .replace(",", " ");
+
+          return formattedWord;
+        }
+
+        function formatTimeToTwelveHourFormat(timeString) {
+          const hours = parseInt(timeString.split(":")[0]);
+          const minutes = timeString.split(":")[1];
+          console.log(hours - 12);
+
+          const time =
+            hours - 12 === -12
+              ? `12 : ${minutes} AM`
+              : hours - 12 > 0
+              ? `${hours - 12}:${minutes} PM`
+              : `${hours.toString().padStart(2, "0")}:${minutes} AM`;
+          return time;
+        }
+
+        function createScheduleListItemMarkup(activityData) {
+          let { activity, activityTime, activityDate } = activityData;
+          const farmInput =
+            activityData.fertilizer ?? activityData.pesticide ?? false;
+
+          const icon = activity.split("Application")[0];
+          activity = formatCamelCaseToNormal(activity);
+
+          activityTime = formatTimeToTwelveHourFormat(activityTime);
+          activityDate = new Date(activityDate);
+
+          activityDate = activityDate.toLocaleDateString("en-us", {
+            month: "short",
+            day: "numeric",
+          });
+
+          console.log(activityData);
+
+          const scheduleListItemMarkup = ` 
+                   <li class="list-item schedule_activity">
+                    <span class="schedule_activity-icon">
+                      <img class="icon-image" src="../src/${icon}.png" alt="" />
+                    </span>
+                    <div class="flex flex-dc">
+                      <div class='flex max-width'>
+                        <div class="flex flex-dc">
+                        <span class="schedule_activity-name">${activity}</span>
+                        ${
+                          farmInput
+                            ? `
+                        <span class="schedule_activity-farmInput">${farmInput}</span>
+                          
+                          `
+                            : `
+                        <span class="schedule_activity-farmInput">&nbsp;</span>
+                          
+                          `
+                        }
+                        </div>
+                        <button class='btn btn-icon-only--sm ml-auto'>
+                        <ion-icon name="ellipsis-vertical"></ion-icon>
+                        </button>
+                        </div>
+                      <div class="flex flex-dr ${
+                        farmInput ? "mt-tiny" : "m"
+                      } height-max">
+                        <span class="schedule_activity-date">${activityDate}</span>
+                        <span class="schedule_activity-time ml-auto"
+                          >${activityTime}</span
+                        >
+                      </div>
+                    </div>
+                  </li>`;
+
+          return scheduleListItemMarkup;
+        }
+
         function createConfirmExpensesFormMarkup(
           expenseDescriptionDetailValues
         ) {
@@ -2028,8 +2118,14 @@
                 activityExpensesDataToDisplay = {},
               } = generateActivityExpenses(activityData, activity);
 
-              console.log(activityExpensesDataToDisplay);
-              console.log(activityExpenses, farmInputDetails);
+              if (Object.keys(activityData).length > 0) {
+                const scheduleListItemMarkup =
+                  createScheduleListItemMarkup(activityData);
+                // document.querySelector(".activities_list").innerHTML = "";
+                document
+                  .querySelector(".activities_list")
+                  .insertAdjacentHTML("beforeend", scheduleListItemMarkup);
+              }
 
               if (Object.keys(activityExpensesDataToDisplay).length > 0) {
                 openConfirmExpensesForm(activityExpensesDataToDisplay);
