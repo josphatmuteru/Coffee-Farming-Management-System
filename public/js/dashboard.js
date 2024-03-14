@@ -1,4 +1,5 @@
-import { get, post } from "./crudOperations.js";
+import { showAlert } from "./alert.js";
+import { get, post, sendDelete } from "./crudOperations.js";
 
 export async function HandleDashboardFunctions() {
   const expenseDialog = document.getElementById("dialog--expenses");
@@ -49,6 +50,40 @@ export async function HandleDashboardFunctions() {
     }
     return newObject;
   }
+
+  const fetchScheduleActivities = async () => {
+    const req = {
+      url: "activities/",
+    };
+
+    const scheduleActivities = await get(req);
+    return scheduleActivities;
+  };
+
+  const scheduleActivities = await fetchScheduleActivities();
+
+  const thisMonthsRecommendedActivities = await get({
+    url: "activities/recommended-this-month",
+  });
+
+  thisMonthsRecommendedActivities.forEach((activity) => {
+    const listItemMarkup = createRecommendedActivitiesListItemMarkup(activity);
+    document
+      .querySelector(".recommended-activities")
+      .insertAdjacentHTML("afterbegin", listItemMarkup);
+
+    handleRecommendedActivities();
+  });
+
+  scheduleActivities.forEach((activity) => {
+    const listItemMarkup = createScheduleListItemMarkup(
+      activity.activity_details
+    );
+
+    document
+      .querySelector(".schedule_activities-list")
+      .insertAdjacentHTML("afterbegin", listItemMarkup);
+  });
 
   const fetchFarmInputs = async () => {
     const req = {
@@ -354,43 +389,39 @@ export async function HandleDashboardFunctions() {
   };
   function createFarmInputListItemsMarkup(farmInput) {
     const farmInputItems = availableFarmInputs[farmInput] ?? [];
+
     let listItemsMarkup = ``;
 
     farmInputItems.forEach((item) => {
       listItemsMarkup += `
-                                        <li class="row row--item"
-                                         data-item-details='${JSON.stringify({
-                                           farmInputId: item.farmInputId,
-                                           description: item.description,
-                                           currentQuantity: item.quantity,
-                                           measurementUnit:
-                                             item.measurementUnit,
-                                         })}'>
-                                          <span>${item.description}</span>
-                                          <span>${item.quantity} ${
+                            <li class="row row--item"
+                              data-item-details='${JSON.stringify({
+                                farmInputId: item.farmInputId,
+                                farmInputType: item.farmInputType,
+                                description: item.description,
+                                currentQuantity: item.quantity,
+                                measurementUnit: item.measurementUnit,
+                              })}'>
+                              <span>${item.description}</span>
+                              <span>${item.quantity} ${
         item.measurementUnit === "Litres"
           ? "Ltr"
           : item.measurementUnit === "Kilograms"
           ? "Kg"
           : item.measurementUnit
       }</span>
-                                          <button
-                                            class="btn btn-small btn-primary btn-icon btn-open-expense-dialog-and-form"
-                                            data-opens=${farmInput}
-                                            data-item-='${item.farmInputId}'
-
-
-
-                                          >
-                                            <ion-icon name="add-outline"></ion-icon>
-                                            <span>Add More</span>
-                                          </button>
-                                          <button class="btn btn-icon-only">
-                                            <ion-icon name="trash-outline"></ion-icon>
-                                          </button>
-                                        </li>
-
-                              `;
+                              <button
+                                class="btn btn-small btn-primary btn-icon btn-open-expense-dialog-and-form"
+                                data-opens=${farmInput}
+                                data-item-='${item.farmInputId}'>
+                                <ion-icon name="add-outline"></ion-icon>
+                                <span>Add More</span>
+                              </button>
+                              <button class="btn btn-icon-only btn-delete-farmInput">
+                                <ion-icon name="trash-outline"></ion-icon>
+                              </button>
+                            </li>
+`;
     });
     return listItemsMarkup;
   }
@@ -418,41 +449,160 @@ export async function HandleDashboardFunctions() {
       farmInputInvetoryListEl.innerHTML = "";
       farmInputInvetoryListEl.insertAdjacentHTML("afterBegin", listItemsMarkup);
 
+      const addDifferentFarmInputBtn =
+        farmInputInvetoryListEl.parentNode.parentNode.querySelector(
+          ".btn-add-different-farm-input"
+        );
+      addDifferentFarmInputBtn.setAttribute("data-opens", farmInputToShow);
+      addDifferentFarmInputBtn.querySelector(
+        "span"
+      ).textContent = `Add Different ${capitilizeFirstLetter(farmInputToShow)}`;
+
       handleFarmInputInventory(btn);
     });
   }
 
-  function handleFarmInputInventory(btn) {
+  function handleFarmInputInventory() {
     const openExpenseDialogAndFormBtns = document.querySelectorAll(
       ".btn-open-expense-dialog-and-form"
     );
-    const farmInputToShow = btn.getAttribute("data-shows");
+
+    const deleteFarmInputBtns = document.querySelectorAll(
+      ".btn-delete-farmInput"
+    );
 
     openExpenseDialogAndFormBtns.forEach((btn) => {
+      const farmInputToShow = btn.getAttribute("data-shows");
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         const itemId = btn.getAttribute("data-item-id") * 1;
+        const formToOpen = btn.getAttribute("data-opens");
 
-        const itemDetails = btn.closest("li").getAttribute("data-item-details");
-        console.log(itemDetails);
+        if (itemId) {
+          const itemDetails = btn
+            .closest("li")
+            ?.getAttribute("data-item-details");
 
-        const formValues = JSON.parse(itemDetails);
+          const formValues = JSON.parse(itemDetails);
+
+          expenseDialog.showModal();
+
+          const isEditMode = true;
+          openForm(e, btn, "expense", formValues, isEditMode);
+        } else {
+          expenseDialog.showModal();
+          openForm(e, btn, "expense");
+        }
+      });
+    });
+
+    deleteFarmInputBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const itemDetails = btn
+          .closest("li")
+          ?.getAttribute("data-item-details");
+        const farmInputData = JSON.parse(itemDetails);
+        const { farmInputId, description, farmInputType } = farmInputData;
+
+        const confirmDeleteModal = document.createElement("dialog");
+        confirmDeleteModal.setAttribute(
+          "id",
+          "dialog-confirm-delete-farmInput"
+        );
+        confirmDeleteModal.classList.add("dialog");
+
+        const confirmDeleteMarkup = `
+        <div class='flex'>
+          <button class='btn btn-icon-only btn-close-modal ml-auto'>
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+        <form>
+        <h3>Discard ${capitilizeFirstLetter(farmInputType)}</h3>
+        <div class='flex flex-dc gap-md'>
+        <span class='intruction-text'>
+          Are you sure you want ot remove ${description} from the inventory?
+        </span>
+        <div class="flex gap-md ml-auto">
+          <button type='button' class="btn btn-medium btn-secondary btn-close-modal">Cancel</button>
+          <button type='button' class="btn btn-medium btn-danger btn-confirm-delete">Delete</button>
+        </div>
+        </div>
+        </form>
+`;
+        confirmDeleteModal.innerHTML = confirmDeleteMarkup;
+
+        btn.parentElement.insertAdjacentElement(
+          "afterbegin",
+          confirmDeleteModal
+        );
+        confirmDeleteModal.showModal();
+        confirmDeleteModal
+          .querySelectorAll(".btn-close-modal")
+          .forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+              e.preventDefault();
+              confirmDeleteModal.close();
+            });
+          });
+
+        confirmDeleteModal
+          .querySelector(".btn-confirm-delete")
+          .addEventListener("click", (e) => {
+            e.preventDefault();
+
+            sendDelete({
+              url: `farmInputs/${farmInputId}`,
+              loadingMessage: `Removing ${description} from inventory...`,
+            }).then((result) => {
+              if (result.status === "success") {
+                confirmDeleteModal.close();
+                showAlert(
+                  "success",
+                  `${capitilizeFirstLetter(description)} removed successfully`
+                );
+              }
+            });
+          });
+        console.log(farmInputData);
+      });
+    });
+  }
+
+  function handleRecommendedActivities() {
+    const openScheduleDialogAndFormBtns = document.querySelectorAll(
+      ".btn-open-schedule-dialog-and-form"
+    );
+
+    openScheduleDialogAndFormBtns.forEach((btn) => {
+      console.log(btn);
+
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
 
         const formToOpen = btn.getAttribute("data-opens");
-        const farmInputDetails = availableFarmInputs[farmInputToShow].find(
-          (item) => item.farmInputId === itemId
+
+        const activityDetails = JSON.parse(
+          btn.closest("li").getAttribute("data-activity-details")
         );
 
-        // const formValues = { id: 2, description: "some pesticide" };
-        console.log(itemId, formValues);
+        const farmInputType = formToOpen.includes("Application")
+          ? formToOpen.split("Application")[0]
+          : false;
+        const farmInput = activityDetails.required_farm_input;
 
-        expenseDialog.showModal();
+        console.log(farmInput);
+        scheduleDialog.showModal();
         // dialogContentEl.removeChild(selectExpenseForm);
 
-        console.log(expenseForms[formToOpen]);
-        const isEditMode = true;
-        openForm(e, btn, "expense", formValues, isEditMode);
-        handleFormOpen();
+        if (farmInput && farmInputType) {
+          const formValues = { [farmInputType]: farmInput };
+          openForm(e, btn, "activity", formValues);
+        }
+
+        console.log(formToOpen);
+        openForm(e, btn, "activity");
+        // handleFormOpen();
       });
     });
   }
@@ -502,14 +652,13 @@ export async function HandleDashboardFunctions() {
     return elements;
   }
 
+  function capitilizeFirstLetter(word) {
+    const capitilizedFirstLetterWord =
+      word.charAt(0).toUpperCase() + word.slice(1);
+    console.log(capitilizedFirstLetterWord);
+    return capitilizedFirstLetterWord;
+  }
   function createMarkup(farmInput, formType, formHeading, isEditMode) {
-    function capitilizeFirstLetter(word) {
-      const capitilizedFirstLetterWord =
-        word.charAt(0).toUpperCase() + word.slice(1);
-      console.log(capitilizedFirstLetterWord);
-      return capitilizedFirstLetterWord;
-    }
-
     function createExpenseFormDetails(formHeading, farmInput) {
       let formDetails = [
         {
@@ -802,6 +951,41 @@ export async function HandleDashboardFunctions() {
     return time;
   }
 
+  function createRecommendedActivitiesListItemMarkup(activityData) {
+    const { activity, required_farm_input: farmInput } = activityData;
+    const activityName = capitilizeFirstLetter(
+      formatCamelCaseToNormal(activity)
+    );
+    const icon = activity.split("Application")[0];
+
+    const markup = `
+    <li class="activity" data-activity-details='${JSON.stringify(
+      activityData
+    )}'>
+      <span class="icon"
+        ><img
+          class="image-icon-sm"
+          src="../src/${icon}.png"
+          alt=""
+        />
+      </span>
+      <div class="activity_details flex flex-dc">
+        <span>${activityName}</span>
+        <span> ${farmInput ? `- ${farmInput}` : ""}</span>
+      </div>
+
+      <button
+        class="btn btn-small btn-primary btn-open-schedule-dialog-and-form"
+        data-opens="${activity}"
+      >
+        Add to schedule
+      </button>
+  </li>
+    `;
+
+    return markup;
+  }
+
   function createScheduleListItemMarkup(activityData) {
     let { activity, activityTime, activityDate } = activityData;
     const farmInput =
@@ -964,22 +1148,6 @@ export async function HandleDashboardFunctions() {
   });
   openActivityFormBtns.forEach((btn) => {
     btn.addEventListener("click", (e) => openForm(e, btn, "activity"));
-  });
-
-  openScheduleDialogAndFormBtns.forEach((btn) => {
-    console.log(btn);
-
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      console.log("clicked");
-      const formToOpen = btn.getAttribute("data-opens");
-      scheduleDialog.showModal();
-      // dialogContentEl.removeChild(selectExpenseForm);
-
-      console.log(formToOpen);
-      openForm(e, btn, "activity");
-      // handleFormOpen();
-    });
   });
 
   function openForm(e, btn, formType, formValues = {}, isEditMode = false) {
@@ -1300,10 +1468,14 @@ export async function HandleDashboardFunctions() {
 
           const farmInputType = activity.split("Application")[0];
 
+          activityData["farmInputType"] = farmInputType;
+
           const purchasedItemName =
             activityData[purchasedItem].length > 0
               ? activityData[purchasedItem]
               : activityData[`${purchasedItem}toPurchase`];
+
+          activityData["farmInputName"] = purchasedItemName;
 
           let purchaseExpenseData = {
             farm_id: 1,
@@ -1462,9 +1634,47 @@ export async function HandleDashboardFunctions() {
           activityExpensesDataToDisplay = {},
         } = generateActivityExpenses(activityData, activity);
 
+        let activityCreateRequest = {};
+        let expenseCreateRequests = {};
+        let farmInputCreateOrUpdateRequest = {};
+
         if (Object.keys(activityData).length > 0) {
           const scheduleListItemMarkup =
             createScheduleListItemMarkup(activityData);
+          const {
+            activity,
+            activityDate,
+            activityTime,
+            numberOfLaborers,
+            farmInputName = false,
+            farmInputType = false,
+          } = activityData;
+
+          console.log(activityData);
+          const activityDataToUpload = {
+            activity_name: activity,
+            activity_date: activityDate,
+            activity_details: {
+              activity,
+              activityDate,
+              activityTime,
+              numberOfLaborers: isNaN(numberOfLaborers)
+                ? "Do it yourself"
+                : numberOfLaborers,
+              farmInputName,
+              farmInputType,
+            },
+            activity_status: "pending",
+          };
+
+          activityCreateRequest = {
+            url: "activities/",
+            data: activityDataToUpload,
+            loadingMessage: "Adding activity to schedule",
+            successMessage: "Activity added successfully",
+          };
+          console.log(activityDataToUpload);
+
           // document.querySelector(".activities_list").innerHTML = "";
           document
             .querySelector(".activities_list")
@@ -1476,24 +1686,22 @@ export async function HandleDashboardFunctions() {
         }
 
         if (Object.keys(activityExpenses.length > 0)) {
-          const expenseCreateRequests = Object.keys(activityExpenses).map(
-            (key) => {
-              const request = {
-                url: "expenses/",
-                data: activityExpenses[key],
-                loadingMessage: `Creating ${formatCamelCaseToNormal(
-                  key.split("ExpenseData")[0]
-                )} expense...`,
-                successMessage: `${formatCamelCaseToNormal(
-                  key.split("ExpenseData")[0]
-                )} expense created successfully`,
-              };
-              return request;
-            }
-          );
+          expenseCreateRequests = Object.keys(activityExpenses).map((key) => {
+            const request = {
+              url: "expenses/",
+              data: activityExpenses[key],
+              loadingMessage: `Creating ${formatCamelCaseToNormal(
+                key.split("ExpenseData")[0]
+              )} expense...`,
+              successMessage: `${formatCamelCaseToNormal(
+                key.split("ExpenseData")[0]
+              )} expense created successfully`,
+            };
+            return request;
+          });
 
-          if (Object.keys(farmInputDetails.length > 0)) {
-            let farmInputCreateOrUpdateRequest = {
+          if (Object.keys(farmInputDetails).length) {
+            farmInputCreateOrUpdateRequest = {
               loadingMessage: `Adding ${
                 activityData.activity.split("Application")[0]
               } to inventory...`,
@@ -1502,13 +1710,18 @@ export async function HandleDashboardFunctions() {
               } added successfully`,
             };
             if (Object.keys(farmInputDetails).includes("farmInputId")) {
-              const { farmInputId } = farmInputDetails;
+              const { farmInputId, quantity } = farmInputDetails;
+              const farmInputData = {
+                quantity,
+              };
 
               farmInputCreateOrUpdateRequest = {
                 ...farmInputCreateOrUpdateRequest,
                 url: `farmInputs/${farmInputId}`,
-                data: quantity,
+                data: { farmInputData },
               };
+
+              console.log(farmInputCreateOrUpdateRequest);
             } else {
               farmInputCreateOrUpdateRequest = {
                 url: `farmInputs/`,
@@ -1517,6 +1730,18 @@ export async function HandleDashboardFunctions() {
               };
             }
             post(farmInputCreateOrUpdateRequest).then((result) => {
+              if (result.status === "success") {
+                post(activityCreateRequest).then((result) => {
+                  if (result.status === "success") {
+                    expenseCreateRequests.forEach((request) => {
+                      post(request);
+                    });
+                  }
+                });
+              }
+            });
+          } else {
+            post(activityCreateRequest).then((result) => {
               if (result.status === "success") {
                 expenseCreateRequests.forEach((request) => {
                   post(request);
@@ -1542,7 +1767,9 @@ export async function HandleDashboardFunctions() {
     if (expensesForm) {
       expensesForm.addEventListener("submit", (e) => {
         e.preventDefault();
+
         const formData = getFormData(expensesForm);
+        console.log("isEditMode", isEditMode);
         if (isEditMode) {
           if (
             formData.expense === "fertilizer" ||
@@ -1555,9 +1782,14 @@ export async function HandleDashboardFunctions() {
               quantity: newQuantity,
             };
             const farmInputId = existingData.farmInputId;
+
             const farmInputUpdateRequest = {
               url: `farmInputs/${farmInputId}`,
               data: { farmInputData },
+              loadingMessage: `Adding more ${formData.expense} to inventory...`,
+              successMessage: `${capitilizeFirstLetter(
+                formData.expense
+              )} added successfully`,
             };
 
             const expenseDetails = [{ ...formData }];
@@ -1578,75 +1810,83 @@ export async function HandleDashboardFunctions() {
 
             post(farmInputUpdateRequest).then((result) => {
               if (result.status === "success") {
+                post(expenseCreateRequest).then((result) => {
+                  if (result.status === "success") {
+                    const dialogEl =
+                      document.getElementById("dialog--expenses");
+                    dialogEl.close();
+                  }
+                });
+              }
+            });
+
+            return;
+          }
+        } else {
+          if (
+            formData.expense === "fertilizer" ||
+            formData.expense === "pesticide"
+          ) {
+            const { description, expense, quantity, measurementUnit } =
+              formData;
+            const farmInputData = {
+              description,
+              farm_input_type: expense,
+              quantity,
+              measurement_unit: measurementUnit,
+              farm_id: 1,
+            };
+
+            const expenseDetails = [{ ...formData }];
+            const expenseData = {
+              transaction_date: formData.transactionDate,
+              expense_type: formData.expense,
+              expense_details: expenseDetails,
+              expense_total: formData.cost,
+              farm_id: 1,
+            };
+
+            const farmInputCreateRequest = {
+              url: "farmInputs/",
+              data: farmInputData,
+              loadingMessage: `Adding ${formData.expense} to inventory...`,
+              successMessage: `${capitilizeFirstLetter(
+                formData.expense
+              )} added successfully`,
+            };
+
+            const expenseCreateRequest = {
+              url: "expenses/",
+              data: expenseData,
+              loadingMessage: "Creating expense...",
+              successMessage: "Expense created successfully",
+            };
+            console.log("farmInputData", farmInputData);
+            post(farmInputCreateRequest).then((result) => {
+              if (result.status === "success") {
                 post(expenseCreateRequest);
               }
             });
-            console.log(expenseData);
+          } else {
+            const { expense, cost, transactionDate } = formData;
+
+            const expenseDetails = [{ ...formData }];
+            const expenseData = {
+              expense_type: expense,
+              transaction_date: transactionDate,
+              expense_details: expenseDetails,
+              expense_total: cost,
+            };
+
+            const expenseCreateRequest = {
+              url: "expenses/",
+              data: expenseData,
+              loadingMessage: "Creating expense...",
+              successMessage: "Expense created successfully",
+            };
+
+            post(expenseCreateRequest);
           }
-        }
-
-        if (
-          formData.expense === "fertilizer" ||
-          formData.expense === "pesticide"
-        ) {
-          const { description, expense, quantity, measurementUnit } = formData;
-          const farmInputData = {
-            description,
-            farm_input_type: expense,
-            quantity,
-            measurement_unit: measurementUnit,
-            farm_id: 1,
-          };
-
-          const expenseDetails = [{ ...formData }];
-          const expenseData = {
-            transaction_date: formData.transactionDate,
-            expense_type: formData.expense,
-            expense_details: expenseDetails,
-            expense_total: formData.cost,
-            farm_id: 1,
-          };
-
-          const farmInputCreateRequest = {
-            url: "farmInputs/",
-            data: farmInputData,
-            loadingMessage: `Adding ${formData.expense} to inventory...`,
-            successMessage: `${capitilizeFirstLetter(
-              formData.expense
-            )} added successfully`,
-          };
-
-          const expenseCreateRequest = {
-            url: "expenses/",
-            data: expenseData,
-            loadingMessage: "Creating expense...",
-            successMessage: "Expense created successfully",
-          };
-          console.log("farmInputData", farmInputData);
-          post(farmInputCreateRequest).then((result) => {
-            if (result.status === "success") {
-              post(expenseCreateRequest);
-            }
-          });
-        } else {
-          const { expense, cost, transactionDate } = formData;
-
-          const expenseDetails = [{ ...formData }];
-          const expenseData = {
-            expense_type: expense,
-            transaction_date: transactionDate,
-            expense_details: expenseDetails,
-            expense_total: cost,
-          };
-
-          const expenseCreateRequest = {
-            url: "expenses/",
-            data: expenseData,
-            loadingMessage: "Creating expense...",
-            successMessage: "Expense created successfully",
-          };
-
-          post(expenseCreateRequest);
         }
       });
     }

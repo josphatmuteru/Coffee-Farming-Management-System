@@ -43,6 +43,7 @@ import authenticationRouter from "./routes/authenticationRoutes.js";
 import viewRouter from "./routes/viewRoutes.js";
 import expenseRouter from "./routes/expenseRoutes.js";
 import farmInputRouter from "./routes/farmInputRoutes.js";
+import activityRouter from "./routes/activityRoutes.js";
 
 app.set("view engine", "pug");
 
@@ -55,5 +56,6 @@ app.use("/", viewRouter);
 app.use("/api/v1/authentication", authenticationRouter);
 app.use("/api/v1/expenses", expenseRouter);
 app.use("/api/v1/farmInputs", farmInputRouter);
+app.use("/api/v1/activities", activityRouter);
 
 export default app;

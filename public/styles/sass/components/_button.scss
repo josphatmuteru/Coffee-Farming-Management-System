@@ -62,6 +62,10 @@
   &-secondary {
     border: 1px solid #d1d5db;
   }
+  &-danger {
+    color: #fff;
+    background-color: $color-red-700;
+  }
 
   &-icon {
     display: flex;

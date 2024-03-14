@@ -59,35 +59,39 @@ block content
                       span Description
                       span Quantity
                     ul.list.farm-input-inventory
+                  .flex.width-max
+                    button.btn.btn-medium.btn-icon.btn-primary.width-max.btn-add-different-farm-input.btn-open-expense-dialog-and-form(data-opens='fertilizer') 
+                      ion-icon(name='add-outline')
+                      span Add Different Fertilizer
                       
             section.section.section-recommended-activities
               h3.heading-tertiary
                 | This Month&apos;s Recommended Farm Activities
               ul.list.recommended-activities
-                li.activity
-                  span.icon
-                    img.image-icon-sm(src='../src/fertilizer.png', alt='')
-                  .activity_details.flex.flex-dc
-                    span Fertilizer Application
-                    span - CAN
-                  button.btn.btn-small.btn-primary.btn-open-schedule-dialog-and-form(data-opens='fertilizerApplication')
-                    | Add to schedule
-                li.activity
-                  span.icon
-                    img.image-icon-sm(src='../src/pruning.png', alt='')
-                  .activity_details.flex.flex-dc
-                    span Pruning
-                    span &nbsp;
-                  button.btn.btn-small.btn-primary.btn-open-schedule-dialog-and-form(data-opens='pruning')
-                    | Add to schedule
-                li.activity
-                  span.icon
-                    img.image-icon-sm(src='../src/pesticide.png', alt='')
-                  .activity_details.flex.flex-dc
-                    span Pesticide Application 
-                    span - Some pesticide
-                  button.btn.btn-small.btn-primary.btn-open-schedule-dialog-and-form(data-opens='pesticideApplication')
-                    | Add to schedule
+                //- li.activity
+                //-   span.icon
+                //-     img.image-icon-sm(src='../src/fertilizer.png', alt='')
+                //-   .activity_details.flex.flex-dc
+                //-     span Fertilizer Application
+                //-     span - CAN
+                //-   button.btn.btn-small.btn-primary.btn-open-schedule-dialog-and-form(data-opens='fertilizerApplication')
+                //-     | Add to schedule
+                //- li.activity
+                //-   span.icon
+                //-     img.image-icon-sm(src='../src/pruning.png', alt='')
+                //-   .activity_details.flex.flex-dc
+                //-     span Pruning
+                //-     span &nbsp;
+                //-   button.btn.btn-small.btn-primary.btn-open-schedule-dialog-and-form(data-opens='pruning')
+                //-     | Add to schedule
+                //- li.activity
+                //-   span.icon
+                //-     img.image-icon-sm(src='../src/pesticide.png', alt='')
+                //-   .activity_details.flex.flex-dc
+                //-     span Pesticide Application 
+                //-     span - Some pesticide
+                //-   button.btn.btn-small.btn-primary.btn-open-schedule-dialog-and-form(data-opens='pesticideApplication')
+                //-     | Add to schedule
 
         .aside
           .weather-box
@@ -219,7 +223,7 @@ block content
             .scheduling
               h4.heading-tertiary Schedule
               .schedule_activities
-                ul.list.activities_list
+                ul.list.activities_list.schedule_activities-list
               
                 .schedule_add-activity
                   dialog#dialog--schedule.dialog

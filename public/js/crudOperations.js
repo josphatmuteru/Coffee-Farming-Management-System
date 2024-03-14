@@ -2,7 +2,7 @@ import { showAlert } from "./alert.js";
 
 export async function post(req) {
   const data = JSON.stringify(req.data);
-
+  console.log(data);
   try {
     showAlert("loading", req.loadingMessage);
     const res = await fetch(`/api/v1/${req.url}`, {
@@ -41,6 +41,21 @@ export async function get(req) {
     } else {
       return {};
     }
+  } catch (err) {
+    console.log(err);
+  }
+}
+export async function sendDelete(req) {
+  try {
+    showAlert("loading", req.loadingMessage);
+    const res = await fetch(`/api/v1/${req.url}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const result = await res.json();
+    return result;
   } catch (err) {
     console.log(err);
   }

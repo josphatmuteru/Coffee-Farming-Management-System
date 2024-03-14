@@ -30,7 +30,7 @@ export async function createFarmInput(req, res) {
 export async function updateFarmInput(req, res) {
   const farm_input_id = req.params.id;
   const { farmInputData } = req.body;
-  console.log(farm_input_id);
+  console.log(farmInputData);
   const { data, error } = await supabase
     .from("farm_inputs")
     .update(farmInputData)
@@ -42,5 +42,21 @@ export async function updateFarmInput(req, res) {
     res.status(500).json({ status: "error", message: error.message });
   } else {
     res.status(200).json({ status: "success", data });
+  }
+}
+export async function deleteFarmInput(req, res) {
+  const farm_input_id = req.params.id;
+
+  const { data, error } = await supabase
+    .from("farm_inputs")
+    .delete()
+    .eq("farm_input_id", farm_input_id)
+    .select();
+
+  if (error) {
+    console.log(error);
+    res.status(500).json({ status: "error", message: error.message });
+  } else {
+    res.status(200).json({ status: "success" });
   }
 }

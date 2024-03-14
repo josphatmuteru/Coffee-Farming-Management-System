@@ -6,7 +6,7 @@ export const getHarvestData = async (req, res, next) => {
     .select("month, total_yield_amount");
 
   if (error) {
-    res.status(error.status).json({ status: "error", message: error.message });
+    res.status(404).json({ status: "error", message: error.message });
   } else {
     req.harvestData = data;
   }

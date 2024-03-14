@@ -729,6 +729,7 @@ exports.export = function(dest, destName, get) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "HandleDashboardFunctions", ()=>HandleDashboardFunctions);
+var _alertJs = require("./alert.js");
 var _crudOperationsJs = require("./crudOperations.js");
 async function HandleDashboardFunctions() {
     const expenseDialog = document.getElementById("dialog--expenses");
@@ -761,6 +762,26 @@ async function HandleDashboardFunctions() {
         }
         return newObject;
     }
+    const fetchScheduleActivities = async ()=>{
+        const req = {
+            url: "activities/"
+        };
+        const scheduleActivities = await (0, _crudOperationsJs.get)(req);
+        return scheduleActivities;
+    };
+    const scheduleActivities = await fetchScheduleActivities();
+    const thisMonthsRecommendedActivities = await (0, _crudOperationsJs.get)({
+        url: "activities/recommended-this-month"
+    });
+    thisMonthsRecommendedActivities.forEach((activity)=>{
+        const listItemMarkup = createRecommendedActivitiesListItemMarkup(activity);
+        document.querySelector(".recommended-activities").insertAdjacentHTML("afterbegin", listItemMarkup);
+        handleRecommendedActivities();
+    });
+    scheduleActivities.forEach((activity)=>{
+        const listItemMarkup = createScheduleListItemMarkup(activity.activity_details);
+        document.querySelector(".schedule_activities-list").insertAdjacentHTML("afterbegin", listItemMarkup);
+    });
     const fetchFarmInputs = async ()=>{
         const req = {
             url: "farmInputs/"
@@ -1088,32 +1109,28 @@ async function HandleDashboardFunctions() {
         let listItemsMarkup = ``;
         farmInputItems.forEach((item)=>{
             listItemsMarkup += `
-                                        <li class="row row--item"
-                                         data-item-details='${JSON.stringify({
+                            <li class="row row--item"
+                              data-item-details='${JSON.stringify({
                 farmInputId: item.farmInputId,
+                farmInputType: item.farmInputType,
                 description: item.description,
                 currentQuantity: item.quantity,
                 measurementUnit: item.measurementUnit
             })}'>
-                                          <span>${item.description}</span>
-                                          <span>${item.quantity} ${item.measurementUnit === "Litres" ? "Ltr" : item.measurementUnit === "Kilograms" ? "Kg" : item.measurementUnit}</span>
-                                          <button
-                                            class="btn btn-small btn-primary btn-icon btn-open-expense-dialog-and-form"
-                                            data-opens=${farmInput}
-                                            data-item-='${item.farmInputId}'
-
-
-
-                                          >
-                                            <ion-icon name="add-outline"></ion-icon>
-                                            <span>Add More</span>
-                                          </button>
-                                          <button class="btn btn-icon-only">
-                                            <ion-icon name="trash-outline"></ion-icon>
-                                          </button>
-                                        </li>
-
-                              `;
+                              <span>${item.description}</span>
+                              <span>${item.quantity} ${item.measurementUnit === "Litres" ? "Ltr" : item.measurementUnit === "Kilograms" ? "Kg" : item.measurementUnit}</span>
+                              <button
+                                class="btn btn-small btn-primary btn-icon btn-open-expense-dialog-and-form"
+                                data-opens=${farmInput}
+                                data-item-='${item.farmInputId}'>
+                                <ion-icon name="add-outline"></ion-icon>
+                                <span>Add More</span>
+                              </button>
+                              <button class="btn btn-icon-only btn-delete-farmInput">
+                                <ion-icon name="trash-outline"></ion-icon>
+                              </button>
+                            </li>
+`;
         });
         return listItemsMarkup;
     }
@@ -1134,29 +1151,107 @@ async function HandleDashboardFunctions() {
             btn.disabled = true;
             farmInputInvetoryListEl.innerHTML = "";
             farmInputInvetoryListEl.insertAdjacentHTML("afterBegin", listItemsMarkup);
+            const addDifferentFarmInputBtn = farmInputInvetoryListEl.parentNode.parentNode.querySelector(".btn-add-different-farm-input");
+            addDifferentFarmInputBtn.setAttribute("data-opens", farmInputToShow);
+            addDifferentFarmInputBtn.querySelector("span").textContent = `Add Different ${capitilizeFirstLetter(farmInputToShow)}`;
             handleFarmInputInventory(btn);
         });
     }
-    function handleFarmInputInventory(btn) {
+    function handleFarmInputInventory() {
         const openExpenseDialogAndFormBtns = document.querySelectorAll(".btn-open-expense-dialog-and-form");
-        const farmInputToShow = btn.getAttribute("data-shows");
+        const deleteFarmInputBtns = document.querySelectorAll(".btn-delete-farmInput");
         openExpenseDialogAndFormBtns.forEach((btn)=>{
+            const farmInputToShow = btn.getAttribute("data-shows");
             btn.addEventListener("click", (e)=>{
                 e.preventDefault();
                 const itemId = btn.getAttribute("data-item-id") * 1;
-                const itemDetails = btn.closest("li").getAttribute("data-item-details");
-                console.log(itemDetails);
-                const formValues = JSON.parse(itemDetails);
                 const formToOpen = btn.getAttribute("data-opens");
-                const farmInputDetails = availableFarmInputs[farmInputToShow].find((item)=>item.farmInputId === itemId);
-                // const formValues = { id: 2, description: "some pesticide" };
-                console.log(itemId, formValues);
-                expenseDialog.showModal();
+                if (itemId) {
+                    const itemDetails = btn.closest("li")?.getAttribute("data-item-details");
+                    const formValues = JSON.parse(itemDetails);
+                    expenseDialog.showModal();
+                    const isEditMode = true;
+                    openForm(e, btn, "expense", formValues, isEditMode);
+                } else {
+                    expenseDialog.showModal();
+                    openForm(e, btn, "expense");
+                }
+            });
+        });
+        deleteFarmInputBtns.forEach((btn)=>{
+            btn.addEventListener("click", (e)=>{
+                const itemDetails = btn.closest("li")?.getAttribute("data-item-details");
+                const farmInputData = JSON.parse(itemDetails);
+                const { farmInputId, description, farmInputType } = farmInputData;
+                const confirmDeleteModal = document.createElement("dialog");
+                confirmDeleteModal.setAttribute("id", "dialog-confirm-delete-farmInput");
+                confirmDeleteModal.classList.add("dialog");
+                const confirmDeleteMarkup = `
+        <div class='flex'>
+          <button class='btn btn-icon-only btn-close-modal ml-auto'>
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+        <form>
+        <h3>Discard ${capitilizeFirstLetter(farmInputType)}</h3>
+        <div class='flex flex-dc gap-md'>
+        <span class='intruction-text'>
+          Are you sure you want ot remove ${description} from the inventory?
+        </span>
+        <div class="flex gap-md ml-auto">
+          <button type='button' class="btn btn-medium btn-secondary btn-close-modal">Cancel</button>
+          <button type='button' class="btn btn-medium btn-danger btn-confirm-delete">Delete</button>
+        </div>
+        </div>
+        </form>
+`;
+                confirmDeleteModal.innerHTML = confirmDeleteMarkup;
+                btn.parentElement.insertAdjacentElement("afterbegin", confirmDeleteModal);
+                confirmDeleteModal.showModal();
+                confirmDeleteModal.querySelectorAll(".btn-close-modal").forEach((btn)=>{
+                    btn.addEventListener("click", (e)=>{
+                        e.preventDefault();
+                        confirmDeleteModal.close();
+                    });
+                });
+                confirmDeleteModal.querySelector(".btn-confirm-delete").addEventListener("click", (e)=>{
+                    e.preventDefault();
+                    (0, _crudOperationsJs.sendDelete)({
+                        url: `farmInputs/${farmInputId}`,
+                        loadingMessage: `Removing ${description} from inventory...`
+                    }).then((result)=>{
+                        if (result.status === "success") {
+                            confirmDeleteModal.close();
+                            (0, _alertJs.showAlert)("success", `${capitilizeFirstLetter(description)} removed successfully`);
+                        }
+                    });
+                });
+                console.log(farmInputData);
+            });
+        });
+    }
+    function handleRecommendedActivities() {
+        const openScheduleDialogAndFormBtns = document.querySelectorAll(".btn-open-schedule-dialog-and-form");
+        openScheduleDialogAndFormBtns.forEach((btn)=>{
+            console.log(btn);
+            btn.addEventListener("click", (e)=>{
+                e.preventDefault();
+                const formToOpen = btn.getAttribute("data-opens");
+                const activityDetails = JSON.parse(btn.closest("li").getAttribute("data-activity-details"));
+                const farmInputType = formToOpen.includes("Application") ? formToOpen.split("Application")[0] : false;
+                const farmInput = activityDetails.required_farm_input;
+                console.log(farmInput);
+                scheduleDialog.showModal();
                 // dialogContentEl.removeChild(selectExpenseForm);
-                console.log(expenseForms[formToOpen]);
-                const isEditMode = true;
-                openForm(e, btn, "expense", formValues, isEditMode);
-                handleFormOpen();
+                if (farmInput && farmInputType) {
+                    const formValues = {
+                        [farmInputType]: farmInput
+                    };
+                    openForm(e, btn, "activity", formValues);
+                }
+                console.log(formToOpen);
+                openForm(e, btn, "activity");
+            // handleFormOpen();
             });
         });
     }
@@ -1194,12 +1289,12 @@ async function HandleDashboardFunctions() {
         console.log(elements);
         return elements;
     }
+    function capitilizeFirstLetter(word) {
+        const capitilizedFirstLetterWord = word.charAt(0).toUpperCase() + word.slice(1);
+        console.log(capitilizedFirstLetterWord);
+        return capitilizedFirstLetterWord;
+    }
     function createMarkup(farmInput, formType, formHeading, isEditMode) {
-        function capitilizeFirstLetter1(word) {
-            const capitilizedFirstLetterWord = word.charAt(0).toUpperCase() + word.slice(1);
-            console.log(capitilizedFirstLetterWord);
-            return capitilizedFirstLetterWord;
-        }
         function createExpenseFormDetails(formHeading, farmInput) {
             let formDetails = [
                 {
@@ -1209,7 +1304,7 @@ async function HandleDashboardFunctions() {
                 },
                 {
                     id: "description",
-                    label: `${farmInput ? capitilizeFirstLetter1(farmInput) : "Description"}`,
+                    label: `${farmInput ? capitilizeFirstLetter(farmInput) : "Description"}`,
                     type: "text"
                 }
             ];
@@ -1251,7 +1346,7 @@ async function HandleDashboardFunctions() {
             if (farmInput) {
                 const farmInputRequiredQuantityField = {
                     id: "requiredQuantity",
-                    label: `${capitilizeFirstLetter1(farmInput.type)} quantity required`,
+                    label: `${capitilizeFirstLetter(farmInput.type)} quantity required`,
                     type: "number"
                 };
                 const farmInputSubForm = {
@@ -1286,13 +1381,13 @@ async function HandleDashboardFunctions() {
                         },
                         {
                             id: `${farmInput.type}toPurchase`,
-                            label: `${capitilizeFirstLetter1(farmInput.type)}`,
+                            label: `${capitilizeFirstLetter(farmInput.type)}`,
                             type: "text"
                         },
                         farmInputRequiredQuantityField,
                         {
                             id: "quantityToPurchase",
-                            label: `${capitilizeFirstLetter1(farmInput.type)} quantity to purchase`,
+                            label: `${capitilizeFirstLetter(farmInput.type)} quantity to purchase`,
                             type: "number"
                         },
                         {
@@ -1307,7 +1402,7 @@ async function HandleDashboardFunctions() {
                         },
                         {
                             id: "purchaseCost",
-                            label: `${capitilizeFirstLetter1(farmInput.type)} purchase cost`,
+                            label: `${capitilizeFirstLetter(farmInput.type)} purchase cost`,
                             type: "number"
                         }
                     ]
@@ -1360,7 +1455,7 @@ async function HandleDashboardFunctions() {
         });
         let markup = `
                           <form class='form dialog_content--input dialog_content--input-${formType}-details 'data-isEditMode=${isEditMode}>
-                            ${formType === "expense" ? `<h2>Enter ${capitilizeFirstLetter1(formHeading)} Expense Details</h2>
+                            ${formType === "expense" ? `<h2>Enter ${capitilizeFirstLetter(formHeading)} Expense Details</h2>
                             <div class="form-row form-row--horizontal hidden">
                               <label for="expense">Expense</label>
                               <input id='expense' class="input input--expense " disabled value=${formHeading} required type="text" />
@@ -1425,6 +1520,34 @@ async function HandleDashboardFunctions() {
         console.log(hours - 12);
         const time = hours - 12 === -12 ? `12 : ${minutes} AM` : hours - 12 > 0 ? `${hours - 12}:${minutes} PM` : `${hours.toString().padStart(2, "0")}:${minutes} AM`;
         return time;
+    }
+    function createRecommendedActivitiesListItemMarkup(activityData) {
+        const { activity, required_farm_input: farmInput } = activityData;
+        const activityName = capitilizeFirstLetter(formatCamelCaseToNormal(activity));
+        const icon = activity.split("Application")[0];
+        const markup = `
+    <li class="activity" data-activity-details='${JSON.stringify(activityData)}'>
+      <span class="icon"
+        ><img
+          class="image-icon-sm"
+          src="../src/${icon}.png"
+          alt=""
+        />
+      </span>
+      <div class="activity_details flex flex-dc">
+        <span>${activityName}</span>
+        <span> ${farmInput ? `- ${farmInput}` : ""}</span>
+      </div>
+
+      <button
+        class="btn btn-small btn-primary btn-open-schedule-dialog-and-form"
+        data-opens="${activity}"
+      >
+        Add to schedule
+      </button>
+  </li>
+    `;
+        return markup;
     }
     function createScheduleListItemMarkup(activityData) {
         let { activity, activityTime, activityDate } = activityData;
@@ -1578,19 +1701,6 @@ async function HandleDashboardFunctions() {
     });
     openActivityFormBtns.forEach((btn)=>{
         btn.addEventListener("click", (e)=>openForm(e, btn, "activity"));
-    });
-    openScheduleDialogAndFormBtns.forEach((btn)=>{
-        console.log(btn);
-        btn.addEventListener("click", (e)=>{
-            e.preventDefault();
-            console.log("clicked");
-            const formToOpen = btn.getAttribute("data-opens");
-            scheduleDialog.showModal();
-            // dialogContentEl.removeChild(selectExpenseForm);
-            console.log(formToOpen);
-            openForm(e, btn, "activity");
-        // handleFormOpen();
-        });
     });
     function openForm(e, btn, formType, formValues = {}, isEditMode = false) {
         e.preventDefault();
@@ -1788,7 +1898,9 @@ async function HandleDashboardFunctions() {
                     let farmInputToUpdate, farmInputToCreate = {};
                     const { activity, purchaseCost, requiredQuantity, quantityToPurchase, activityDate, measurementUnit } = activityData;
                     const farmInputType = activity.split("Application")[0];
+                    activityData["farmInputType"] = farmInputType;
                     const purchasedItemName = activityData[purchasedItem].length > 0 ? activityData[purchasedItem] : activityData[`${purchasedItem}toPurchase`];
+                    activityData["farmInputName"] = purchasedItemName;
                     let purchaseExpenseData = {
                         farm_id: 1,
                         expense_type: farmInputType,
@@ -1895,14 +2007,39 @@ async function HandleDashboardFunctions() {
             activityForm.addEventListener("submit", (e)=>{
                 e.preventDefault();
                 const { activityExpenses = {}, farmInputDetails = {}, activityExpensesDataToDisplay = {} } = generateActivityExpenses(activityData, activity);
+                let activityCreateRequest = {};
+                let expenseCreateRequests = {};
+                let farmInputCreateOrUpdateRequest = {};
                 if (Object.keys(activityData).length > 0) {
                     const scheduleListItemMarkup = createScheduleListItemMarkup(activityData);
+                    const { activity, activityDate, activityTime, numberOfLaborers, farmInputName = false, farmInputType = false } = activityData;
+                    console.log(activityData);
+                    const activityDataToUpload = {
+                        activity_name: activity,
+                        activity_date: activityDate,
+                        activity_details: {
+                            activity,
+                            activityDate,
+                            activityTime,
+                            numberOfLaborers: isNaN(numberOfLaborers) ? "Do it yourself" : numberOfLaborers,
+                            farmInputName,
+                            farmInputType
+                        },
+                        activity_status: "pending"
+                    };
+                    activityCreateRequest = {
+                        url: "activities/",
+                        data: activityDataToUpload,
+                        loadingMessage: "Adding activity to schedule",
+                        successMessage: "Activity added successfully"
+                    };
+                    console.log(activityDataToUpload);
                     // document.querySelector(".activities_list").innerHTML = "";
                     document.querySelector(".activities_list").insertAdjacentHTML("beforeend", scheduleListItemMarkup);
                 }
                 if (Object.keys(activityExpensesDataToDisplay).length > 0) openConfirmExpensesForm(activityExpensesDataToDisplay);
                 if (Object.keys(activityExpenses.length > 0)) {
-                    const expenseCreateRequests = Object.keys(activityExpenses).map((key)=>{
+                    expenseCreateRequests = Object.keys(activityExpenses).map((key)=>{
                         const request = {
                             url: "expenses/",
                             data: activityExpenses[key],
@@ -1911,29 +2048,41 @@ async function HandleDashboardFunctions() {
                         };
                         return request;
                     });
-                    if (Object.keys(farmInputDetails.length > 0)) {
-                        let farmInputCreateOrUpdateRequest = {
+                    if (Object.keys(farmInputDetails).length) {
+                        farmInputCreateOrUpdateRequest = {
                             loadingMessage: `Adding ${activityData.activity.split("Application")[0]} to inventory...`,
                             successMessage: `${activityData.activity.split("Application")[0]} added successfully`
                         };
                         if (Object.keys(farmInputDetails).includes("farmInputId")) {
-                            const { farmInputId } = farmInputDetails;
+                            const { farmInputId, quantity } = farmInputDetails;
+                            const farmInputData = {
+                                quantity
+                            };
                             farmInputCreateOrUpdateRequest = {
                                 ...farmInputCreateOrUpdateRequest,
                                 url: `farmInputs/${farmInputId}`,
-                                data: quantity
+                                data: {
+                                    farmInputData
+                                }
                             };
+                            console.log(farmInputCreateOrUpdateRequest);
                         } else farmInputCreateOrUpdateRequest = {
                             url: `farmInputs/`,
                             data: farmInputDetails,
                             ...farmInputCreateOrUpdateRequest
                         };
                         (0, _crudOperationsJs.post)(farmInputCreateOrUpdateRequest).then((result)=>{
-                            if (result.status === "success") expenseCreateRequests.forEach((request)=>{
-                                (0, _crudOperationsJs.post)(request);
+                            if (result.status === "success") (0, _crudOperationsJs.post)(activityCreateRequest).then((result)=>{
+                                if (result.status === "success") expenseCreateRequests.forEach((request)=>{
+                                    (0, _crudOperationsJs.post)(request);
+                                });
                             });
                         });
-                    }
+                    } else (0, _crudOperationsJs.post)(activityCreateRequest).then((result)=>{
+                        if (result.status === "success") expenseCreateRequests.forEach((request)=>{
+                            (0, _crudOperationsJs.post)(request);
+                        });
+                    });
                 }
             });
             function openConfirmExpensesForm(activityExpensesDataToDisplay) {
@@ -1946,6 +2095,7 @@ async function HandleDashboardFunctions() {
         if (expensesForm) expensesForm.addEventListener("submit", (e)=>{
             e.preventDefault();
             const formData = getFormData(expensesForm);
+            console.log("isEditMode", isEditMode);
             if (isEditMode) {
                 if (formData.expense === "fertilizer" || formData.expense === "pesticide") {
                     const newQuantity = existingData.currentQuantity + formData.quantity;
@@ -1957,7 +2107,9 @@ async function HandleDashboardFunctions() {
                         url: `farmInputs/${farmInputId}`,
                         data: {
                             farmInputData
-                        }
+                        },
+                        loadingMessage: `Adding more ${formData.expense} to inventory...`,
+                        successMessage: `${capitilizeFirstLetter(formData.expense)} added successfully`
                     };
                     const expenseDetails = [
                         {
@@ -1978,17 +2130,21 @@ async function HandleDashboardFunctions() {
                         successMessage: "Expense created successfully..."
                     };
                     (0, _crudOperationsJs.post)(farmInputUpdateRequest).then((result)=>{
-                        if (result.status === "success") (0, _crudOperationsJs.post)(expenseCreateRequest);
+                        if (result.status === "success") (0, _crudOperationsJs.post)(expenseCreateRequest).then((result)=>{
+                            if (result.status === "success") {
+                                const dialogEl = document.getElementById("dialog--expenses");
+                                dialogEl.close();
+                            }
+                        });
                     });
-                    console.log(expenseData);
+                    return;
                 }
-            }
-            if (formData.expense === "fertilizer" || formData.expense === "pesticide") {
-                const { description, expense, quantity: quantity1, measurementUnit } = formData;
+            } else if (formData.expense === "fertilizer" || formData.expense === "pesticide") {
+                const { description, expense, quantity, measurementUnit } = formData;
                 const farmInputData = {
                     description,
                     farm_input_type: expense,
-                    quantity: quantity1,
+                    quantity,
                     measurement_unit: measurementUnit,
                     farm_id: 1
                 };
@@ -2045,14 +2201,16 @@ async function HandleDashboardFunctions() {
     }
 }
 
-},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2nPvR":[function(require,module,exports) {
+},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./alert.js":"kxdiQ"}],"2nPvR":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "post", ()=>post);
 parcelHelpers.export(exports, "get", ()=>get);
+parcelHelpers.export(exports, "sendDelete", ()=>sendDelete);
 var _alertJs = require("./alert.js");
 async function post(req) {
     const data = JSON.stringify(req.data);
+    console.log(data);
     try {
         (0, _alertJs.showAlert)("loading", req.loadingMessage);
         const res = await fetch(`/api/v1/${req.url}`, {
@@ -2086,6 +2244,21 @@ async function get(req) {
         const result = await res.json();
         if (result.status === "success") return result.data;
         else return {};
+    } catch (err) {
+        console.log(err);
+    }
+}
+async function sendDelete(req) {
+    try {
+        (0, _alertJs.showAlert)("loading", req.loadingMessage);
+        const res = await fetch(`/api/v1/${req.url}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const result = await res.json();
+        return result;
     } catch (err) {
         console.log(err);
     }

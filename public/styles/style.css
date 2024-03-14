@@ -142,6 +142,8 @@ a {
   flex-direction: column;
   padding: 4rem;
   width: 100%;
+  max-height: 100svh;
+  overflow-y: auto;
   gap: 4rem;
 }
 .dashboard_graph {
@@ -175,8 +177,6 @@ a {
   flex-direction: column;
   border-radius: 7px;
   box-shadow: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
-  max-height: 32rem;
-  overflow: hidden;
 }
 .dashboard .section h3 {
   font-size: 1.4rem;
@@ -188,16 +188,18 @@ a {
   border: 0.5px solid #888;
   border-radius: 5px;
   overflow: hidden;
+  margin-bottom: 1.4rem;
 }
 .dashboard .tab_body .farm-input-inventory {
   display: flex;
   flex-direction: column;
+  max-height: 20rem;
   overflow-y: auto;
 }
 .dashboard .tab_body .row {
   margin-top: 0;
   display: grid;
-  grid-template-columns: 12rem 6rem 10rem 0.5fr;
+  grid-template-columns: 16rem 6rem 10rem 0.5fr;
   gap: 2rem;
   align-items: center;
   padding: 1rem;
@@ -226,7 +228,6 @@ a {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  overflow-y: auto;
 }
 .dashboard .section-recommended-activities .activity {
   display: grid;
@@ -802,6 +803,7 @@ a {
 .aside {
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .weather-box {
@@ -877,10 +879,11 @@ a {
 
 .section-actions {
   background-color: #207d40;
+  display: flex;
+  flex-direction: column;
+  gap: 0.64rem;
+  padding: 1rem 2rem 0 2rem;
   height: 100%;
-  display: grid;
-  padding: 2rem;
-  grid-template-rows: 2fr 4fr;
 }
 .section-actions h4 {
   color: #fff;
@@ -890,6 +893,7 @@ a {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding-bottom: 1.4rem;
 }
 .section-actions .scheduling {
   margin-top: 1rem;
@@ -900,6 +904,7 @@ a {
   gap: 1rem;
   margin-top: 0.8rem;
   overflow-y: auto;
+  max-height: 22rem;
 }
 .section-actions .schedule_activity {
   display: grid;
@@ -941,13 +946,6 @@ a {
   font-size: 1.1rem;
   font-weight: 600;
   color: #333;
-}
-.section-actions .schedule_add-activity {
-  margin-top: 2.4rem;
-  display: flex;
-}
-.section-actions .schedule_add-activity button {
-  width: 100%;
 }
 
 .button-70 {
@@ -1009,6 +1007,10 @@ a {
 }
 .btn-secondary {
   border: 1px solid #d1d5db;
+}
+.btn-danger {
+  color: #fff;
+  background-color: #c32121;
 }
 .btn-icon {
   display: flex;
@@ -1219,10 +1221,13 @@ a {
   border: 0.5px solid #222;
   border-radius: 5px;
   box-shadow: 0 2.4rem 3.2rem rgba(0, 0, 0, 0.12);
+  background-color: #fbfbfb;
+  padding: 2rem;
 }
 .dialog form,
 .dialog .form {
-  padding: 4rem;
+  padding: 2rem;
+  box-shadow: none;
 }
 .dialog form h2,
 .dialog .form h2 {
