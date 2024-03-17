@@ -1,24 +1,69 @@
-.activity-instructions {
+.activity-instructions,
+.pest-details {
   display: flex;
-  flex-wrap: wrap;
+
+  flex-direction: column;
   gap: 2rem;
+
   .row {
     padding: 2rem;
     background-color: #fbfbfb;
   }
 
-  .procedure_steps {
+  .procedure_steps,
+  .pest_symptoms {
     padding: 0 2rem;
     list-style: none; /* Remove default list-style */
     counter-reset: step-counter; /* Reset the counter */
   }
 
-  .procedure_steps li {
+  .procedure_steps,
+  .pest_symptoms li {
     counter-increment: step-counter; /* Increment the counter for each list item */
+  }
+  .pest_symptoms {
+    list-style: square;
   }
 
   .procedure_steps li:before {
     content: "Step " counter(step-counter) ": "; /* Add the word "Step" and the counter value before each list item */
     font-weight: bold; /* Optional: Make the step number bold */
+  }
+
+  .section {
+    &-instructions--images,
+    &-symptoms--images {
+      & .row {
+        display: flex;
+        flex-direction: column;
+
+        & h3 {
+          font-size: 1.4rem;
+          font-family: "Rubik", sans-serif;
+          font-weight: 500;
+          margin-bottom: 0.8rem;
+        }
+      }
+
+      & .list-activity-images {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1.4rem;
+
+        & figure {
+          & img {
+            outline: 1px solid #333;
+            border-radius: $border-radius-sm;
+            max-height: 24rem;
+          }
+
+          & figcaption {
+            margin-top: 0.64rem;
+            font-size: 1.3rem;
+          }
+        }
+      }
+    }
   }
 }

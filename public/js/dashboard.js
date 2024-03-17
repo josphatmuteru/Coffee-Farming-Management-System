@@ -7,6 +7,14 @@ export async function HandleDashboardFunctions() {
   const openDialogBtns = document.querySelectorAll(".btn-open-dialog");
 
   const showFarmInputBtns = document.querySelectorAll(".btn-show-farmInput");
+  const closeDialogBtns = document.querySelectorAll(".btn-close-modal");
+
+  closeDialogBtns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      btn.closest("dialog").close();
+    });
+  });
 
   // let openExpenseDialogAndFormBtns = document.querySelectorAll(
   //   ".btn-open-expense-dialog-and-form"
@@ -75,15 +83,22 @@ export async function HandleDashboardFunctions() {
     handleRecommendedActivities();
   });
 
-  scheduleActivities.forEach((activity) => {
-    const listItemMarkup = createScheduleListItemMarkup(
-      activity.activity_details
-    );
+  function renderScheduleActivities() {
+    scheduleActivities.forEach((activity) => {
+      const listItemMarkup = createScheduleListItemMarkup(
+        activity.activity_details,
+        activity.activity_id
+      );
 
-    document
-      .querySelector(".schedule_activities-list")
-      .insertAdjacentHTML("afterbegin", listItemMarkup);
-  });
+      document
+        .querySelector(".schedule_activities-list")
+        .insertAdjacentHTML("afterbegin", listItemMarkup);
+    });
+
+    handleScheduleActivities();
+  }
+
+  renderScheduleActivities();
 
   const fetchFarmInputs = async () => {
     const req = {
@@ -590,13 +605,26 @@ export async function HandleDashboardFunctions() {
           ? formToOpen.split("Application")[0]
           : false;
         const farmInput = activityDetails.required_farm_input;
+        const measurementUnit = activityDetails.farm_input_measurement_unit;
 
         console.log(farmInput);
         scheduleDialog.showModal();
         // dialogContentEl.removeChild(selectExpenseForm);
 
         if (farmInput && farmInputType) {
-          const formValues = { [farmInputType]: farmInput };
+          let formValues = {};
+          if (
+            availableFarmInputs[farmInputType].find(
+              (item) => item.description === farmInput
+            )
+          ) {
+            formValues = { [farmInputType]: farmInput, measurementUnit };
+          } else {
+            formValues = {
+              [`${farmInputType}ToPurchase`]: farmInput,
+              measurementUnit,
+            };
+          }
           openForm(e, btn, "activity", formValues);
         }
 
@@ -650,6 +678,151 @@ export async function HandleDashboardFunctions() {
     console.log(elements);
 
     return elements;
+  }
+
+  function handleScheduleActivities() {
+    const openActivityPopoverBtns = document.querySelectorAll(
+      ".btn-trigger-popover"
+    );
+
+    const cancelActivityBtns = document.querySelectorAll(
+      ".btn-cancel-activity"
+    );
+    const completeActivityBtns = document.querySelectorAll(
+      ".btn-complete-activity"
+    );
+
+    openActivityPopoverBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        const currentPopover = btn
+          .closest(".schedule_activity-btns")
+          .querySelector(".popover");
+
+        document.querySelectorAll(".popover").forEach((popover) => {
+          if (popover !== currentPopover) {
+            popover.classList.add("hidden");
+          }
+        });
+        currentPopover.classList.toggle("hidden");
+      });
+    });
+
+    completeActivityBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const activityListItemEl = btn.closest("li");
+        const activityId =
+          activityListItemEl.getAttribute("data-activity-id") * 1;
+        const activity = scheduleActivities.find(
+          (activity) => activity.activity_id === activityId
+        );
+        btn.textContent = "Updating activity...";
+        post({
+          url: `activities/${activityId}`,
+          data: { activity_status: "completed" },
+          loadingMessage: "Updating activity...",
+          successMessage: "Activity completed successfully",
+        }).then((result) => {
+          if (result.status === "success") {
+            btn.textContent = "Activity updated";
+
+            activityListItemEl.parentNode.removeChild(activityListItemEl);
+          }
+        });
+      });
+    });
+
+    cancelActivityBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const activityListItemEl = btn.closest("li");
+        const activityId =
+          activityListItemEl.getAttribute("data-activity-id") * 1;
+        const activity = scheduleActivities.find(
+          (activity) => activity.activity_id === activityId
+        );
+        btn.textContent = "Cancelling activity...";
+
+        const { farmInputName, farmInputType, requiredQuantity } =
+          activity.activity_details;
+
+        console.log(farmInputName, farmInputType, activity.activity_details);
+
+        if (farmInputName) {
+          const farmInput = availableFarmInputs[farmInputType].find(
+            (item) => item.description === farmInputName
+          );
+
+          const { farmInputId, quantity } = farmInput;
+
+          const newQuantity = quantity + requiredQuantity;
+
+          post({
+            url: `farmInputs/${farmInputId}`,
+            data: { farmInputData: { quantity: newQuantity } },
+            loadingMessage: `Updating ${farmInputName} quantity`,
+            successMessage: `${capitilizeFirstLetter(
+              farmInputName
+            )} quantity updated`,
+          }).then((result) => {
+            if (result.status === "success") {
+              sendDelete({ url: `expenses/labour/${activityId}` }).then(
+                (result) => {
+                  if (result.status === "success") {
+                    post({
+                      url: `activities/${activityId}`,
+                      data: { activity_status: "cancelled" },
+                      loadingMessage: "Cancelling activity...",
+                      successMessage: "Activity cancelled successfully",
+                    }).then((result) => {
+                      if (result.status === "success") {
+                        btn.textContent = "Activity cancelled";
+
+                        activityListItemEl.parentNode.removeChild(
+                          activityListItemEl
+                        );
+                      }
+                    });
+                  }
+                }
+              );
+            }
+          });
+        } else {
+          sendDelete({ url: `expenses/labour/${activityId}` }).then(
+            (result) => {
+              if (result.status === "success") {
+                console.log(activityId);
+                post({
+                  url: `activities/${activityId}`,
+                  data: { activity_status: "cancelled" },
+                  loadingMessage: "Cancelling activity...",
+                  successMessage: "Activity cancelled successfully",
+                }).then((result) => {
+                  if (result.status === "success") {
+                    btn.textContent = "Activity cancelled";
+
+                    activityListItemEl.parentNode.removeChild(
+                      activityListItemEl
+                    );
+                  }
+                });
+              }
+            }
+          );
+        }
+
+        console.log(activity);
+        // sendDelete({ url: `activities/${activityId}` }).then((result) => {
+        //   if (result.status === "success") {
+        //     btn.textContent = "Activity cancelled";
+
+        //     // activityListItemEl.parentNode.removeChild(activityListItemEl);
+        //   }
+        // });
+      });
+    });
   }
 
   function capitilizeFirstLetter(word) {
@@ -719,7 +892,7 @@ export async function HandleDashboardFunctions() {
 
         const farmInputSubForm = {
           id: "subForm",
-          heading: farmInput.type,
+          heading: capitilizeFirstLetter(farmInput.type),
           optionButtons: [
             {
               label: `Choose from available ${farmInput.type}s `,
@@ -728,7 +901,7 @@ export async function HandleDashboardFunctions() {
             {
               label: "Buy different type",
               unHides: [
-                `${farmInput.type}toPurchase`,
+                `${farmInput.type}ToPurchase`,
                 "quantityToPurchase",
                 "measurementUnit",
                 "requiredQuantity",
@@ -748,7 +921,7 @@ export async function HandleDashboardFunctions() {
             },
 
             {
-              id: `${farmInput.type}toPurchase`,
+              id: `${farmInput.type}ToPurchase`,
               label: `${capitilizeFirstLetter(farmInput.type)}`,
               type: "text",
             },
@@ -818,9 +991,9 @@ export async function HandleDashboardFunctions() {
 
     const elements = formDetails?.map((el) => {
       if (el.id === "subForm") {
-        let subFromMarkup = `<div class='sub-form'>
-                        <div class="form-row form-row--horizontal">
-                          <label>${el.heading}</label>
+        let subFromMarkup = `<div class='sub-form '>
+                        <div class="form-row form-row--horizontal sub-form_option-buttons-row">
+                          <label class='sub-form_label'>${el.heading}</label>
                           <div class='flex flex-dc gap-sm'>`;
         el.optionButtons.forEach((button) => {
           subFromMarkup += `<button  type='button' class='btn btn-medium btn-secondary btn-unHide-form-fields' data-unHides=${JSON.stringify(
@@ -986,10 +1159,18 @@ export async function HandleDashboardFunctions() {
     return markup;
   }
 
-  function createScheduleListItemMarkup(activityData) {
-    let { activity, activityTime, activityDate } = activityData;
-    const farmInput =
-      activityData.fertilizer ?? activityData.pesticide ?? false;
+  function createScheduleListItemMarkup(activityData, activityId) {
+    console.log("activityData", activityData);
+    let {
+      activity,
+      activityTime,
+      activityDate,
+      farmInputName: farmInput,
+    } = activityData;
+    // const farmInput =
+    //   activityData.fertilizer ?? activityData.pesticide ?? false;
+    // const farmInput =
+    //   activityData.fertilizer ?? activityData.pesticide ?? false;
 
     const icon = activity.split("Application")[0];
     activity = formatCamelCaseToNormal(activity);
@@ -1005,7 +1186,7 @@ export async function HandleDashboardFunctions() {
     console.log(activityData);
 
     const scheduleListItemMarkup = ` 
-           <li class="list-item schedule_activity">
+           <li class="list-item schedule_activity" data-activity-id='${activityId}'>
             <span class="schedule_activity-icon">
               <img class="icon-image" src="../src/${icon}.png" alt="" />
             </span>
@@ -1025,9 +1206,23 @@ export async function HandleDashboardFunctions() {
                   `
                 }
                 </div>
-                <button class='btn btn-icon-only--sm ml-auto'>
+                <div class='schedule_activity-btns max-width ml-auto'>
+                <button class='btn btn-icon-only--sm ml-auto btn-trigger-popover' >
                 <ion-icon name="ellipsis-vertical"></ion-icon>
                 </button>
+              
+             
+                <div class='popover popover--schedule hidden' id='schedule-btns--${activityId}'>
+                <button class='btn btn-small btn-icon btn-cancel-activity'>
+                <ion-icon name="trash-outline"></ion-icon>
+                
+                Cancel activity</button>
+                <button class='btn btn-small btn-icon btn-complete-activity'>
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                Mark as done</button>
+                </div>
+                </div>
+              
                 </div>
               <div class="flex flex-dr ${
                 farmInput ? "mt-tiny" : "m"
@@ -1273,6 +1468,71 @@ export async function HandleDashboardFunctions() {
         ".btn-open-confirm-expense-form"
       );
 
+      const subFormLabelEls = activityForm.querySelectorAll(".sub-form_label");
+
+      subFormLabelEls.forEach((el) => {
+        const label = el.textContent.toLowerCase();
+        console.log(label);
+
+        if (
+          Object.keys(existingData).includes(label) ||
+          Object.keys(existingData).includes(`${label}ToPurchase`)
+        ) {
+          const formRowEl = el.parentNode;
+          formRowEl.parentNode.removeChild(formRowEl);
+
+          const farmInput =
+            existingData[label] ?? existingData[`${label}ToPurchase`];
+
+          console.log(farmInput, label);
+
+          const farmInputDetails = getSelectedFarmInputDetails(
+            farmInput,
+            label
+          );
+          const requiredQuantityEl =
+            document.getElementById("requiredQuantity");
+
+          if (Object.keys(farmInputDetails).length > 0) {
+            document
+              .getElementById(label)
+              .closest(".form-row--horizontal")
+              .classList.remove("hidden");
+
+            requiredQuantityEl
+              .closest(".form-row--horizontal")
+              .classList.remove("hidden");
+
+            requiredQuantityEl.removeAttribute("disabled");
+            requiredQuantityEl.addEventListener("change", (e) => {
+              e.preventDefault();
+              compareAvailableAndRequiredQuantities(farmInputDetails.quantity);
+            });
+          } else {
+            document.getElementById(`${label}ToPurchase`).value = farmInput;
+            const elementsToUnHide = [
+              `${label}ToPurchase`,
+              "requiredQuantity",
+              "measurementUnit",
+              "quantityToPurchase",
+              "purchaseCost",
+            ];
+
+            elementsToUnHide.forEach((id) => {
+              const inputEl = document.getElementById(id);
+
+              inputEl
+                .closest(".form-row--horizontal")
+                .classList.remove("hidden");
+
+              inputEl.removeAttribute("disabled");
+            });
+          }
+        }
+      });
+
+      // if(optionButtonsRowEl.querySelector('label').textContent.includes(existingData.fo))
+
       unHideFormFieldsBtns.forEach((btn) => {
         btn.addEventListener("click", (e) => {
           e.preventDefault();
@@ -1314,9 +1574,11 @@ export async function HandleDashboardFunctions() {
 
       availableFarmInputSelectEl?.addEventListener("change", (e) => {
         e.preventDefault();
-        addMeasurementUnitToLabel();
+        if (!availableFarmInputSelectEl.disabled) {
+          addMeasurementUnitToLabel();
 
-        compareAvailableAndRequiredQuantities();
+          compareAvailableAndRequiredQuantities();
+        }
       });
 
       function addMeasurementUnitToLabel() {
@@ -1347,46 +1609,59 @@ export async function HandleDashboardFunctions() {
       }
 
       function getSelectedFarmInputDetails(selectedFarmInput, farmInputType) {
-        const selectedFarmInputDetails = availableFarmInputs[
-          farmInputType
-        ].find((item) => item.description === selectedFarmInput);
+        console.log(selectedFarmInput, farmInputType);
+        const selectedFarmInputDetails =
+          availableFarmInputs[farmInputType].find(
+            (item) => item.description === selectedFarmInput
+          ) ?? {};
 
         console.log(selectedFarmInput);
 
         return selectedFarmInputDetails;
       }
 
-      function compareAvailableAndRequiredQuantities() {
-        if (availableFarmInputSelectEl.disabled) return;
-        if (availableFarmInputSelectEl.value === "") return;
+      function compareAvailableAndRequiredQuantities(
+        availableQuantity = false
+      ) {
+        let selectedFarmInputQuantity;
         const requiredQuantity = requiredQuantityEl.value * 1;
 
-        const farmInputType = availableFarmInputSelectEl.getAttribute("id");
+        function compare(selectedFarmInputQuantity, requiredQuantity) {
+          console.log(document.getElementById("quantityToPurchase"));
+          const quantityToPurchaseEl =
+            document.getElementById("quantityToPurchase");
+          const purchaseCostEl = document.getElementById("purchaseCost");
+          if (selectedFarmInputQuantity < requiredQuantity) {
+            quantityToPurchaseEl.parentElement.classList.remove("hidden");
+            purchaseCostEl.parentElement.classList.remove("hidden");
 
-        const selectedFarmInput = activityForm.querySelector("select").value;
-        console.log(availableFarmInputSelectEl);
-        const selectedFarmInputDetails = getSelectedFarmInputDetails(
-          selectedFarmInput,
-          farmInputType
-        );
-        const selectedFarmInputQuantity = selectedFarmInputDetails?.quantity;
+            quantityToPurchaseEl.removeAttribute("disabled");
+            purchaseCostEl.removeAttribute("disabled");
+          } else if (selectedFarmInputQuantity > requiredQuantity) {
+            quantityToPurchaseEl.parentElement.classList.add("hidden");
+            purchaseCostEl.parentElement.classList.add("hidden");
 
-        console.log(document.getElementById("quantityToPurchase"));
-        const quantityToPurchaseEl =
-          document.getElementById("quantityToPurchase");
-        const purchaseCostEl = document.getElementById("purchaseCost");
-        if (selectedFarmInputQuantity < requiredQuantity) {
-          quantityToPurchaseEl.parentElement.classList.remove("hidden");
-          purchaseCostEl.parentElement.classList.remove("hidden");
+            quantityToPurchaseEl.setAttribute("disabled", true);
+            purchaseCostEl.setAttribute("disabled", true);
+          }
+        }
 
-          quantityToPurchaseEl.removeAttribute("disabled");
-          purchaseCostEl.removeAttribute("disabled");
-        } else if (selectedFarmInputQuantity > requiredQuantity) {
-          quantityToPurchaseEl.parentElement.classList.add("hidden");
-          purchaseCostEl.parentElement.classList.add("hidden");
+        if (availableQuantity) {
+          compare(availableQuantity, requiredQuantity);
+        } else {
+          if (availableFarmInputSelectEl.disabled) return;
+          if (availableFarmInputSelectEl.value === "") return;
 
-          quantityToPurchaseEl.setAttribute("disabled", true);
-          purchaseCostEl.setAttribute("disabled", true);
+          const farmInputType = availableFarmInputSelectEl.getAttribute("id");
+
+          const selectedFarmInput = activityForm.querySelector("select").value;
+          console.log(availableFarmInputSelectEl);
+          const selectedFarmInputDetails = getSelectedFarmInputDetails(
+            selectedFarmInput,
+            farmInputType
+          );
+          selectedFarmInputQuantity = selectedFarmInputDetails?.quantity;
+          compare(selectedFarmInputQuantity, requiredQuantity);
         }
       }
 
@@ -1402,6 +1677,17 @@ export async function HandleDashboardFunctions() {
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(",")
           .replace(",", " ");
+
+        const farmInputType = activity.split("Application")[0];
+
+        activityData["farmInputType"] = farmInputType;
+
+        const purchasedItemName =
+          activityData[farmInputType].length > 0
+            ? activityData[farmInputType]
+            : activityData[`${farmInputType}toPurchase`];
+
+        activityData["farmInputName"] = purchasedItemName;
 
         const {
           numberOfLaborers: laborers,
@@ -1466,16 +1752,16 @@ export async function HandleDashboardFunctions() {
             measurementUnit,
           } = activityData;
 
-          const farmInputType = activity.split("Application")[0];
+          // const farmInputType = activity.split("Application")[0];
 
-          activityData["farmInputType"] = farmInputType;
+          // activityData["farmInputType"] = farmInputType;
 
-          const purchasedItemName =
-            activityData[purchasedItem].length > 0
-              ? activityData[purchasedItem]
-              : activityData[`${purchasedItem}toPurchase`];
+          // const purchasedItemName =
+          //   activityData[purchasedItem].length > 0
+          //     ? activityData[purchasedItem]
+          //     : activityData[`${purchasedItem}toPurchase`];
 
-          activityData["farmInputName"] = purchasedItemName;
+          // activityData["farmInputName"] = purchasedItemName;
 
           let purchaseExpenseData = {
             farm_id: 1,
@@ -1529,12 +1815,12 @@ export async function HandleDashboardFunctions() {
 
             farmInputToUpdate = updatedFarmInputDetails;
           }
-          if (activityData[`${purchasedItem}toPurchase`].length > 1) {
+          if (activityData[`${purchasedItem}ToPurchase`].length > 1) {
             const quantityAfterSubtractingRequiredQuantity =
               quantityToPurchase - requiredQuantity;
 
             const newFarmInputDetails = {
-              description: activityData[`${purchasedItem}toPurchase`],
+              description: activityData[`${purchasedItem}ToPurchase`],
               quantity: quantityAfterSubtractingRequiredQuantity,
               measurement_unit: measurementUnit,
               farm_input_type: farmInputType,
@@ -1648,6 +1934,7 @@ export async function HandleDashboardFunctions() {
             numberOfLaborers,
             farmInputName = false,
             farmInputType = false,
+            requiredQuantity = false,
           } = activityData;
 
           console.log(activityData);
@@ -1662,6 +1949,7 @@ export async function HandleDashboardFunctions() {
                 ? "Do it yourself"
                 : numberOfLaborers,
               farmInputName,
+              requiredQuantity,
               farmInputType,
             },
             activity_status: "pending",
@@ -1734,6 +2022,14 @@ export async function HandleDashboardFunctions() {
                 post(activityCreateRequest).then((result) => {
                   if (result.status === "success") {
                     expenseCreateRequests.forEach((request) => {
+                      const { activity_id } = result.data[0];
+                      const updatedRequestData = {
+                        ...request.data,
+                        activity_id,
+                      };
+
+                      request.data = updatedRequestData;
+
                       post(request);
                     });
                   }
@@ -1744,6 +2040,14 @@ export async function HandleDashboardFunctions() {
             post(activityCreateRequest).then((result) => {
               if (result.status === "success") {
                 expenseCreateRequests.forEach((request) => {
+                  const { activity_id } = result.data[0];
+                  const updatedRequestData = {
+                    ...request.data,
+                    activity_id,
+                  };
+
+                  request.data = updatedRequestData;
+
                   post(request);
                 });
               }

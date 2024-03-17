@@ -12,7 +12,7 @@ export async function createExpense(req, res) {
     console.log(error);
     res.status(500).json({ status: "error", message: error.message });
   } else {
-    res.status(200).json({ status: "success" });
+    res.status(200).json({ status: "success", data });
   }
 }
 export async function getAllExpenses(req, res, next) {
@@ -39,6 +39,25 @@ export async function getAllExpenses(req, res, next) {
 
   next();
 }
+
+export async function deleteLabourExpense(req, res) {
+  const activityId = req.params.activityId;
+
+  const { data, error } = await supabase
+    .from("expenses")
+    .delete()
+    .eq("expense_type", "labour")
+    .eq("activity_id", activityId)
+    .select();
+
+  if (error) {
+    console.log(error);
+    res.status(500).json({ status: "error", message: error.message });
+  } else {
+    res.status(200).json({ status: "success" });
+  }
+}
+
 export async function getBudget(req, res, next) {
   let { data, error } = await supabase.from("budget").select("*");
   console.log("data", data);

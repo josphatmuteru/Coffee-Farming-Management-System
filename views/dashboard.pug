@@ -190,6 +190,9 @@ block content
               button.btn.btn-medium.btn-primary--light.btn-primary.btn-open-dialog(data-opens='dialog--expenses')
                 | Record An Expense
               dialog#dialog--harvest.dialog
+                .flex   
+                  button.btn.btn-icon-only.btn-close-modal.ml-auto
+                    ion-icon(name="close-outline")
                 form.form
                   h2 Enter Coffee Harvest Details
                   .form-row.form-row--horizontal
@@ -202,6 +205,9 @@ block content
                     button.btn.btn-secondary.btn-large Cancel
                     button.btn.btn-primary.btn-large Submit
               dialog#dialog--expenses.dialog
+                .flex   
+                  button.btn.btn-icon-only.btn-close-modal.ml-auto
+                    ion-icon(name="close-outline")
                 .dialog_content
                   .form.dialog_content-select.dialog_content-select--expense
                     h2 Choose the type of expense
@@ -227,6 +233,9 @@ block content
               
                 .schedule_add-activity
                   dialog#dialog--schedule.dialog
+                    .flex   
+                      button.btn.btn-icon-only.btn-close-modal.ml-auto
+                        ion-icon(name="close-outline")
                     
                     .dialog_content
                       .form.dialog_content-select.dialog_content-select--activity

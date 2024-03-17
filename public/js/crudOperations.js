@@ -47,7 +47,7 @@ export async function get(req) {
 }
 export async function sendDelete(req) {
   try {
-    showAlert("loading", req.loadingMessage);
+    // showAlert("loading", req.loadingMessage);
     const res = await fetch(`/api/v1/${req.url}`, {
       method: "DELETE",
       headers: {

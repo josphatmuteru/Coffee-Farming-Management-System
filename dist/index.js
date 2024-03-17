@@ -1351,7 +1351,7 @@ async function HandleDashboardFunctions() {
                 };
                 const farmInputSubForm = {
                     id: "subForm",
-                    heading: farmInput.type,
+                    heading: capitilizeFirstLetter(farmInput.type),
                     optionButtons: [
                         {
                             label: `Choose from available ${farmInput.type}s `,
@@ -1363,7 +1363,7 @@ async function HandleDashboardFunctions() {
                         {
                             label: "Buy different type",
                             unHides: [
-                                `${farmInput.type}toPurchase`,
+                                `${farmInput.type}ToPurchase`,
                                 "quantityToPurchase",
                                 "measurementUnit",
                                 "requiredQuantity",
@@ -1380,7 +1380,7 @@ async function HandleDashboardFunctions() {
                             options: farmInput.availableOptions
                         },
                         {
-                            id: `${farmInput.type}toPurchase`,
+                            id: `${farmInput.type}ToPurchase`,
                             label: `${capitilizeFirstLetter(farmInput.type)}`,
                             type: "text"
                         },
@@ -1433,9 +1433,9 @@ async function HandleDashboardFunctions() {
         const formDetails = formType === "expense" ? createExpenseFormDetails(formHeading, farmInput) : formType === "activity" ? createActivityFormDetails(farmInput) : false;
         const elements = formDetails?.map((el)=>{
             if (el.id === "subForm") {
-                let subFromMarkup = `<div class='sub-form'>
-                        <div class="form-row form-row--horizontal">
-                          <label>${el.heading}</label>
+                let subFromMarkup = `<div class='sub-form '>
+                        <div class="form-row form-row--horizontal sub-form_option-buttons-row">
+                          <label class='sub-form_label'>${el.heading}</label>
                           <div class='flex flex-dc gap-sm'>`;
                 el.optionButtons.forEach((button)=>{
                     subFromMarkup += `<button  type='button' class='btn btn-medium btn-secondary btn-unHide-form-fields' data-unHides=${JSON.stringify(button.unHides)}>
@@ -1774,6 +1774,43 @@ async function HandleDashboardFunctions() {
             const unHideFormFieldsBtns = document.querySelectorAll(".btn-unHide-form-fields");
             const activity = document.querySelector(".input--activity").value;
             const openExpenseConfirmFormBtn = document.querySelector(".btn-open-confirm-expense-form");
+            const subFormLabelEls = activityForm.querySelectorAll(".sub-form_label");
+            subFormLabelEls.forEach((el)=>{
+                const label = el.textContent.toLowerCase();
+                console.log(label);
+                if (Object.keys(existingData).includes(label)) {
+                    const formRowEl = el.parentNode;
+                    formRowEl.parentNode.removeChild(formRowEl);
+                    const farmInput = existingData[label];
+                    console.log(farmInput, label);
+                    const farmInputDetails = getSelectedFarmInputDetails(farmInput, label);
+                    const requiredQuantityEl = document.getElementById("requiredQuantity");
+                    if (Object.keys(farmInputDetails).length > 0) {
+                        document.getElementById(label).closest(".form-row--horizontal").classList.remove("hidden");
+                        requiredQuantityEl.closest(".form-row--horizontal").classList.remove("hidden");
+                        requiredQuantityEl.removeAttribute("disabled");
+                        requiredQuantityEl.addEventListener("change", (e)=>{
+                            e.preventDefault();
+                            compareAvailableAndRequiredQuantities(farmInputDetails.quantity);
+                        });
+                    } else {
+                        document.getElementById(`${label}ToPurchase`).value = farmInput;
+                        const elementsToUnHide = [
+                            `${label}ToPurchase`,
+                            "requiredQuantity",
+                            "measurementUnit",
+                            "quantityToPurchase",
+                            "purchaseCost"
+                        ];
+                        elementsToUnHide.forEach((id)=>{
+                            const inputEl = document.getElementById(id);
+                            inputEl.closest(".form-row--horizontal").classList.remove("hidden");
+                            inputEl.removeAttribute("disabled");
+                        });
+                    }
+                }
+            });
+            // if(optionButtonsRowEl.querySelector('label').textContent.includes(existingData.fo))
             unHideFormFieldsBtns.forEach((btn)=>{
                 btn.addEventListener("click", (e)=>{
                     e.preventDefault();
@@ -1821,32 +1858,40 @@ async function HandleDashboardFunctions() {
                 requiredQuantityEl.parentNode.querySelector("label").textContent += ` (${selectedMeasurementUnit})`;
             }
             function getSelectedFarmInputDetails(selectedFarmInput, farmInputType) {
-                const selectedFarmInputDetails = availableFarmInputs[farmInputType].find((item)=>item.description === selectedFarmInput);
+                console.log(selectedFarmInput, farmInputType);
+                const selectedFarmInputDetails = availableFarmInputs[farmInputType].find((item)=>item.description === selectedFarmInput) ?? {};
                 console.log(selectedFarmInput);
                 return selectedFarmInputDetails;
             }
-            function compareAvailableAndRequiredQuantities() {
-                if (availableFarmInputSelectEl.disabled) return;
-                if (availableFarmInputSelectEl.value === "") return;
+            function compareAvailableAndRequiredQuantities(availableQuantity = false) {
+                let selectedFarmInputQuantity;
                 const requiredQuantity = requiredQuantityEl.value * 1;
-                const farmInputType = availableFarmInputSelectEl.getAttribute("id");
-                const selectedFarmInput = activityForm.querySelector("select").value;
-                console.log(availableFarmInputSelectEl);
-                const selectedFarmInputDetails = getSelectedFarmInputDetails(selectedFarmInput, farmInputType);
-                const selectedFarmInputQuantity = selectedFarmInputDetails?.quantity;
-                console.log(document.getElementById("quantityToPurchase"));
-                const quantityToPurchaseEl = document.getElementById("quantityToPurchase");
-                const purchaseCostEl = document.getElementById("purchaseCost");
-                if (selectedFarmInputQuantity < requiredQuantity) {
-                    quantityToPurchaseEl.parentElement.classList.remove("hidden");
-                    purchaseCostEl.parentElement.classList.remove("hidden");
-                    quantityToPurchaseEl.removeAttribute("disabled");
-                    purchaseCostEl.removeAttribute("disabled");
-                } else if (selectedFarmInputQuantity > requiredQuantity) {
-                    quantityToPurchaseEl.parentElement.classList.add("hidden");
-                    purchaseCostEl.parentElement.classList.add("hidden");
-                    quantityToPurchaseEl.setAttribute("disabled", true);
-                    purchaseCostEl.setAttribute("disabled", true);
+                function compare(selectedFarmInputQuantity, requiredQuantity) {
+                    console.log(document.getElementById("quantityToPurchase"));
+                    const quantityToPurchaseEl = document.getElementById("quantityToPurchase");
+                    const purchaseCostEl = document.getElementById("purchaseCost");
+                    if (selectedFarmInputQuantity < requiredQuantity) {
+                        quantityToPurchaseEl.parentElement.classList.remove("hidden");
+                        purchaseCostEl.parentElement.classList.remove("hidden");
+                        quantityToPurchaseEl.removeAttribute("disabled");
+                        purchaseCostEl.removeAttribute("disabled");
+                    } else if (selectedFarmInputQuantity > requiredQuantity) {
+                        quantityToPurchaseEl.parentElement.classList.add("hidden");
+                        purchaseCostEl.parentElement.classList.add("hidden");
+                        quantityToPurchaseEl.setAttribute("disabled", true);
+                        purchaseCostEl.setAttribute("disabled", true);
+                    }
+                }
+                if (availableQuantity) compare(availableQuantity, requiredQuantity);
+                else {
+                    if (availableFarmInputSelectEl.disabled) return;
+                    if (availableFarmInputSelectEl.value === "") return;
+                    const farmInputType = availableFarmInputSelectEl.getAttribute("id");
+                    const selectedFarmInput = activityForm.querySelector("select").value;
+                    console.log(availableFarmInputSelectEl);
+                    const selectedFarmInputDetails = getSelectedFarmInputDetails(selectedFarmInput, farmInputType);
+                    selectedFarmInputQuantity = selectedFarmInputDetails?.quantity;
+                    compare(selectedFarmInputQuantity, requiredQuantity);
                 }
             }
             let activityData = getFormData(activityForm);

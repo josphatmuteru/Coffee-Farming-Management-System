@@ -57,6 +57,6 @@ export async function deleteFarmInput(req, res) {
     console.log(error);
     res.status(500).json({ status: "error", message: error.message });
   } else {
-    res.status(200).json({ status: "success" });
+    res.status(200).json({ status: "success", data });
   }
 }

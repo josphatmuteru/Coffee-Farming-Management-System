@@ -12,6 +12,39 @@ export async function createActivity(req, res) {
     console.log(error);
     res.status(500).json({ status: "error", message: error.message });
   } else {
+    res.status(200).json({ status: "success", data });
+  }
+}
+export async function deleteActivity(req, res) {
+  const activityId = req.params.activityId;
+
+  const { data, error } = await supabase
+    .from("schedule_activities")
+    .delete()
+    .eq("activity_id", activityId)
+    .select();
+
+  if (error) {
+    console.log(error);
+    res.status(500).json({ status: "error", message: error.message });
+  } else {
+    res.status(200).json({ status: "success" });
+  }
+}
+export async function updateActivity(req, res) {
+  const activityId = req.params.activityId;
+  const activityData = req.body;
+
+  const { data, error } = await supabase
+    .from("schedule_activities")
+    .update(activityData)
+    .eq("activity_id", activityId)
+    .select();
+
+  if (error) {
+    console.log(error);
+    res.status(500).json({ status: "error", message: error.message });
+  } else {
     res.status(200).json({ status: "success" });
   }
 }
@@ -19,7 +52,8 @@ export async function createActivity(req, res) {
 export async function getScheduleActivities(req, res) {
   const { data, error } = await supabase
     .from("schedule_activities")
-    .select("*");
+    .select("*")
+    .eq("activity_status", "pending");
 
   if (error) {
     console.log(error);
