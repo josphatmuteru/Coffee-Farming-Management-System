@@ -31,7 +31,7 @@ export function getFinances(req, res) {
 
   res.render("finances", { currentPageUrl, financesData });
 }
-export function getFarmGuide(req, res) {
+export function getFarmGuideMenu(req, res) {
   const currentPageUrl = req.originalUrl;
   console.log("currentPageUrl", currentPageUrl);
   res.render("farmGuide", { currentPageUrl });
@@ -40,4 +40,24 @@ export function getFarmProfile(req, res) {
   const currentPageUrl = req.originalUrl;
   console.log("currentPageUrl", currentPageUrl);
   res.render("farmProfile", { currentPageUrl });
+}
+export function getFertilizerApplicationGuide(req, res) {
+  const currentPageUrl = req.originalUrl;
+
+  res.render("fertilizerApplicationGuide", { currentPageUrl });
+}
+export function getPestManagementGuide(req, res) {
+  const currentPageUrl = req.originalUrl;
+
+  res.render("pestManagementGuide", { currentPageUrl });
+}
+export function getPestDetailsPage(req, res) {
+  const currentPageUrl = req.originalUrl;
+
+  res.render("pestDetails", { currentPageUrl });
+}
+export function getFarmingActivityDetailsPage(req, res) {
+  const currentPageUrl = req.originalUrl;
+
+  res.render("farmActivityInstructions", { currentPageUrl });
 }

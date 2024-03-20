@@ -132,6 +132,40 @@ a {
   margin-top: 0.4rem;
 }
 
+.loading p,
+.loading span,
+.loading button {
+  width: fit-content;
+  color: transparent !important;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard syntax */
+  animation: animateBackground infinite 5s;
+  transition: background-color 5s;
+}
+.loading button {
+  width: 100%;
+}
+.loading figcaption {
+  display: none;
+}
+.loading .pest_img-box, .loading figure {
+  background-color: rgba(221, 221, 221, 0.8666666667);
+  border-radius: 7px;
+}
+.loading img {
+  opacity: 0;
+}
+@keyframes animateBackground {
+  0% {
+    background-color: rgba(221, 221, 221, 0.8666666667);
+  }
+  100% {
+    background-color: #ccc;
+  }
+}
+
 .app-layout {
   display: grid;
   grid-template-columns: 23rem auto;
@@ -530,6 +564,7 @@ a {
   display: grid;
   grid-template-columns: 7fr 3fr;
   gap: 2rem;
+  margin-top: 1rem;
 }
 .pest-management .column-pests {
   display: flex;
@@ -622,18 +657,23 @@ a {
 }
 
 .fertilizer-management {
-  display: flex;
+  display: grid;
+  grid-template-columns: 6fr 4fr;
   gap: 4rem;
   width: 100%;
+  height: 100%;
+  margin-top: 1rem;
 }
 .fertilizer-management .section-fertilizers {
   width: 100%;
   max-width: 64rem;
+  height: 100%;
 }
 .fertilizer-management .list-fertilizers {
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
   gap: 0.8rem;
 }
 .fertilizer-management .list-fertilizers li {
@@ -731,12 +771,7 @@ a {
 }
 .activity-instructions .pest_symptoms,
 .pest-details .pest_symptoms {
-  list-style: square;
-}
-.activity-instructions .procedure_steps li:before,
-.pest-details .procedure_steps li:before {
-  content: "Step " counter(step-counter) ": "; /* Add the word "Step" and the counter value before each list item */
-  font-weight: bold; /* Optional: Make the step number bold */
+  list-style: disc;
 }
 .activity-instructions .section-instructions--images .row, .activity-instructions .section-symptoms--images .row,
 .pest-details .section-instructions--images .row,
@@ -752,24 +787,30 @@ a {
   font-weight: 500;
   margin-bottom: 0.8rem;
 }
-.activity-instructions .section-instructions--images .list-activity-images, .activity-instructions .section-symptoms--images .list-activity-images,
+.activity-instructions .section-instructions--images .list-activity-images, .activity-instructions .section-instructions--images .list-symptoms-images, .activity-instructions .section-symptoms--images .list-activity-images, .activity-instructions .section-symptoms--images .list-symptoms-images,
 .pest-details .section-instructions--images .list-activity-images,
-.pest-details .section-symptoms--images .list-activity-images {
+.pest-details .section-instructions--images .list-symptoms-images,
+.pest-details .section-symptoms--images .list-activity-images,
+.pest-details .section-symptoms--images .list-symptoms-images {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 1.4rem;
 }
-.activity-instructions .section-instructions--images .list-activity-images figure img, .activity-instructions .section-symptoms--images .list-activity-images figure img,
+.activity-instructions .section-instructions--images .list-activity-images figure img, .activity-instructions .section-instructions--images .list-symptoms-images figure img, .activity-instructions .section-symptoms--images .list-activity-images figure img, .activity-instructions .section-symptoms--images .list-symptoms-images figure img,
 .pest-details .section-instructions--images .list-activity-images figure img,
-.pest-details .section-symptoms--images .list-activity-images figure img {
+.pest-details .section-instructions--images .list-symptoms-images figure img,
+.pest-details .section-symptoms--images .list-activity-images figure img,
+.pest-details .section-symptoms--images .list-symptoms-images figure img {
   outline: 1px solid #333;
   border-radius: 5px;
   max-height: 24rem;
 }
-.activity-instructions .section-instructions--images .list-activity-images figure figcaption, .activity-instructions .section-symptoms--images .list-activity-images figure figcaption,
+.activity-instructions .section-instructions--images .list-activity-images figure figcaption, .activity-instructions .section-instructions--images .list-symptoms-images figure figcaption, .activity-instructions .section-symptoms--images .list-activity-images figure figcaption, .activity-instructions .section-symptoms--images .list-symptoms-images figure figcaption,
 .pest-details .section-instructions--images .list-activity-images figure figcaption,
-.pest-details .section-symptoms--images .list-activity-images figure figcaption {
+.pest-details .section-instructions--images .list-symptoms-images figure figcaption,
+.pest-details .section-symptoms--images .list-activity-images figure figcaption,
+.pest-details .section-symptoms--images .list-symptoms-images figure figcaption {
   margin-top: 0.64rem;
   font-size: 1.3rem;
 }

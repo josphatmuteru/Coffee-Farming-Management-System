@@ -65,3 +65,46 @@ a {
 .mt-tiny {
   margin-top: 0.4rem;
 }
+
+.loading {
+  & p,
+  span,
+  button {
+    // background: linear-gradient(to left, #ddd, #bbb);
+    width: fit-content;
+    color: transparent !important;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Standard syntax */
+    animation: animateBackground infinite 5s;
+    transition: background-color 5s;
+  }
+
+  & button {
+    width: 100%;
+  }
+  & figcaption {
+    display: none;
+  }
+
+  & .pest_img-box,
+  & figure {
+    background-color: #dddd;
+    // animation: animateBackground infinite 5s;
+    // transition: background-color 5s;
+    border-radius: $border-radius-md;
+  }
+  & img {
+    opacity: 0;
+  }
+
+  @keyframes animateBackground {
+    0% {
+      background-color: #dddd;
+    }
+    100% {
+      background-color: #ccc;
+    }
+  }
+}

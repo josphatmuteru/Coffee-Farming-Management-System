@@ -22,12 +22,12 @@
     counter-increment: step-counter; /* Increment the counter for each list item */
   }
   .pest_symptoms {
-    list-style: square;
+    list-style: disc;
   }
 
   .procedure_steps li:before {
-    content: "Step " counter(step-counter) ": "; /* Add the word "Step" and the counter value before each list item */
-    font-weight: bold; /* Optional: Make the step number bold */
+    // content: "Step " counter(step-counter) ": "; /* Add the word "Step" and the counter value before each list item */
+    // font-weight: bold; /* Optional: Make the step number bold */
   }
 
   .section {
@@ -45,7 +45,8 @@
         }
       }
 
-      & .list-activity-images {
+      & .list-activity-images,
+      & .list-symptoms-images {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;

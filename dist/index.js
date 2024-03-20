@@ -579,22 +579,30 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"f2QDv":[function(require,module,exports) {
+var _activityInstructionsJs = require("./activityInstructions.js");
 var _authenticationJs = require("./authentication.js");
 var _dashboardJs = require("./dashboard.js");
 var _expenseAndYieldInputHandlerJs = require("./expenseAndYieldInputHandler.js");
+var _fertilizerApplicationGuideJs = require("./fertilizerApplicationGuide.js");
 var _financesJs = require("./finances.js");
+var _pestManagementJs = require("./pestManagement.js");
 const signupForm = document.querySelector(".authentication--signup");
 const loginForm = document.querySelector(".authentication--login");
 const dashboard = document.querySelector(".main--dashboard");
 const financesPage = document.querySelector(".main--finances");
-console.log("hello");
+const fertilizerApplicationGuide = document.querySelector(".main--fertilizer-application");
+const pestManagementGuidePage = document.querySelector(".main--pest-management");
+const activityInstructionsPage = document.querySelector(".main--activity-instructions");
 if (signupForm) (0, _authenticationJs.handleSignup)(signupForm);
 if (loginForm) (0, _authenticationJs.handleLogin)(loginForm);
 if (dashboard) // handleExpenseAndYieldInput();
 (0, _dashboardJs.HandleDashboardFunctions)();
 if (financesPage) (0, _financesJs.handleFinancesPage)();
+if (pestManagementGuidePage) (0, _pestManagementJs.handlePestManagementPage)();
+if (fertilizerApplicationGuide) (0, _fertilizerApplicationGuideJs.handleFertilizerApplicationGuidePage)();
+if (activityInstructionsPage) (0, _activityInstructionsJs.handleActivityInstructions)();
 
-},{"./authentication.js":"4WnuJ","./dashboard.js":"8E1QO","./expenseAndYieldInputHandler.js":"h1yDZ","./finances.js":"hFxMF"}],"4WnuJ":[function(require,module,exports) {
+},{"./authentication.js":"4WnuJ","./dashboard.js":"8E1QO","./expenseAndYieldInputHandler.js":"h1yDZ","./fertilizerApplicationGuide.js":"11str","./finances.js":"hFxMF","./pestManagement.js":"fzqhH","./activityInstructions.js":"jdlzQ"}],"4WnuJ":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "handleSignup", ()=>handleSignup);
@@ -736,6 +744,13 @@ async function HandleDashboardFunctions() {
     const scheduleDialog = document.getElementById("dialog--schedule");
     const openDialogBtns = document.querySelectorAll(".btn-open-dialog");
     const showFarmInputBtns = document.querySelectorAll(".btn-show-farmInput");
+    const closeDialogBtns = document.querySelectorAll(".btn-close-modal");
+    closeDialogBtns.forEach((btn)=>{
+        btn.addEventListener("click", (e)=>{
+            e.preventDefault();
+            btn.closest("dialog").close();
+        });
+    });
     // let openExpenseDialogAndFormBtns = document.querySelectorAll(
     //   ".btn-open-expense-dialog-and-form"
     // );
@@ -766,27 +781,31 @@ async function HandleDashboardFunctions() {
         const req = {
             url: "activities/"
         };
-        const scheduleActivities = await (0, _crudOperationsJs.get)(req);
+        const scheduleActivities = await (0, _crudOperationsJs.get)(req).then((result)=>result.data);
         return scheduleActivities;
     };
     const scheduleActivities = await fetchScheduleActivities();
     const thisMonthsRecommendedActivities = await (0, _crudOperationsJs.get)({
         url: "activities/recommended-this-month"
-    });
+    }).then((result)=>result.data);
     thisMonthsRecommendedActivities.forEach((activity)=>{
         const listItemMarkup = createRecommendedActivitiesListItemMarkup(activity);
         document.querySelector(".recommended-activities").insertAdjacentHTML("afterbegin", listItemMarkup);
         handleRecommendedActivities();
     });
-    scheduleActivities.forEach((activity)=>{
-        const listItemMarkup = createScheduleListItemMarkup(activity.activity_details);
-        document.querySelector(".schedule_activities-list").insertAdjacentHTML("afterbegin", listItemMarkup);
-    });
+    function renderScheduleActivities() {
+        scheduleActivities.forEach((activity)=>{
+            const listItemMarkup = createScheduleListItemMarkup(activity.activity_details, activity.activity_id);
+            document.querySelector(".schedule_activities-list").insertAdjacentHTML("afterbegin", listItemMarkup);
+        });
+        handleScheduleActivities();
+    }
+    renderScheduleActivities();
     const fetchFarmInputs = async ()=>{
         const req = {
             url: "farmInputs/"
         };
-        const farmInputs = await (0, _crudOperationsJs.get)(req);
+        const farmInputs = await (0, _crudOperationsJs.get)(req).then((result)=>result.data);
         let farmInputsWithRenamedDetails = [];
         console.log(farmInputs);
         if (farmInputs.length > 1) farmInputsWithRenamedDetails = farmInputs.map((farmInput)=>{
@@ -1240,12 +1259,19 @@ async function HandleDashboardFunctions() {
                 const activityDetails = JSON.parse(btn.closest("li").getAttribute("data-activity-details"));
                 const farmInputType = formToOpen.includes("Application") ? formToOpen.split("Application")[0] : false;
                 const farmInput = activityDetails.required_farm_input;
+                const measurementUnit = activityDetails.farm_input_measurement_unit;
                 console.log(farmInput);
                 scheduleDialog.showModal();
                 // dialogContentEl.removeChild(selectExpenseForm);
                 if (farmInput && farmInputType) {
-                    const formValues = {
-                        [farmInputType]: farmInput
+                    let formValues = {};
+                    if (availableFarmInputs[farmInputType].find((item)=>item.description === farmInput)) formValues = {
+                        [farmInputType]: farmInput,
+                        measurementUnit
+                    };
+                    else formValues = {
+                        [`${farmInputType}ToPurchase`]: farmInput,
+                        measurementUnit
                     };
                     openForm(e, btn, "activity", formValues);
                 }
@@ -1288,6 +1314,112 @@ async function HandleDashboardFunctions() {
         });
         console.log(elements);
         return elements;
+    }
+    function handleScheduleActivities() {
+        const openActivityPopoverBtns = document.querySelectorAll(".btn-trigger-popover");
+        const cancelActivityBtns = document.querySelectorAll(".btn-cancel-activity");
+        const completeActivityBtns = document.querySelectorAll(".btn-complete-activity");
+        openActivityPopoverBtns.forEach((btn)=>{
+            btn.addEventListener("click", (e)=>{
+                e.preventDefault();
+                const currentPopover = btn.closest(".schedule_activity-btns").querySelector(".popover");
+                document.querySelectorAll(".popover").forEach((popover)=>{
+                    if (popover !== currentPopover) popover.classList.add("hidden");
+                });
+                currentPopover.classList.toggle("hidden");
+            });
+        });
+        completeActivityBtns.forEach((btn)=>{
+            btn.addEventListener("click", (e)=>{
+                const activityListItemEl = btn.closest("li");
+                const activityId = activityListItemEl.getAttribute("data-activity-id") * 1;
+                const activity = scheduleActivities.find((activity)=>activity.activity_id === activityId);
+                btn.textContent = "Updating activity...";
+                (0, _crudOperationsJs.post)({
+                    url: `activities/${activityId}`,
+                    data: {
+                        activity_status: "completed"
+                    },
+                    loadingMessage: "Updating activity...",
+                    successMessage: "Activity completed successfully"
+                }).then((result)=>{
+                    if (result.status === "success") {
+                        btn.textContent = "Activity updated";
+                        activityListItemEl.parentNode.removeChild(activityListItemEl);
+                    }
+                });
+            });
+        });
+        cancelActivityBtns.forEach((btn)=>{
+            btn.addEventListener("click", (e)=>{
+                e.preventDefault();
+                const activityListItemEl = btn.closest("li");
+                const activityId = activityListItemEl.getAttribute("data-activity-id") * 1;
+                const activity = scheduleActivities.find((activity)=>activity.activity_id === activityId);
+                btn.textContent = "Cancelling activity...";
+                const { farmInputName, farmInputType, requiredQuantity } = activity.activity_details;
+                console.log(farmInputName, farmInputType, activity.activity_details);
+                if (farmInputName) {
+                    const farmInput = availableFarmInputs[farmInputType].find((item)=>item.description === farmInputName);
+                    const { farmInputId, quantity } = farmInput;
+                    const newQuantity = quantity + requiredQuantity;
+                    (0, _crudOperationsJs.post)({
+                        url: `farmInputs/${farmInputId}`,
+                        data: {
+                            farmInputData: {
+                                quantity: newQuantity
+                            }
+                        },
+                        loadingMessage: `Updating ${farmInputName} quantity`,
+                        successMessage: `${capitilizeFirstLetter(farmInputName)} quantity updated`
+                    }).then((result)=>{
+                        if (result.status === "success") (0, _crudOperationsJs.sendDelete)({
+                            url: `expenses/labour/${activityId}`
+                        }).then((result)=>{
+                            if (result.status === "success") (0, _crudOperationsJs.post)({
+                                url: `activities/${activityId}`,
+                                data: {
+                                    activity_status: "cancelled"
+                                },
+                                loadingMessage: "Cancelling activity...",
+                                successMessage: "Activity cancelled successfully"
+                            }).then((result)=>{
+                                if (result.status === "success") {
+                                    btn.textContent = "Activity cancelled";
+                                    activityListItemEl.parentNode.removeChild(activityListItemEl);
+                                }
+                            });
+                        });
+                    });
+                } else (0, _crudOperationsJs.sendDelete)({
+                    url: `expenses/labour/${activityId}`
+                }).then((result)=>{
+                    if (result.status === "success") {
+                        console.log(activityId);
+                        (0, _crudOperationsJs.post)({
+                            url: `activities/${activityId}`,
+                            data: {
+                                activity_status: "cancelled"
+                            },
+                            loadingMessage: "Cancelling activity...",
+                            successMessage: "Activity cancelled successfully"
+                        }).then((result)=>{
+                            if (result.status === "success") {
+                                btn.textContent = "Activity cancelled";
+                                activityListItemEl.parentNode.removeChild(activityListItemEl);
+                            }
+                        });
+                    }
+                });
+                console.log(activity);
+            // sendDelete({ url: `activities/${activityId}` }).then((result) => {
+            //   if (result.status === "success") {
+            //     btn.textContent = "Activity cancelled";
+            //     // activityListItemEl.parentNode.removeChild(activityListItemEl);
+            //   }
+            // });
+            });
+        });
     }
     function capitilizeFirstLetter(word) {
         const capitilizedFirstLetterWord = word.charAt(0).toUpperCase() + word.slice(1);
@@ -1549,9 +1681,13 @@ async function HandleDashboardFunctions() {
     `;
         return markup;
     }
-    function createScheduleListItemMarkup(activityData) {
-        let { activity, activityTime, activityDate } = activityData;
-        const farmInput = activityData.fertilizer ?? activityData.pesticide ?? false;
+    function createScheduleListItemMarkup(activityData, activityId) {
+        console.log("activityData", activityData);
+        let { activity, activityTime, activityDate, farmInputName: farmInput } = activityData;
+        // const farmInput =
+        //   activityData.fertilizer ?? activityData.pesticide ?? false;
+        // const farmInput =
+        //   activityData.fertilizer ?? activityData.pesticide ?? false;
         const icon = activity.split("Application")[0];
         activity = formatCamelCaseToNormal(activity);
         activityTime = formatTimeToTwelveHourFormat(activityTime);
@@ -1562,7 +1698,7 @@ async function HandleDashboardFunctions() {
         });
         console.log(activityData);
         const scheduleListItemMarkup = ` 
-           <li class="list-item schedule_activity">
+           <li class="list-item schedule_activity" data-activity-id='${activityId}'>
             <span class="schedule_activity-icon">
               <img class="icon-image" src="../src/${icon}.png" alt="" />
             </span>
@@ -1578,9 +1714,23 @@ async function HandleDashboardFunctions() {
                   
                   `}
                 </div>
-                <button class='btn btn-icon-only--sm ml-auto'>
+                <div class='schedule_activity-btns max-width ml-auto'>
+                <button class='btn btn-icon-only--sm ml-auto btn-trigger-popover' >
                 <ion-icon name="ellipsis-vertical"></ion-icon>
                 </button>
+              
+             
+                <div class='popover popover--schedule hidden' id='schedule-btns--${activityId}'>
+                <button class='btn btn-small btn-icon btn-cancel-activity'>
+                <ion-icon name="trash-outline"></ion-icon>
+                
+                Cancel activity</button>
+                <button class='btn btn-small btn-icon btn-complete-activity'>
+                <ion-icon name="checkmark-circle-outline"></ion-icon>
+                Mark as done</button>
+                </div>
+                </div>
+              
                 </div>
               <div class="flex flex-dr ${farmInput ? "mt-tiny" : "m"} height-max">
                 <span class="schedule_activity-date">${activityDate}</span>
@@ -1778,10 +1928,10 @@ async function HandleDashboardFunctions() {
             subFormLabelEls.forEach((el)=>{
                 const label = el.textContent.toLowerCase();
                 console.log(label);
-                if (Object.keys(existingData).includes(label)) {
+                if (Object.keys(existingData).includes(label) || Object.keys(existingData).includes(`${label}ToPurchase`)) {
                     const formRowEl = el.parentNode;
                     formRowEl.parentNode.removeChild(formRowEl);
-                    const farmInput = existingData[label];
+                    const farmInput = existingData[label] ?? existingData[`${label}ToPurchase`];
                     console.log(farmInput, label);
                     const farmInputDetails = getSelectedFarmInputDetails(farmInput, label);
                     const requiredQuantityEl = document.getElementById("requiredQuantity");
@@ -1840,8 +1990,10 @@ async function HandleDashboardFunctions() {
             console.log(availableFarmInputSelectEl);
             availableFarmInputSelectEl?.addEventListener("change", (e)=>{
                 e.preventDefault();
-                addMeasurementUnitToLabel();
-                compareAvailableAndRequiredQuantities();
+                if (!availableFarmInputSelectEl.disabled) {
+                    addMeasurementUnitToLabel();
+                    compareAvailableAndRequiredQuantities();
+                }
             });
             function addMeasurementUnitToLabel() {
                 const selectedFarmInput = activityForm.querySelector("select").value;
@@ -1899,6 +2051,10 @@ async function HandleDashboardFunctions() {
             console.log(activityData);
             function generateActivityExpenses(activityData, activity) {
                 const activityName = activity.replace(/([a-z])([A-Z])/g, "$1 $2").split(" ").map((word)=>word.charAt(0).toUpperCase() + word.slice(1)).join(",").replace(",", " ");
+                const farmInputType = activity.split("Application")[0];
+                activityData["farmInputType"] = farmInputType;
+                const purchasedItemName = activityData[farmInputType].length > 0 ? activityData[farmInputType] : activityData[`${farmInputType}toPurchase`];
+                activityData["farmInputName"] = purchasedItemName;
                 const { numberOfLaborers: laborers, payRate, hoursRequired, activityDate } = activityData;
                 const totalCost = laborers * payRate * hoursRequired;
                 const labourExpenseData = {
@@ -1942,10 +2098,13 @@ async function HandleDashboardFunctions() {
                 function generatePurchaseExpenseDetails(purchasedItem) {
                     let farmInputToUpdate, farmInputToCreate = {};
                     const { activity, purchaseCost, requiredQuantity, quantityToPurchase, activityDate, measurementUnit } = activityData;
-                    const farmInputType = activity.split("Application")[0];
-                    activityData["farmInputType"] = farmInputType;
-                    const purchasedItemName = activityData[purchasedItem].length > 0 ? activityData[purchasedItem] : activityData[`${purchasedItem}toPurchase`];
-                    activityData["farmInputName"] = purchasedItemName;
+                    // const farmInputType = activity.split("Application")[0];
+                    // activityData["farmInputType"] = farmInputType;
+                    // const purchasedItemName =
+                    //   activityData[purchasedItem].length > 0
+                    //     ? activityData[purchasedItem]
+                    //     : activityData[`${purchasedItem}toPurchase`];
+                    // activityData["farmInputName"] = purchasedItemName;
                     let purchaseExpenseData = {
                         farm_id: 1,
                         expense_type: farmInputType,
@@ -1984,10 +2143,10 @@ async function HandleDashboardFunctions() {
                         };
                         farmInputToUpdate = updatedFarmInputDetails;
                     }
-                    if (activityData[`${purchasedItem}toPurchase`].length > 1) {
+                    if (activityData[`${purchasedItem}ToPurchase`].length > 1) {
                         const quantityAfterSubtractingRequiredQuantity = quantityToPurchase - requiredQuantity;
                         const newFarmInputDetails = {
-                            description: activityData[`${purchasedItem}toPurchase`],
+                            description: activityData[`${purchasedItem}ToPurchase`],
                             quantity: quantityAfterSubtractingRequiredQuantity,
                             measurement_unit: measurementUnit,
                             farm_input_type: farmInputType
@@ -2057,7 +2216,7 @@ async function HandleDashboardFunctions() {
                 let farmInputCreateOrUpdateRequest = {};
                 if (Object.keys(activityData).length > 0) {
                     const scheduleListItemMarkup = createScheduleListItemMarkup(activityData);
-                    const { activity, activityDate, activityTime, numberOfLaborers, farmInputName = false, farmInputType = false } = activityData;
+                    const { activity, activityDate, activityTime, numberOfLaborers, farmInputName = false, farmInputType = false, requiredQuantity = false } = activityData;
                     console.log(activityData);
                     const activityDataToUpload = {
                         activity_name: activity,
@@ -2068,6 +2227,7 @@ async function HandleDashboardFunctions() {
                             activityTime,
                             numberOfLaborers: isNaN(numberOfLaborers) ? "Do it yourself" : numberOfLaborers,
                             farmInputName,
+                            requiredQuantity,
                             farmInputType
                         },
                         activity_status: "pending"
@@ -2119,12 +2279,24 @@ async function HandleDashboardFunctions() {
                         (0, _crudOperationsJs.post)(farmInputCreateOrUpdateRequest).then((result)=>{
                             if (result.status === "success") (0, _crudOperationsJs.post)(activityCreateRequest).then((result)=>{
                                 if (result.status === "success") expenseCreateRequests.forEach((request)=>{
+                                    const { activity_id } = result.data[0];
+                                    const updatedRequestData = {
+                                        ...request.data,
+                                        activity_id
+                                    };
+                                    request.data = updatedRequestData;
                                     (0, _crudOperationsJs.post)(request);
                                 });
                             });
                         });
                     } else (0, _crudOperationsJs.post)(activityCreateRequest).then((result)=>{
                         if (result.status === "success") expenseCreateRequests.forEach((request)=>{
+                            const { activity_id } = result.data[0];
+                            const updatedRequestData = {
+                                ...request.data,
+                                activity_id
+                            };
+                            request.data = updatedRequestData;
                             (0, _crudOperationsJs.post)(request);
                         });
                     });
@@ -2246,7 +2418,7 @@ async function HandleDashboardFunctions() {
     }
 }
 
-},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./alert.js":"kxdiQ"}],"2nPvR":[function(require,module,exports) {
+},{"./alert.js":"kxdiQ","./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2nPvR":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "post", ()=>post);
@@ -2287,7 +2459,7 @@ async function get(req) {
             }
         });
         const result = await res.json();
-        if (result.status === "success") return result.data;
+        if (result.status === "success") return result;
         else return {};
     } catch (err) {
         console.log(err);
@@ -2295,7 +2467,7 @@ async function get(req) {
 }
 async function sendDelete(req) {
     try {
-        (0, _alertJs.showAlert)("loading", req.loadingMessage);
+        // showAlert("loading", req.loadingMessage);
         const res = await fetch(`/api/v1/${req.url}`, {
             method: "DELETE",
             headers: {
@@ -2531,6 +2703,120 @@ function handleExpenseAndYieldInput() {
     });
 }
 
+},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11str":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "handleFertilizerApplicationGuidePage", ()=>handleFertilizerApplicationGuidePage);
+var _crudOperationsJs = require("./crudOperations.js");
+async function handleFertilizerApplicationGuidePage() {
+    let isLoading = true;
+    let fertilizers = [];
+    const goBackToFarmGuideMenuBtn = document.querySelector(".btn-open-farm-guide-menu");
+    goBackToFarmGuideMenuBtn.addEventListener("click", (e)=>{
+        e.preventDefault();
+        window.location.replace("/farm-guide");
+    });
+    function toggleLoading(isLoading) {
+        if (isLoading) {
+            document.querySelector(".row-instructions").classList.add("loading");
+            document.querySelector(".row-fertilizers").classList.add("loading");
+        } else {
+            document.querySelector(".row-instructions").classList.remove("loading");
+            document.querySelector(".row-fertilizers").classList.remove("loading");
+        }
+    }
+    toggleLoading(isLoading);
+    (0, _crudOperationsJs.get)({
+        url: "farmGuide/fertilizer-application"
+    }).then((result)=>{
+        if (result.status === "success") {
+            isLoading = false;
+            fertilizers = result.data;
+            const fertilizerList = fertilizers.map((fertilizer)=>({
+                    id: fertilizer.fertilizer_id,
+                    name: fertilizer.fertilizer_name,
+                    nutrient: fertilizer.fertilizer_name
+                }));
+            console.log(fertilizers);
+            renderFertilizerApplicationInstructions(fertilizers[0]);
+            renderFertilizerList(fertilizerList, fertilizers);
+            toggleLoading(isLoading);
+        } else console.log(result);
+    });
+    function handleFertilizerList(fertilizers) {
+        const fertilizerListEls = document.querySelectorAll(".fertilizer");
+        console.log(fertilizerListEls);
+        fertilizerListEls.forEach((item)=>{
+            item.addEventListener("click", (e)=>{
+                e.preventDefault();
+                const selectedFertilizerId = item.getAttribute("id") * 1;
+                fertilizerListEls.forEach((el)=>{
+                    el.classList.remove("active");
+                });
+                item.classList.add("active");
+                const fertilizer = fertilizers.find((item)=>item.fertilizer_id === selectedFertilizerId);
+                console.log(fertilizer);
+                renderFertilizerApplicationInstructions(fertilizer);
+            });
+        });
+    }
+    function renderFertilizerList(fertilizerList, fertilizers) {
+        let markup = ``;
+        fertilizerList.forEach((fertilizer, index)=>{
+            console.log(index);
+            markup += `
+                <li class="fertilizer  ${index === 0 ? "active" : ""}" id=${fertilizer.id} >
+                  <span class="fertilizer_name">
+                  ${fertilizer.name}
+                  </span>
+                  <div class="flex align-center">
+                    <span class="fertilizer_nutrient"
+                      >Nutrient -
+                      <span class="value"> ${fertilizer.nutrient} </span>
+                    </span>
+                
+                  </span>
+                </div>
+                </li>
+  `;
+        });
+        document.querySelector(".list-fertilizers").innerHTML = "";
+        document.querySelector(".list-fertilizers").insertAdjacentHTML("afterbegin", markup);
+        handleFertilizerList(fertilizers);
+    }
+    function renderFertilizerApplicationInstructions(fertilizer) {
+        const { fertilizer_name: name, amount_per_tree: amountPerTree, application_procedure: applicationProcedure, required_tools: tools } = fertilizer;
+        const markup = `
+                  <div class="flex flex-dc gap-sm">
+                    <p class="instruction_detail">
+                      <span> Fertilizer - </span>
+                      <span>${name} </span>
+                    </p>
+                    <p class="instruction_detail">
+                      <span>Amount per tree - </span>
+                      <span> ${amountPerTree} </span>
+                    </p>
+                    <p class="instruction_detail">
+                      <span> Tools - </span>
+                      <span>${tools.map((tool)=>tool).join("")}</span>
+                    </p>
+                  </div>
+
+                  <div class="instruction_detail instruction_detail-procedure">
+                    <h4>Application Procedure</h4>
+                    ${applicationProcedure.map((step)=>{
+            const stepMarkup = `<p>${step}</p>`;
+            return stepMarkup;
+        }).join("")}
+                  </div>
+               
+
+`;
+        document.querySelector(".fertilizer-instructions_text").innerHTML = "";
+        document.querySelector(".fertilizer-instructions_text").insertAdjacentHTML("afterbegin", markup);
+    }
+}
+
 },{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hFxMF":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -2589,6 +2875,300 @@ function handleFinancesPage() {
     toggleExpenseDetails();
 }
 
-},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["1jZC8","f2QDv"], "f2QDv", "parcelRequiref6bb")
+},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fzqhH":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "handlePestManagementPage", ()=>handlePestManagementPage);
+parcelHelpers.export(exports, "toggleLoading", ()=>toggleLoading);
+var _crudOperationsJs = require("./crudOperations.js");
+async function handlePestManagementPage() {
+    let isLoading = true;
+    const pageElements = [
+        ".row-probable-pests",
+        ".row-other-pests"
+    ];
+    toggleLoading(isLoading, pageElements);
+    const pestListsContainer = document.querySelector(".container--pest-lists");
+    const pestDetailsContainer = document.querySelector(".container--pest-details");
+    const goBackToFarmGuideMenuBtn = document.querySelector(".btn-open-farm-guide-menu");
+    goBackToFarmGuideMenuBtn.addEventListener("click", (e)=>{
+        e.preventDefault();
+        window.location.replace("/farm-guide");
+    });
+    const goBackToPestListsBtn = document.querySelector(".btn-open-pest-lists");
+    goBackToPestListsBtn.addEventListener("click", (e)=>{
+        e.preventDefault();
+        goBackToPestLists();
+    });
+    function goBackToPestLists() {
+        pestDetailsContainer.classList.add("hidden");
+        pestListsContainer.classList.remove("hidden");
+    }
+    (0, _crudOperationsJs.get)({
+        url: "farmGuide/pest-management"
+    }).then((result)=>{
+        if (result.status === "success") {
+            const pests = result.data;
+            isLoading = false;
+            toggleLoading(isLoading, [
+                ".row-other-pests"
+            ]);
+            console.log(pests);
+            renderOtherPestsList(pests);
+        }
+    });
+    function renderPestListItem(pest) {
+        const { pest_id: pestId, pest_name: pestName, pest_symptoms: symptoms, required_tools: tools, required_pesticide: pesticide, pesticide_application_procedure: pesticideApplicationProcedure } = pest;
+        const markup = ` 
+      <li class="pest">
+      <div class="pest_img-box">
+        <img
+          src="../src/Coffee-diseases/coffee-berry-disease-1.jpg"
+          alt=""
+          class="pest_image"
+        />
+      </div>
+      <span class="pest_name">${pestName}</span>
+      <button class="btn btn-primary btn-medium btn-open-more-details" id=${pestId}>
+        See more details
+      </button>
+      </li>
+
+      
+`;
+        return markup;
+    }
+    function renderOtherPestsList(otherPestsList) {
+        let otherPestsListItemsMarkup = `${otherPestsList.map((pest)=>renderPestListItem(pest)).join("")}`;
+        document.querySelector(".list-other-pests").innerHTML = "";
+        document.querySelector(".list-other-pests").insertAdjacentHTML("afterbegin", otherPestsListItemsMarkup);
+        handlePestLists(otherPestsList);
+    }
+    function handlePestLists(pestList) {
+        const openPestDetailsBtns = document.querySelectorAll(".btn-open-more-details");
+        console.log(openPestDetailsBtns);
+        openPestDetailsBtns.forEach((btn)=>{
+            btn.addEventListener("click", (e)=>{
+                e.preventDefault();
+                pestListsContainer.classList.add("hidden");
+                pestDetailsContainer.classList.remove("hidden");
+                console.log("helllooo");
+                const selectedPestId = btn.getAttribute("id") * 1;
+                const pestToShow = pestList.find((pest)=>pest.pest_id === selectedPestId);
+                renderMorePestDetails(pestToShow);
+            });
+        });
+    }
+    function renderMorePestDetails(pest) {
+        const { pest_id: pestId, pest_name: pestName, pest_symptoms: symptoms, pest_symptoms_images: symptomsImages, required_tools: requiredTools, required_pesticide: requiredPesticide, pesticide_application_procedure: pesticideApplicationProcedure } = pest;
+        const pestDetailsMarkup = `
+    <div class="row flex flex-dc">
+    <div class="flex flex-dc gap-md">
+      <div class="flex flex-dc gap-sm">
+        <p class="pest_detail">
+          <span>Pest Name</span>
+          <span>${pestName}</span>
+        </p>
+        <div class="pest_detail pest_detail-symptoms flex flex-dc gap-sm">
+          <h4>Symptoms</h4>
+          <ul class="flex flex-dc gap-sm pest_symptoms">
+               ${symptoms.map((symptom)=>`<li>
+                                  <p class="pest_symptom">
+                                  ${symptom}
+                                  </p>
+                                </li>`).join("")}
+          </ul>
+        </div>
+        <div>
+          <div class="pest_detail flex-dc flex gap-sm section-symptoms--images">
+            <h4>Symptom Images</h4>
+            <ul class="list list-activity-images list-symptoms-images">
+                  ${symptoms.map((image)=>`
+                                        <li>
+                                          <figure class="procedure_step-img">
+                                            <img
+                                              src="/src/fertilizer-application-methods/ring-method.jpg"
+                                              alt=""
+                                            />
+                                            <figcaption>Step 1</figcaption>
+                                          </figure>
+                                        </li>
+                      `).join("")}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    
+    `;
+        const pestControlDetailsMarkup = `
+    <div class="flex flex-dc gap-md">
+    <div class="flex flex-dc gap-sm">
+      <p class="instruction_detail">
+        <span>Required Pesticide</span>
+        <span
+          >${requiredPesticide}</span
+        >
+      </p>
+      <p class="instruction_detail">
+      <span>Required Tools</span>
+        <span>${requiredTools}</span>
+      </p>
+    </div>
+    <div
+      class="instruction_detail instruction_detail-procedure flex flex-dc gap-sm"
+    >
+      <h4>Procedure</h4>
+
+      <ul class="flex flex-dc gap-sm procedure_steps">
+      ${pesticideApplicationProcedure.map((step, index)=>`
+          <li>
+          <p class="procedure_step">
+        <strong>Step ${index + 1}: </strong>${step}
+        </p>
+        </li>
+          `).join("")}
+      </ul>
+      <div class="section-instructions--images">
+        <div class="row row-activity">
+          <h3>Procedure Images</h3>
+          <ul class="list list-activity-images">
+          ${symptoms.map((image)=>`
+                                <li>
+                                  <figure class="procedure_step-img">
+                                    <img
+                                      src="/src/fertilizer-application-methods/ring-method.jpg"
+                                      alt=""
+                                    />
+                                    <figcaption>Step 1</figcaption>
+                                  </figure>
+                                </li>
+              `).join("")}
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+`;
+        document.querySelector(".section-details--text").innerHTML = "";
+        document.querySelector(".pest-control--instructions").innerHTML = "";
+        document.querySelector(".section-details--text").insertAdjacentHTML("afterbegin", pestDetailsMarkup);
+        document.querySelector(".pest-control--instructions").insertAdjacentHTML("afterbegin", pestControlDetailsMarkup);
+    }
+}
+function toggleLoading(isLoading, elements) {
+    if (isLoading) elements.forEach((el)=>{
+        document.querySelector(el).classList.add("loading");
+        document.querySelector(el).querySelectorAll("button").forEach((btn)=>btn.disabled = true);
+    });
+    else elements.forEach((el)=>{
+        document.querySelector(el).classList.remove("loading");
+        document.querySelector(el).querySelectorAll("button").forEach((btn)=>btn.removeAttribute("disabled"));
+    });
+}
+
+},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jdlzQ":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "handleActivityInstructions", ()=>handleActivityInstructions);
+var _crudOperationsJs = require("./crudOperations.js");
+var _pestManagementJs = require("./pestManagement.js");
+async function handleActivityInstructions() {
+    const currentUrl = window.location.href;
+    const activityName = currentUrl.split("farm-guide/")[1];
+    const goBackToFarmGuideMenuBtn = document.querySelector(".btn-open-farm-guide-menu");
+    goBackToFarmGuideMenuBtn.addEventListener("click", (e)=>{
+        e.preventDefault();
+        window.location.replace("/farm-guide");
+    });
+    console.log(activityName);
+    let isLoading = true;
+    const pageElements = [
+        ".section-instructions--images",
+        ".section-instructions--text"
+    ];
+    (0, _pestManagementJs.toggleLoading)(isLoading, pageElements);
+    (0, _crudOperationsJs.get)({
+        url: `farmGuide/${activityName}`
+    }).then((result)=>{
+        if (result.status === "success") {
+            const activityDetails = result.data[0];
+            isLoading = false;
+            renderActivityInstructionDetails(activityDetails);
+            (0, _pestManagementJs.toggleLoading)(isLoading, pageElements);
+        }
+    });
+    function renderActivityInstructionDetails(activityDetails) {
+        const { activity_name: activityName, required_tools: requiredTools, activity_procedure: activityProcedure, procedure_images: procedureImages } = activityDetails;
+        console.log(activityDetails.activity_procedure);
+        const markup = `
+    <div class="row row-activity">
+    <div class="flex flex-dc gap-md">
+      <div class="flex flex-dc gap-sm">
+        <p class="instruction_detail">
+          <span>Activity</span>
+          <span>${activityName}</span>
+        </p>
+        <p class="instruction_detail">
+          <span>Purpose</span>
+          <span
+            >Lorem ipsum dolor sit amet consectetur adipisicing
+            elit.</span
+          >
+        </p>
+        <p class="instruction_detail">
+          <span>Tools</span> <span>${requiredTools}</span>
+        </p>
+      </div>
+      <div
+        class="instruction_detail instruction_detail-procedure flex flex-dc gap-sm"
+      >
+        <h4>Procedure</h4>
+
+        <ul class="flex flex-dc gap-sm procedure_steps">
+        ${activityProcedure.map((step, index)=>`
+        <li>
+        <div class='flex gap-sm' >
+        <span><strong>${index + 1}.</strong></span>
+        <p class="procedure_step">
+         ${step}
+        </p>
+        </div>
+        </li>
+        `).join("")}
+
+        </ul>
+        <div class="section-instructions--images">
+          <div class="row row-activity">
+            <h3>Procedure Images</h3>
+            <ul class="list list-activity-images">            
+            ${activityProcedure.map((image)=>`
+                                  <li>
+                                    <figure class="procedure_step-img">
+                                      <img
+                                        src="/src/fertilizer-application-methods/ring-method.jpg"
+                                        alt=""
+                                      />
+                                      <figcaption>Step 1</figcaption>
+                                    </figure>
+                                  </li>
+                `).join("")}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    `;
+        document.querySelector(".section-instructions--text").innerHTML = "";
+        document.querySelector(".section-instructions--text").insertAdjacentHTML("afterbegin", markup);
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./crudOperations.js":"2nPvR"}]},["1jZC8","f2QDv"], "f2QDv", "parcelRequiref6bb")
 
 //# sourceMappingURL=index.js.map

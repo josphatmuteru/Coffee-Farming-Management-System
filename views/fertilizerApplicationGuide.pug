@@ -1,0 +1,58 @@
+extends base
+
+block content 
+  main.main.main--fertilizer-application
+    .container
+      .header.flex
+        button.btn.btn-icon.btn-icon--lg.btn-open-farm-guide-menu
+          ion-icon(name="arrow-back-outline")
+          span Back
+      .fertilizer-management
+        section.section.section-instructions
+          h2.heading-secondary
+            | Fertilizer Application instructions
+          .row.row-instructions
+            .fertilizer-instructions
+              .fertilizer-instructions_text
+                .flex.flex-dc.gap-sm
+                  p.instruction_detail
+                    span  Fertilizer - 
+                    span  CAN 
+                  p.instruction_detail
+                    span Amount per tree - 
+                    span  150g 
+                  p.instruction_detail
+                    span  Tools - 
+                    span  Measuring can 
+                .instruction_detail.instruction_detail-procedure
+                  h4 Application Procedure
+                  p
+                    | Spread fertiliser evenly on the soil around the drip
+                    | line (the outside edge of the canopy) of the coffee
+                    | tree. Keep fertiliser at least 100 mm from the stem of
+                    | the plant; fertiliser applied closer than this can
+                    | damage the coffee tree.
+              
+        section.section.section-fertilizer-list
+          h2.headig-tertiary Fertilizers
+          .flex.flex-dc.gap-sm.row.row-fertilizers
+            h3 Select a fertilizer to see application instructions
+            ul.list.list-fertilizers
+              li.fertilizer
+                span.fertilizer_name Calcium Ammonium Nitrate (CAN)
+                .flex.align-center
+                  span.fertilizer_nutrient
+                    | Nutrient -
+                    span.value  Nitrogen 
+              li.fertilizer.active
+                span.fertilizer_name Calcium Ammonium Nitrate (CAN)
+                .flex.align-center
+                  span.fertilizer_nutrient
+                    | Nutrient -
+                    span.value  Nitrogen 
+              li.fertilizer
+                span.fertilizer_name Calcium Ammonium Nitrate (CAN)
+                .flex.align-center
+                  span.fertilizer_nutrient
+                    | Nutrient -
+                    span.value  Nitrogen 

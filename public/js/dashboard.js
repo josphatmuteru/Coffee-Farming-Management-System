@@ -64,7 +64,7 @@ export async function HandleDashboardFunctions() {
       url: "activities/",
     };
 
-    const scheduleActivities = await get(req);
+    const scheduleActivities = await get(req).then((result) => result.data);
     return scheduleActivities;
   };
 
@@ -72,7 +72,7 @@ export async function HandleDashboardFunctions() {
 
   const thisMonthsRecommendedActivities = await get({
     url: "activities/recommended-this-month",
-  });
+  }).then((result) => result.data);
 
   thisMonthsRecommendedActivities.forEach((activity) => {
     const listItemMarkup = createRecommendedActivitiesListItemMarkup(activity);
@@ -105,7 +105,7 @@ export async function HandleDashboardFunctions() {
       url: "farmInputs/",
     };
 
-    const farmInputs = await get(req);
+    const farmInputs = await get(req).then((result) => result.data);
 
     let farmInputsWithRenamedDetails = [];
 

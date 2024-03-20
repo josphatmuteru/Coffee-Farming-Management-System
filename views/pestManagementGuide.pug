@@ -1,0 +1,184 @@
+extends base
+
+block content 
+
+  main.main.main--pest-management
+    .container.container--pest-lists
+      .header.flex
+        button.btn.btn-icon.btn-icon--lg.btn-open-farm-guide-menu
+          ion-icon(name="arrow-back-outline")
+          span Back
+      .pest-management
+        .column-pests
+          section.section.section-probable-pests
+            h2.heading-secondary
+              | Pests and diseases that may attack this month
+            .row.row-probable-pests
+              ul.list.list-probable-pests
+                li.pest
+                  .pest_img-box
+                    img.pest_image(src='/src/Coffee-diseases/coffee-berry-disease-1.jpg', alt='')
+                  span.pest_name Coffee berry disease
+                  button.btn.btn-primary.btn-medium
+                    | See more details
+                li.pest
+                  .pest_img-box
+                    img.pest_image(src='/src/Coffee-diseases/coffee-berry-disease-1.jpg', alt='')
+                  span.pest_name Coffee Berry Disease
+          section.section.section-other-pests
+            h2.heading-secondary
+              | Other Coffee Pests and diseases
+            .row.row-other-pests
+              ul.list.list-other-pests
+                li.pest
+                  .pest_img-box
+                    img.pest_image(src='../src/Coffee-diseases/coffee-berry-disease-1.jpg', alt='')
+                  span.pest_name Coffee berry disease
+                li.pest
+                  .pest_img-box
+                    img.pest_image(src='../src/Coffee-diseases/coffee-berry-disease-1.jpg', alt='')
+                  span.pest_name Coffee berry disease
+                li.pest
+                  .pest_img-box
+                    img.pest_image(src='../src/Coffee-diseases/coffee-berry-disease-1.jpg', alt='')
+                  span.pest_name Coffee berry disease
+                li.pest
+                  .pest_img-box
+                    img.pest_image(src='../src/Coffee-diseases/coffee-berry-disease-1.jpg', alt='')
+                  span.pest_name Coffee berry disease
+                li.pest
+                  .pest_img-box
+                    img.pest_image(src='../src/Coffee-diseases/coffee-berry-disease-1.jpg', alt='')
+                  span.pest_name Coffee berry disease
+                li.pest
+                  .pest_img-box
+                    img.pest_image(src='../src/Coffee-diseases/coffee-berry-disease-1.jpg', alt='')
+                  span.pest_name Coffee berry disease
+                li.pest
+                  .pest_img-box
+                    img.pest_image(src='../src/Coffee-diseases/coffee-berry-disease-1.jpg', alt='')
+                  span.pest_name Coffee berry disease
+                li.pest
+                  .pest_img-box
+                    img.pest_image(src='../src/Coffee-diseases/coffee-berry-disease-1.jpg', alt='')
+                  span.pest_name Coffee berry disease
+    .container.container--pest-details.hidden
+      .header.flex
+        button.btn.btn-icon.btn-icon--lg.btn-open-pest-lists
+          ion-icon(name="arrow-back-outline")
+          span Back
+        
+      .flex.flex-dc.gap-md
+        section.section.section--pest-details
+          .pest-details
+            section.section.section-details--text
+              .row.flex.flex-dc
+                .flex.flex-dc.gap-md
+                  .flex.flex-dc.gap-sm
+                    p.pest_detail
+                      span Pest Name
+                      span
+                        | Lorem ipsum dolor sit amet consectetur adipisicing
+                        | elit.
+                  .pest_detail.pest_detail-symptoms.flex.flex-dc.gap-sm
+                    h4 Symptoms
+                    ul.flex.flex-dc.gap-sm.pest_symptoms
+                      li
+                        p.pest_symptom
+                          | Lorem ipsum dolor sit amet consectetur adipisicing
+                          | elit. Culpa eaque quasi distinctio corporis quos?
+                          | Ex tenetur quidem rem omnis rerum vero, eveniet
+                          | doloremque esse voluptas suscipit accusantium
+                          | perspiciatis deserunt labore.
+                      li
+                        p.pest_symptom
+                          | Lorem ipsum dolor sit amet consectetur adipisicing
+                          | elit. Culpa eaque quasi distinctio corporis quos?
+                          | Ex tenetur quidem rem omnis rerum vero, eveniet
+                          | doloremque esse voluptas suscipit accusantium
+                  
+                          | perspiciatis deserunt labore.
+                  .pest_detail.pest_detail-symptoms
+                    h4 Symptom Images
+                    ul.list.list-activity-images.list-symptoms-images
+                      li
+                        figure.procedure_step-img
+                          img(src='../src/fertilizer-application-methods/ring-method.jpg', alt='')
+                          figcaption Step 1
+                      li
+                        figure.procedure_step-img
+                          img(src='../src/fertilizer-application-methods/ring-method.jpg', alt='')
+                          figcaption Step 1
+                      li
+                        figure.procedure_step-img
+                          img(src='../src/fertilizer-application-methods/ring-method.jpg', alt='')
+                          figcaption Step 1
+                      li
+                        figure.procedure_step-img
+                          img(src='../src/fertilizer-application-methods/ring-method.jpg', alt='')
+                          figcaption Some pruning technique        
+            
+            
+            
+            
+          
+               
+        .activity-instructions.pest-control
+          section.section.section-instructions--text
+            h2.heading-tertiary Control Method
+            .row.row-activity.pest-control--instructions
+              .flex.flex-dc.gap-md
+                .flex.flex-dc.gap-sm
+                  p.instruction_detail
+                    span Required Pesticide
+                    span
+                      | Lorem ipsum dolor sit amet consectetur adipisicing
+                      | elit.
+                  p.instruction_detail
+                    span Required Tools
+                    |  
+                    span Shears
+                .instruction_detail.instruction_detail-procedure.flex.flex-dc.gap-sm
+                  h4 Procedure
+                  ul.flex.flex-dc.gap-sm.procedure_steps
+                    li
+                      p.procedure_step
+                        | Lorem ipsum dolor sit amet consectetur adipisicing
+                        | elit. Culpa eaque quasi distinctio corporis quos? Ex
+                        | tenetur quidem rem omnis rerum vero, eveniet
+                        | doloremque esse voluptas suscipit accusantium
+                        | perspiciatis deserunt labore.
+                    li
+                      p.procedure_step
+                        | Lorem ipsum dolor sit amet consectetur adipisicing
+                        | elit. Culpa eaque quasi distinctio corporis quos? Ex
+                        | tenetur quidem rem omnis rerum vero, eveniet
+                        | doloremque esse voluptas suscipit accusantium
+                        | perspiciatis deserunt labore.
+                    li
+                      p.procedure_step
+                        | Lorem ipsum dolor sit amet consectetur adipisicing
+                        | elit. Culpa eaque quasi distinctio corporis quos? Ex
+                        | tenetur quidem rem omnis rerum vero, eveniet
+                        | doloremque esse voluptas suscipit accusantium
+                        | perspiciatis deserunt labore.
+                  .section-instructions--images
+                    .row.row-activity
+                      h3 Procedure Images
+                      ul.list.list-activity-images
+                        li
+                          figure.procedure_step-img
+                            img(src='../src/fertilizer-application-methods/ring-method.jpg', alt='')
+                            figcaption Step 1
+                        li
+                          figure.procedure_step-img
+                            img(src='../src/fertilizer-application-methods/ring-method.jpg', alt='')
+                            figcaption Step 1
+                        li
+                          figure.procedure_step-img
+                            img(src='../src/fertilizer-application-methods/ring-method.jpg', alt='')
+                            figcaption Step 1
+                        li
+                          figure.procedure_step-img
+                            img(src='../src/fertilizer-application-methods/ring-method.jpg', alt='')
+                            figcaption Some pruning technique   

@@ -1,18 +1,24 @@
 .fertilizer-management {
-  display: flex;
+  display: grid;
+  grid-template-columns: 6fr 4fr;
   // flex-direction: column;
   gap: 4rem;
   width: 100%;
+  height: 100%;
+
+  margin-top: 1rem;
 
   .section-fertilizers {
     width: 100%;
     max-width: 64rem;
+    height: 100%;
   }
 
   .list-fertilizers {
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 100%;
 
     gap: 0.8rem;
 

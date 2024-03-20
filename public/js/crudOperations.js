@@ -37,7 +37,7 @@ export async function get(req) {
     });
     const result = await res.json();
     if (result.status === "success") {
-      return result.data;
+      return result;
     } else {
       return {};
     }
