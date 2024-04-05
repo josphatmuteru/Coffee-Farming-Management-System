@@ -50,10 +50,12 @@ export async function updateActivity(req, res) {
 }
 
 export async function getScheduleActivities(req, res) {
+  const farmId = req.farmId;
   const { data, error } = await supabase
     .from("schedule_activities")
     .select("*")
-    .eq("activity_status", "pending");
+    .eq("activity_status", "pending")
+    .eq("farm_id", farmId);
 
   if (error) {
     console.log(error);

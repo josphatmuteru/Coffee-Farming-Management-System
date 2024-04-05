@@ -2,10 +2,10 @@ extends base
 
 
 block content 
-  main.main.main--finances
+  main.main.main--finances(data-id=`${userId}`)
         .container
           .flex.flex-dc.gap-md
-            .section
+            .section.section--overview
               h2.heading-secondary Overview
               .row.row-widgets
                 .widget.widget--income
@@ -46,7 +46,7 @@ block content
               .section.section-expenses(data-expenses={expenses}, data-financesData={financesData})
                 h2.heading-secondary Expenses
                 .row.row-expenses
-                  .expense.expense-labour
+                  .expense.expense-labour(data-expense-type="labour")
                     .expense_header
                       span.expense_icon
                         img.image-icon(src='src/farmer.png', alt='farmer-icon')
@@ -56,13 +56,13 @@ block content
                           button.btn.btn-icon-only.ml-auto.btn-toggle--expense-details
                             ion-icon(name='chevron-down-outline')
                         .flex.allocated-amounmt.align-center
-                          span.expense_status On-budget
+                          span.expense_status.expense_status--on-budget On-budget
                           .expense_cost
                             span.expense_cost-label Total cost
                             -if(expenses.labour?.length > 0) 
-                              span.expense_cost-value=`KSH. ${ expenses.labour[0].expense_total_cost}`
+                              span.expense_cost-value(data-expense-total=`${expenses.labour[0].expense_total_cost}`)=`KSH. ${ expenses.labour[0].expense_total_cost}`
                             -else
-                              span.expense_cost-value=`KSH. 0.00`
+                              span.expense_cost-value(data-expense-total=`${0}`)=`KSH. 0.00`
                     .expense_body.hidden
                       h4 Details
                       ul.list.expense_list.expense_list--labor
@@ -75,22 +75,26 @@ block content
                           span Cost
 
                       
+                        -if(expenses.labour?.length > 0) 
 
-                        each item in expenses.labour[0].expense_particulars
-                           
-                           
-                          li.expense_list-item.values-row
-                              
-                              
-                              span=formatDate(item.transaction_date)
-                              span=item.expense_details[0].description 
-                              span=item.expense_details[0].numberOfLaborers 
-                              span=item.expense_details[0].payRate 
-                              span=item.expense_details[0].hoursWorked 
-                              span=item.expense_total 
+                          each item in expenses.labour[0].expense_particulars
+                            
+                            
+                            li.expense_list-item.values-row
+                                
+                                
+                                span=formatDate(item.transaction_date)
+                                span=item.expense_details[0].description 
+                                span=item.expense_details[0].numberOfLaborers 
+                                span=item.expense_details[0].payRate 
+                                span=item.expense_details[0].hoursWorked 
+                                span=item.expense_total 
+                        
+                        
+
                           
                       
-                  .expense.expense-Pesticide
+                  .expense.expense-Pesticide(data-expense-type="pesticide")
                     .expense_header
                       span.expense_icon
                         img.image-icon(src='src/pesticide.png', alt='farmer-icon')
@@ -104,9 +108,9 @@ block content
                           .expense_cost
                             span.expense_cost-label Total cost
                             -if(expenses.pesticide?.length > 0) 
-                              span.expense_cost-value=`KSH. ${ expenses.pesticide[0].expense_total_cost}`
+                              span.expense_cost-value(data-expense-total=`${expenses.pesticide[0].expense_total_cost}`)=`KSH. ${ expenses.pesticide[0].expense_total_cost}`
                             -else 
-                              span.expense_cost-value=`KSH. 0.00`
+                              span.expense_cost-value(data-expense-total=`${0}`)=`KSH. 0.00`
                     .expense_body.hidden
                       h4 Details
                       ul.list.expense_list.expense_list--pesticide
@@ -126,8 +130,9 @@ block content
                               
                             
                               span=item.expense_total 
+                             
 
-                  .expense.expense-fertilizer
+                  .expense.expense-fertilizer(data-expense-type="fertilizer")
                     .expense_header
                       span.expense_icon
                         img.image-icon(src='src/fertilizer.png', alt='farmer-icon')
@@ -141,9 +146,9 @@ block content
                           .expense_cost
                             span.expense_cost-label Total cost
                             -if(expenses.fertilizer?.length > 0) 
-                              span.expense_cost-value=`KSH. ${ expenses.fertilizer[0].expense_total_cost}`
+                              span.expense_cost-value(data-expense-total=`${ expenses.fertilizer[0].expense_total_cost}`)=`KSH. ${ expenses.fertilizer[0].expense_total_cost}`
                             -else
-                              span.expense_cost-value=`KSH. 0.00`
+                              span.expense_cost-value(data-expense-total=`${0}`)=`KSH. 0.00`
                     .expense_body.hidden
                       h4 Details
                       ul.list.expense_list.expense_list--fertilizer
@@ -161,7 +166,7 @@ block content
                               span=item.expense_details[0].description 
                               span=item.expense_details[0].quantity                           
                               span=item.expense_total 
-                  .expense.expense-miscelleneous
+                  .expense.expense-miscelleneous(data-expense-type="miscelleneous")
                     .expense_header
                       span.expense_icon
                         img.image-icon(src='src/income.png', alt='farmer-icon')
@@ -175,9 +180,9 @@ block content
                           .expense_cost
                             span.expense_cost-label Total cost
                             -if(expenses.miscelleneous?.length > 0) 
-                              span.expense_cost-value=`KSH. ${ expenses.miscelleneous[0].expense_total_cost}`
+                              span.expense_cost-value(data-expense-total=`${ expenses.miscelleneous[0].expense_total_cost}`)=`KSH. ${ expenses.miscelleneous[0].expense_total_cost}`
                             -else
-                              span.expense_cost-value=`KSH. 0.00`
+                              span.expense_cost-value(data-expense-total=`${0}`)=`KSH. 0.00`
                     .expense_body.hidden
                       h4 Details
                       ul.list.expense_list.expense_list--miscelleneous
@@ -202,71 +207,36 @@ block content
                   div
                     canvas#myChart
                   dialog.dialog.dialog-budget
+                    .flex   
+                      button.btn.btn-icon-only.btn-close-modal.ml-auto
+                        ion-icon(name="close-outline")
                     form.form.form--budget(action='')
                       h2 Create Budget
                       .form-row--horizontal
                         label(for='budget') Available funds
-                        input#budget_amount.input(type='number')
+                        input#budget_amount.input(type='number' min=0)
                       p.instruction-text
                         | Enter the amount of money to allocate each expense
                       .form-row--horizontal
                         label(for='labour') Labour
-                        input#labour.input(type='number')
+                        input#labour.input(type='number' min=0 )
                       .form-row--horizontal
                         label(for='pesticide') Pesticides
-                        input#pesticide.input(type='number')
+                        input#pesticide.input(type='number' min=0)
                       .form-row--horizontal
                         label(for='fertilizer') Fertilizer
-                        input#fertilizer.input(type='number')
+                        input#fertilizer.input(type='number' min=0)
                       .form-row--horizontal
                         label(for='fertilizer') Miscelleneous
-                        input#fertilizer.input(type='number')
+                        input#fertilizer.input(type='number' min=0)
                       .btns-row
-                        button.btn.btn-large.btn-secondary(type='button')
+                        button.btn.btn-large.btn-secondary.btn-close-modal(type='button')
                           | Cancel
                         button.btn.btn-primary.btn-large(type='submit')
                           | Submit
                   button.btn.btn-primary.btn-md.btn-open-budget-form
-                    | Edit budget
-                script(src='https://cdn.jsdelivr.net/npm/chart.js')
-                script.
-                  const budgetSection = document.querySelector('.section-budget')
-                  const budgetData = JSON.parse(budgetSection.getAttribute('data-budget'))
-                  const budgetChartData = [budgetData.budget[0].fertilizer, budgetData.budget[0].labour, budgetData.budget[0].pesticide, budgetData.budget[0].miscelleneous]
-                  
-
-
-                  const ctx = document.getElementById("myChart");
-                  new Chart(ctx, {
-                  type: "doughnut",
-                  data: {
-                  labels: [
-                  "Fertilizer",
-                  "Labour",
-                  "Pesticides",
-                  "Miscellaneous",
-                  ],
-                  datasets: [
-                  {
-                  label: "Allocated amount",
-                  data: budgetChartData,
-                  borderWidth: 1,
-                  },
-                  ],
-                  },
-                  options: {
-                  plugins: {
-                  legend: {
-                  position: "right",
-                  },
-                  },
-                  // scales: {
-                  //   y: {
-                  //     beginAtZero: true,
-                  //   },
-                  // },
-                  },
-                  });
+                    | Create budget
+                
                 .budget-overview
 
 

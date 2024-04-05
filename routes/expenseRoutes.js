@@ -4,13 +4,17 @@ import {
   createExpense,
   deleteLabourExpense,
   getAllExpenses,
+  getBudget,
 } from "../controllers/expensesController.js";
+import { protect } from "../api/authController.js";
 
 const router = Router();
 
-router.post("/", createExpense);
-router.post("/budget", createBudget);
-router.delete("/labour/:activityId", deleteLabourExpense);
+router.post("/", protect, createExpense);
+router.get("/", protect, getAllExpenses);
+router.post("/budget", protect, createBudget);
+router.get("/budget", protect, getBudget);
+router.delete("/labour/:activityId", protect, deleteLabourExpense);
 
 // router.get("/", getAllExpenses);
 

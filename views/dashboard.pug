@@ -1,7 +1,7 @@
 extends base 
 
 block content 
-  main.main.main--dashboard
+  main.main.main--dashboard(data-id=`${userId}`)
 
         .container.dashboard
           h2 Dashboard
@@ -16,8 +16,28 @@ block content
                 const ctx = document.getElementById("myChart");
                 let harvestData = document.getElementById("harvestChart").getAttribute('data-harvest-data');
                harvestData =JSON.parse(harvestData)
-                const labels = harvestData.map(item => item.month);
-                const yieldAmount = harvestData.map(item => item.total_yield_amount)
+                //- let labels = harvestData.map(item => item.month)
+                const labels = [
+                        "Jan",
+                        "Feb",
+                        "Mar",
+                        "Apr",
+                        "May",
+                        "Jun",
+                        "Jul",
+                        "Aug",
+                        "Sep",
+                        "Oct",
+                        "Nov",
+                        "Dec",
+                      ];
+
+                      let yieldAmount = labels.map((month) => {
+                        const coffeeHarvestedInMonth =
+                          harvestData.find((item) => item.month === month)?.total_yield_amount ?? 0;
+                        return coffeeHarvestedInMonth;
+                      });
+
                 new Chart(ctx, {
                 type: "bar",
                 data: {
@@ -25,7 +45,7 @@ block content
                
                 datasets: [
                 {
-                label: "Amount by Weight",
+                label: "Coffee Weight in Kilograms",
                 data: yieldAmount,
               
                 borderWidth: 1,
@@ -33,9 +53,18 @@ block content
                 ],
                 },
                 options: {
+                  plugins: {
+                    legend : {
+                      display: false,
+                      position: 'right'
+                    }
+                  },
+
                 scales: {
                 y: {
                 beginAtZero: true,
+                suggestedMin: 50,
+                suggestedMax: 100
                 },
                 },
                 
@@ -43,7 +72,7 @@ block content
                 });
               .dashboard_legend 
                 span.dashboard_legend-rectangle
-                span.dashboard_legend-text Weight of coffee
+                span.dashboard_legend-text Coffee weight in Kg
           .flex.gap-md.width-max
             section.section.section-inventory
               h3.heading-tertiary Available Farm inputs
@@ -193,16 +222,16 @@ block content
                 .flex   
                   button.btn.btn-icon-only.btn-close-modal.ml-auto
                     ion-icon(name="close-outline")
-                form.form
+                form.form.form--coffee-harvest
                   h2 Enter Coffee Harvest Details
                   .form-row.form-row--horizontal
                     label(for='date') Harvest Date
-                    input.input(type='date')
+                    input#harvestDate.input(type='date' min=`${new Date().toISOString().split('T')[0]}`)
                   .form-row.form-row--horizontal
-                    label(for='date') Coffee quantity (Kg)
-                    input.input(type='number')
+                    label(for='harvestQuantity') Coffee quantity (Kg)
+                    input#harvestQuantity.input(type='number' min=1)
                   .btns-row
-                    button.btn.btn-secondary.btn-large Cancel
+                    button.btn.btn-secondary.btn-large.btn-close-modal(type='button') Cancel
                     button.btn.btn-primary.btn-large Submit
               dialog#dialog--expenses.dialog
                 .flex   

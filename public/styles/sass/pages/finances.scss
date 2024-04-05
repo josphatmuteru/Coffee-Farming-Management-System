@@ -134,7 +134,13 @@
       &_status {
         font-size: 1.2rem;
         font-weight: 600;
-        color: green;
+
+        &--on-budget {
+          color: green;
+        }
+        &--over-budget {
+          color: rgb(208, 91, 91);
+        }
       }
       &_cost {
         display: flex;

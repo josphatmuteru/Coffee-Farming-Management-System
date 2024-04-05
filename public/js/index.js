@@ -2,6 +2,9 @@ const signupForm = document.querySelector(".authentication--signup");
 const loginForm = document.querySelector(".authentication--login");
 const dashboard = document.querySelector(".main--dashboard");
 const financesPage = document.querySelector(".main--finances");
+const farmProfilePage = document.querySelector(".main--farm-profile");
+const logoutBtns = document.querySelectorAll(".btn-logout");
+
 const fertilizerApplicationGuide = document.querySelector(
   ".main--fertilizer-application"
 );
@@ -13,9 +16,10 @@ const activityInstructionsPage = document.querySelector(
 );
 
 import { handleActivityInstructions } from "./activityInstructions.js";
-import { handleSignup, handleLogin } from "./authentication.js";
+import { handleSignup, handleLogin, handleLogout } from "./authentication.js";
 import { HandleDashboardFunctions } from "./dashboard.js";
 import { handleExpenseAndYieldInput } from "./expenseAndYieldInputHandler.js";
+import { handleFarmProfilePage } from "./farmProfile.js";
 import { handleFertilizerApplicationGuidePage } from "./fertilizerApplicationGuide.js";
 import { handleFinancesPage } from "./finances.js";
 import { handlePestManagementPage } from "./pestManagement.js";
@@ -47,4 +51,14 @@ if (fertilizerApplicationGuide) {
 
 if (activityInstructionsPage) {
   handleActivityInstructions();
+}
+
+if (farmProfilePage) {
+  handleFarmProfilePage();
+}
+
+if (logoutBtns) {
+  logoutBtns.forEach((btn) => {
+    handleLogout(btn);
+  });
 }

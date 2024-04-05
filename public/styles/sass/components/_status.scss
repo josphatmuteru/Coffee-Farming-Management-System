@@ -37,7 +37,8 @@
 
   &--success {
     .icon-error,
-    .icon-loading {
+    .icon-loading,
+    .icon-warning {
       display: none;
     }
     & ion-icon {
@@ -46,7 +47,8 @@
   }
   &--loading {
     .icon-success,
-    .icon-error {
+    .icon-error,
+    .icon-warning {
       display: none;
     }
 
@@ -57,11 +59,22 @@
 
   &--error {
     .icon-success,
-    .icon-loading {
+    .icon-loading,
+    .icon-warning {
       display: none;
     }
     & ion-icon {
       background-color: $color-red-700;
+    }
+  }
+  &--warning {
+    .icon-success,
+    .icon-loading,
+    .icon-error {
+      display: none;
+    }
+    & ion-icon {
+      background-color: $color-blue-700;
     }
   }
 }

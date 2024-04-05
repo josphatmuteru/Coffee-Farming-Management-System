@@ -27,8 +27,9 @@
     align-items: center;
     gap: 1rem;
     &-rectangle {
-      background-color: $color-blue-700;
-      width: 2rem;
+      background-color: #9ad0f5;
+      outline: 1.6px solid #4caced;
+      width: 2.4rem;
       height: 1rem;
     }
   }

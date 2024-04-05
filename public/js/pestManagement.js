@@ -250,19 +250,25 @@ export async function handlePestManagementPage() {
 export function toggleLoading(isLoading, elements) {
   if (isLoading) {
     elements.forEach((el) => {
-      document.querySelector(el).classList.add("loading");
-      document
-        .querySelector(el)
-        .querySelectorAll("button")
-        .forEach((btn) => (btn.disabled = true));
+      document.querySelectorAll(el).forEach((el) => {
+        el.classList.add("loading");
+        el.querySelectorAll("button").forEach((btn) => (btn.disabled = true));
+        el.querySelectorAll("input").forEach(
+          (input) => (input.disabled = true)
+        );
+      });
     });
   } else {
     elements.forEach((el) => {
-      document.querySelector(el).classList.remove("loading");
-      document
-        .querySelector(el)
-        .querySelectorAll("button")
-        .forEach((btn) => btn.removeAttribute("disabled"));
+      document.querySelectorAll(el).forEach((el) => {
+        el.classList.remove("loading");
+        el.querySelectorAll("button").forEach((btn) =>
+          btn.removeAttribute("disabled")
+        );
+        el.querySelectorAll("input").forEach((input) =>
+          input.removeAttribute("disabled")
+        );
+      });
     });
   }
 }

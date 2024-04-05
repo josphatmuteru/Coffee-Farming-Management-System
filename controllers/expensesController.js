@@ -16,7 +16,12 @@ export async function createExpense(req, res) {
   }
 }
 export async function getAllExpenses(req, res, next) {
-  let { data, error } = await supabase.from("expense_details").select("*");
+  const farmId = req.farmId;
+
+  let { data, error } = await supabase
+    .from("expense_details")
+    .select("*")
+    .eq("farm_id", farmId);
 
   if (error) {
     console.log(error);
@@ -59,14 +64,18 @@ export async function deleteLabourExpense(req, res) {
 }
 
 export async function getBudget(req, res, next) {
-  let { data, error } = await supabase.from("budget").select("*");
+  const farmId = req.farmId;
+  let { data, error } = await supabase
+    .from("budget")
+    .select("*")
+    .eq("farm_id", farmId);
   console.log("data", data);
 
   if (error) {
     console.log(error);
     res.status(500).json({ status: "error", message: error.message });
   } else {
-    res.budget = data;
+    res.status(200).json({ status: "success", data });
   }
 
   next();

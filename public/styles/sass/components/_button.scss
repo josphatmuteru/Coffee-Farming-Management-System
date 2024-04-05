@@ -104,6 +104,7 @@
     background: none;
     cursor: pointer;
     box-shadow: none;
+    width: fit-content;
     ion-icon {
       font-size: 2rem;
     }
@@ -113,6 +114,27 @@
       ion-icon {
         font-size: 1.4rem;
       }
+    }
+  }
+
+  &-link {
+    background: none;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem 2rem;
+
+    & ion-icon {
+      color: #333 !important;
+
+      font-size: 2rem !important;
+    }
+
+    & span {
+      color: #333;
+      font-weight: 500 !important;
+
+      font-size: 1.8rem !important;
     }
   }
 }

@@ -1,9 +1,11 @@
 import supabase from "../api/supabase.js";
 
 export async function getAllFarmInputs(req, res) {
-  console.log("dataFarmInputs");
-
-  let { data, error } = await supabase.from("farm_inputs").select("*");
+  const farmId = req.farmId;
+  let { data, error } = await supabase
+    .from("farm_inputs")
+    .select("*")
+    .eq("farm_id", farmId);
 
   if (error) {
     console.log(error);

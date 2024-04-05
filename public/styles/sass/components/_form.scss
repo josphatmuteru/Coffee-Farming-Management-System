@@ -5,7 +5,6 @@
   flex-direction: column;
   border-radius: $border-radius-md;
   box-shadow: $shadow-md;
-  // gap: 2rem;
 
   .sub-form {
     border-bottom: 1px solid #d1d5db;
@@ -15,9 +14,18 @@
   }
 
   &--authentication {
+    gap: 0.8rem;
     width: 100%;
-    max-width: 56rem;
+    max-width: 48rem;
     margin: auto;
+
+    h2 {
+      margin-top: 1rem;
+    }
+    & p {
+      font-size: 1.4rem;
+    }
+
     & button {
       margin-top: 1rem;
     }
@@ -31,40 +39,58 @@
     }
   }
 
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-    font-size: 1.6rem;
+  // .input-group {
+  //   display: flex;
+  //   flex-direction: column;
+  //   gap: 1.2rem;
 
-    & input {
-      padding: 1rem 2rem;
-      border-radius: $border-radius-sm;
+  //   & input {
+  //     padding: 1rem 2rem;
+  //     border-radius: $border-radius-sm;
+  //   }
+  // }
+
+  .form-row {
+    &--vertical {
+      font-size: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      padding: 1.2rem 0px;
+
+      & input,
+      & select {
+        border: solid 1px #d1d5db;
+        box-shadow: $shadow-sm;
+        border-radius: $border-radius-sm;
+        padding: 1rem 1.2rem;
+      }
     }
-  }
 
-  .form-row--horizontal {
-    display: grid;
-    grid-template-columns: 2fr 2fr 2fr;
-    font-size: 1.4rem;
-    gap: 2.4rem;
-    padding: 1.2rem 0;
-    align-items: center;
+    &--horizontal {
+      font-size: 1.6rem;
 
-    &:not(:last-child) {
-      border-bottom: 1px solid #d1d5db;
-    }
+      & label {
+        font-weight: 500;
+      }
 
-    & label {
-      font-weight: 500;
-    }
+      & input,
+      & select {
+        border: solid 1px #d1d5db;
+        box-shadow: $shadow-sm;
+        border-radius: $border-radius-sm;
+        padding: 0.8rem 1.2rem;
+      }
+      display: grid;
+      grid-template-columns: 2fr 2fr 2fr;
+      font-size: 1.4rem;
+      gap: 2.4rem;
+      padding: 1.2rem 0;
+      align-items: center;
 
-    & input,
-    & select {
-      border: solid 1px #d1d5db;
-      box-shadow: $shadow-sm;
-      border-radius: $border-radius-sm;
-      padding: 0.8rem 1.2rem;
+      &:not(:last-child) {
+        border-bottom: 1px solid #d1d5db;
+      }
     }
   }
 

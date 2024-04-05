@@ -29,7 +29,7 @@ app.use(
       useDefaults: true,
       directives: {
         defaultSrc: ["*"],
-        scriptSrc: ["* data: 'unsafe-eval' unsafe-inline blob:"],
+        scriptSrc: ["* data: 'unsafe-eval' 'unsafe-inline' blob:"],
         connectSrc: ["* data: 'unsafe-eval'  blob:"],
       },
     },
@@ -45,6 +45,7 @@ import expenseRouter from "./routes/expenseRoutes.js";
 import farmInputRouter from "./routes/farmInputRoutes.js";
 import activityRouter from "./routes/activityRoutes.js";
 import farmGuideRouter from "./routes/farmGuideRoutes.js";
+import farmProduceRouter from "./routes/produceRoutes.js";
 
 app.set("view engine", "pug");
 
@@ -59,5 +60,6 @@ app.use("/api/v1/expenses", expenseRouter);
 app.use("/api/v1/farmInputs", farmInputRouter);
 app.use("/api/v1/activities", activityRouter);
 app.use("/api/v1/farmGuide", farmGuideRouter);
+app.use("/api/v1/farmProduce", farmProduceRouter);
 
 export default app;

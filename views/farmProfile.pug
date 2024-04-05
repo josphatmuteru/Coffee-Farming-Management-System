@@ -1,41 +1,45 @@
 extends base
 
 block content 
-  main.main
+  main.main.main--farm-profile(data-id=`${userId}`)
       .farm-profile
-        section.section.section-farm-details
-          h2.heading-secondary Farm Details
-          .row.row-farm-details
-            p.profile_detail
-              span Location
-              span Nyeri
-            p.profile_detail
-              span Farmer
-              span Farmer
-            p.profile_detail
-              span Farm size
-              span 1 Acre
-        section.section.section-coffee-details
-          h2.heading-secondary Coffee Details
-          .row.row-coffee-details
-            p.profile_detail
-              span Type
-              span Arabica
-            p.profile_detail
-              span Number of trees
-              span 150
-            p.profile_detail
-              span Yearly Yield
-              span 10kg
-        section.section.section-coffee-details
-          h2.heading-secondary Soil Details
-          .row.row-coffee-details
-            p.profile_detail
-              span Type
-              span Arabica
-            p.profile_detail
-              span Number of trees
-              span 150
-            p.profile_detail
-              span Production per tree
-              span 10kg
+        form.form.form--farm-profile
+          section.section.section-farm-details
+            h2.heading-secondary Farm Details
+            .row--details
+              .form-row--horizontal
+                label(for='location') Location
+                input#location.input(value='Nyeri')
+              .form-row--horizontal
+                label(for='farmerName') Farmer's Name
+                input#farmerName.input(value='Josphat')
+              .form-row--horizontal
+                label(for='farmSize') Farm size
+                input#farmSize.input(value='1 Acre')
+              .btns-row.hidden 
+                button.btn.btn-medium.btn-secondary.btn-cancel(type='button') Cancel
+                button.btn.btn-medium.btn-primary(type='submit') Save changes
+
+
+          section.section.section-coffee-details
+            h2.heading-secondary Coffee Details
+            .row--details
+              .form-row--horizontal
+                label(for='coffeeVariety') Coffee Variety
+                input#coffeeVariety.input(value='Arabica')
+              .form-row--horizontal
+                label(for='numberOfTrees') Number of trees
+                input#numberOfCoffeeTrees.input(value='150')
+              .form-row--horizontal
+                label(for='yearlyYield') Yearly Yield
+                input#expectedYearlyYield.input(value='100 Kg')
+              .form-row--horizontal
+                label(for='pricePerKg') Price Per Kg
+                input#coffeePricePerKg.input(value='150')
+              .btns-row.hidden 
+                button.btn.btn-medium.btn-secondary.btn-cancel(type='button') Cancel
+                button.btn.btn-medium.btn-primary(type='submit') Save changes
+
+
+              
+          

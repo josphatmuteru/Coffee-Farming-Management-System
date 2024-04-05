@@ -3,20 +3,22 @@ extends base
 block content 
 
     main.main.main--authentication
-      form.form.form--authentication.authentication--login(action='')
+      -console.log(errorMessage)
+      form.form.form--authentication.authentication--login(data-isRedirectFromAuthentication=`${redirectedFromAuthentication}`)
         h1 Coffee Farming Management System
         h2 Login to your account
-        .input-group
-          label(for='email') Email
-          input#email(required='', placeholder='example@email.com', value='example@email.com' type='email')
-        .input-group
+        .form-row--vertical
+          label.label(for='email') Email
+          input#email.input(required='', placeholder='example@email.com', value='example@email.com' type='email')
+        .form-row--vertical
+
           label(for='password') Password
-          input#password(minlength='8', required='', value='pass1234'  type='password')
+          input#password.input(minlength='8', required='', value='pass1234'  type='password')
           p
             a(href='') Forgot password?
         div
           button.btn.btn-primary.btn-large Login
         .input-group
-          p
-            | Don&apos;t have an account?
+          p.mt-md.text-align-center
+            | Don&apos;t have an account?&nbsp;
             a(href='/signup') Sign-up

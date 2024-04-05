@@ -5,13 +5,15 @@ export function getSignupPage(req, res) {
 
   res.render("signup", { currentPageUrl });
 }
-export function getLoginPage(req, res) {
+export function getLoginPage(req, res, next) {
   const currentPageUrl = req.originalUrl;
 
   res.render("login", { currentPageUrl });
 }
 
 export async function getDashboard(req, res) {
+  const user = req.user;
+  const { id: userId } = user;
   const currentPageUrl = req.originalUrl;
   const harvestData = req.harvestData;
 
@@ -19,27 +21,60 @@ export async function getDashboard(req, res) {
 
   const isDashboard = currentPageUrl === "/";
 
-  res.render("dashboard", { currentPageUrl, weatherData, harvestData });
+  const labels = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  let yieldAmount = labels.map((month) => {
+    const coffeeHarvestedInMonth =
+      harvestData.find((item) => item.month === month)?.total_yield_amount ?? 0;
+    return coffeeHarvestedInMonth;
+  });
+
+  console.log(yieldAmount);
+
+  res.render("dashboard", {
+    currentPageUrl,
+    weatherData,
+    harvestData,
+    labels,
+    yieldAmount,
+    userId,
+  });
 }
 
 export function getFinances(req, res) {
+  const user = req.user;
+  const { id: userId } = user;
   const currentPageUrl = req.originalUrl;
   const expenses = res.expenses;
-  const budget = res.budget;
-  const financesData = { expenses, budget };
-  console.log(financesData);
 
-  res.render("finances", { currentPageUrl, financesData });
+  const financesData = { expenses };
+
+  res.render("finances", { currentPageUrl, financesData, userId });
 }
 export function getFarmGuideMenu(req, res) {
   const currentPageUrl = req.originalUrl;
-  console.log("currentPageUrl", currentPageUrl);
+
   res.render("farmGuide", { currentPageUrl });
 }
 export function getFarmProfile(req, res) {
+  const user = req.user;
+  const { id: userId } = user;
   const currentPageUrl = req.originalUrl;
-  console.log("currentPageUrl", currentPageUrl);
-  res.render("farmProfile", { currentPageUrl });
+
+  res.render("farmProfile", { currentPageUrl, userId });
 }
 export function getFertilizerApplicationGuide(req, res) {
   const currentPageUrl = req.originalUrl;

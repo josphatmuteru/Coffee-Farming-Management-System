@@ -9,10 +9,15 @@ export async function HandleDashboardFunctions() {
   const showFarmInputBtns = document.querySelectorAll(".btn-show-farmInput");
   const closeDialogBtns = document.querySelectorAll(".btn-close-modal");
 
+  function closeDialog(el) {
+    el.closest("dialog").close();
+    window.location.reload();
+  }
+
   closeDialogBtns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      btn.closest("dialog").close();
+      closeDialog(btn);
     });
   });
 
@@ -1062,7 +1067,7 @@ export async function HandleDashboardFunctions() {
 
                           <div class="btns-row">
                             <button class="btn btn-secondary btn-large open-select-expense-form" type='button' >Back</button>
-                            <button class="btn btn-secondary btn-large">Cancel</button>
+                            <button class="btn btn-secondary btn-large btn-close-modal"  type='button' >Cancel</button>
                             <button class="btn btn-primary btn-large btn-open-confirm-expense-form">${
                               formType === "expense"
                                 ? "Submit"
@@ -1213,7 +1218,7 @@ export async function HandleDashboardFunctions() {
               
              
                 <div class='popover popover--schedule hidden' id='schedule-btns--${activityId}'>
-                <button class='btn btn-small btn-icon btn-cancel-activity'>
+                <button class='btn btn-small btn-icon btn-cancel-activity btn-close-modal'>
                 <ion-icon name="trash-outline"></ion-icon>
                 
                 Cancel activity</button>
@@ -1318,8 +1323,8 @@ export async function HandleDashboardFunctions() {
                                 </div>
 
                           <div class="btns-row flex">
-                                <button class="btn btn-secondary btn-large">Cancel</button>
-                                <button class="btn btn-primary btn-large btn-open-confirm-expense-form">Edit</button>
+                                <button  type='button' class="btn btn-secondary btn-large btn-close-modal">Cancel</button>
+                                <button type='button' class="btn btn-primary btn-large btn-open-confirm-expense-form">Edit</button>
                                 <button class="btn btn-primary btn-large btn-open-confirm-expense-form">Confirm</button>
                           </div>
                         </form>`;
@@ -1450,6 +1455,28 @@ export async function HandleDashboardFunctions() {
   }
 
   function handleFormOpen(existingData = {}, isEditMode = false) {
+    const closeDialogBtns = document.querySelectorAll(".btn-close-modal");
+
+    closeDialogBtns.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        closeDialog(btn);
+      });
+    });
+
+    function addFormValidation(form) {
+      const inputElements = form.querySelectorAll("input");
+
+      inputElements.forEach((el) => {
+        if (el.getAttribute("type") === "number") {
+          el.setAttribute("min", 1);
+        }
+        if (el.getAttribute("type") === "date") {
+          el.setAttribute("min", new Date().toISOString().split("T")[0]);
+        }
+      });
+    }
+
     const expensesForm = document.querySelector(
       ".dialog_content--input-expense-details"
     );
@@ -1460,6 +1487,8 @@ export async function HandleDashboardFunctions() {
     function editFormMarkup() {}
 
     if (activityForm) {
+      addFormValidation(activityForm);
+
       const unHideFormFieldsBtns = document.querySelectorAll(
         ".btn-unHide-form-fields"
       );
@@ -2069,6 +2098,8 @@ export async function HandleDashboardFunctions() {
     }
 
     if (expensesForm) {
+      addFormValidation(expensesForm);
+
       expensesForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -2195,4 +2226,37 @@ export async function HandleDashboardFunctions() {
       });
     }
   }
+
+  function handleCoffeeHarvestForm() {
+    const harvestForm = document.querySelector(".form--coffee-harvest");
+    let formData = {};
+    harvestForm.querySelectorAll("input").forEach((input) => {
+      input.addEventListener("change", (e) => {
+        const label = input.getAttribute("id");
+        const type = input.getAttribute("type");
+        const value = type === "number" ? parseFloat(input.value) : input.value;
+        formData = { ...formData, [label]: value };
+      });
+    });
+    harvestForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const { harvestQuantity: harvest_amount_kg, harvestDate: harvest_date } =
+        formData;
+
+      const harvestData = { harvest_amount_kg, harvest_date };
+
+      post({
+        url: "farmProduce/coffee-yield",
+        data: harvestData,
+        loadingMessage: "Adding yield records...",
+        successMessage: "Coffee yield recorded successfully",
+      }).then((result) => {
+        if (result.status === "success") {
+          closeDialog(harvestForm);
+        }
+      });
+    });
+  }
+  handleCoffeeHarvestForm();
 }

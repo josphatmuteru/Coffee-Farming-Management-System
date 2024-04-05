@@ -16,6 +16,20 @@ export function handleExpenseAndYieldInput() {
     ".btn-open-expense-form"
   );
 
+  const closeDialogBtns = document.querySelectorAll(".btn-close-modal");
+
+  function closeDialog(btn) {
+    btn.closest("dialog").close();
+    window.location.reload();
+  }
+
+  closeDialogBtns.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeDialog(btn);
+    });
+  });
+
   showHarvestDialogBtn.addEventListener("click", () => {
     harvestDialog.showModal();
   });

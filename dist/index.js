@@ -583,6 +583,7 @@ var _activityInstructionsJs = require("./activityInstructions.js");
 var _authenticationJs = require("./authentication.js");
 var _dashboardJs = require("./dashboard.js");
 var _expenseAndYieldInputHandlerJs = require("./expenseAndYieldInputHandler.js");
+var _farmProfileJs = require("./farmProfile.js");
 var _fertilizerApplicationGuideJs = require("./fertilizerApplicationGuide.js");
 var _financesJs = require("./finances.js");
 var _pestManagementJs = require("./pestManagement.js");
@@ -590,6 +591,8 @@ const signupForm = document.querySelector(".authentication--signup");
 const loginForm = document.querySelector(".authentication--login");
 const dashboard = document.querySelector(".main--dashboard");
 const financesPage = document.querySelector(".main--finances");
+const farmProfilePage = document.querySelector(".main--farm-profile");
+const logoutBtns = document.querySelectorAll(".btn-logout");
 const fertilizerApplicationGuide = document.querySelector(".main--fertilizer-application");
 const pestManagementGuidePage = document.querySelector(".main--pest-management");
 const activityInstructionsPage = document.querySelector(".main--activity-instructions");
@@ -601,82 +604,170 @@ if (financesPage) (0, _financesJs.handleFinancesPage)();
 if (pestManagementGuidePage) (0, _pestManagementJs.handlePestManagementPage)();
 if (fertilizerApplicationGuide) (0, _fertilizerApplicationGuideJs.handleFertilizerApplicationGuidePage)();
 if (activityInstructionsPage) (0, _activityInstructionsJs.handleActivityInstructions)();
+if (farmProfilePage) (0, _farmProfileJs.handleFarmProfilePage)();
+if (logoutBtns) logoutBtns.forEach((btn)=>{
+    (0, _authenticationJs.handleLogout)(btn);
+});
 
-},{"./authentication.js":"4WnuJ","./dashboard.js":"8E1QO","./expenseAndYieldInputHandler.js":"h1yDZ","./fertilizerApplicationGuide.js":"11str","./finances.js":"hFxMF","./pestManagement.js":"fzqhH","./activityInstructions.js":"jdlzQ"}],"4WnuJ":[function(require,module,exports) {
+},{"./activityInstructions.js":"jdlzQ","./authentication.js":"4WnuJ","./dashboard.js":"8E1QO","./expenseAndYieldInputHandler.js":"h1yDZ","./farmProfile.js":"lO1Ft","./fertilizerApplicationGuide.js":"11str","./finances.js":"hFxMF","./pestManagement.js":"fzqhH"}],"jdlzQ":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "handleSignup", ()=>handleSignup);
-parcelHelpers.export(exports, "handleLogin", ()=>handleLogin);
+parcelHelpers.export(exports, "handleActivityInstructions", ()=>handleActivityInstructions);
+var _crudOperationsJs = require("./crudOperations.js");
+var _pestManagementJs = require("./pestManagement.js");
+async function handleActivityInstructions() {
+    const currentUrl = window.location.href;
+    const activityName = currentUrl.split("farm-guide/")[1];
+    const goBackToFarmGuideMenuBtn = document.querySelector(".btn-open-farm-guide-menu");
+    goBackToFarmGuideMenuBtn.addEventListener("click", (e)=>{
+        e.preventDefault();
+        window.location.replace("/farm-guide");
+    });
+    console.log(activityName);
+    let isLoading = true;
+    const pageElements = [
+        ".section-instructions--images",
+        ".section-instructions--text"
+    ];
+    (0, _pestManagementJs.toggleLoading)(isLoading, pageElements);
+    (0, _crudOperationsJs.get)({
+        url: `farmGuide/${activityName}`
+    }).then((result)=>{
+        if (result.status === "success") {
+            const activityDetails = result.data[0];
+            isLoading = false;
+            renderActivityInstructionDetails(activityDetails);
+            (0, _pestManagementJs.toggleLoading)(isLoading, pageElements);
+        }
+    });
+    function renderActivityInstructionDetails(activityDetails) {
+        const { activity_name: activityName, required_tools: requiredTools, activity_procedure: activityProcedure, procedure_images: procedureImages } = activityDetails;
+        console.log(activityDetails.activity_procedure);
+        const markup = `
+    <div class="row row-activity">
+    <div class="flex flex-dc gap-md">
+      <div class="flex flex-dc gap-sm">
+        <p class="instruction_detail">
+          <span>Activity</span>
+          <span>${activityName}</span>
+        </p>
+        <p class="instruction_detail">
+          <span>Purpose</span>
+          <span
+            >Lorem ipsum dolor sit amet consectetur adipisicing
+            elit.</span
+          >
+        </p>
+        <p class="instruction_detail">
+          <span>Tools</span> <span>${requiredTools}</span>
+        </p>
+      </div>
+      <div
+        class="instruction_detail instruction_detail-procedure flex flex-dc gap-sm"
+      >
+        <h4>Procedure</h4>
+
+        <ul class="flex flex-dc gap-sm procedure_steps">
+        ${activityProcedure.map((step, index)=>`
+        <li>
+        <div class='flex gap-sm' >
+        <span><strong>${index + 1}.</strong></span>
+        <p class="procedure_step">
+         ${step}
+        </p>
+        </div>
+        </li>
+        `).join("")}
+
+        </ul>
+        <div class="section-instructions--images">
+          <div class="row row-activity">
+            <h3>Procedure Images</h3>
+            <ul class="list list-activity-images">            
+            ${activityProcedure.map((image)=>`
+                                  <li>
+                                    <figure class="procedure_step-img">
+                                      <img
+                                        src="/src/fertilizer-application-methods/ring-method.jpg"
+                                        alt=""
+                                      />
+                                      <figcaption>Step 1</figcaption>
+                                    </figure>
+                                  </li>
+                `).join("")}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    `;
+        document.querySelector(".section-instructions--text").innerHTML = "";
+        document.querySelector(".section-instructions--text").insertAdjacentHTML("afterbegin", markup);
+    }
+}
+
+},{"./crudOperations.js":"2nPvR","./pestManagement.js":"fzqhH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2nPvR":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "post", ()=>post);
+parcelHelpers.export(exports, "get", ()=>get);
+parcelHelpers.export(exports, "sendDelete", ()=>sendDelete);
 var _alertJs = require("./alert.js");
-async function signup(data) {
+async function post(req) {
+    const data = JSON.stringify(req.data);
+    console.log(data);
     try {
-        (0, _alertJs.showAlert)("loading", "Creating account ...");
-        const response = await fetch("/api/v1/authentication/signup", {
+        (0, _alertJs.showAlert)("loading", req.loadingMessage);
+        const res = await fetch(`/api/v1/${req.url}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(data)
+            body: data
         });
-        const result = await response.json();
-        console.log(result);
-        if (result.status !== "success") (0, _alertJs.showAlert)("error", result.message);
-        else {
-            (0, _alertJs.showAlert)("success", "Account created successfully");
-            window.location.assign("/");
+        const result = await res.json();
+        if (result.status === "success") {
+            (0, _alertJs.showAlert)("success", req.successMessage);
+            return result;
+        } else {
+            (0, _alertJs.showAlert)("error", result.message);
+            return result;
         }
-    } catch (error) {
-        (0, _alertJs.showAlert)("error", "Something went wrong");
-        console.error("Error:", error);
+    } catch (err) {
+        console.log("err", err);
     }
 }
-async function login(data) {
+async function get(req) {
+    console.log(req);
     try {
-        (0, _alertJs.showAlert)("loading", "Login in...");
-        const response = await fetch("/api/v1/authentication/login", {
-            method: "POST",
+        const res = await fetch(`/api/v1/${req.url}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
+            }
         });
-        const result = await response.json();
-        console.log(result);
-        if (result.status !== "success") (0, _alertJs.showAlert)("error", result.message);
-        else {
-            (0, _alertJs.showAlert)("success", "Login successful");
-            window.location.assign("/");
-        }
-    } catch (error) {
-        (0, _alertJs.showAlert)("error", "Something went wrong");
-        console.error("Error:", error);
+        const result = await res.json();
+        if (result.status === "success") return result;
+        else return {};
+    } catch (err) {
+        console.log(err);
     }
 }
-function handleSignup(signupForm) {
-    signupForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-        const name = document.getElementById("name").value;
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        const passwordConfirm = document.getElementById("passwordConfirm").value;
-        const data = {
-            email,
-            password
-        };
-        signup(data);
-    });
-}
-function handleLogin(loginForm) {
-    loginForm.addEventListener("submit", function(e) {
-        e.preventDefault();
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        const data = {
-            email,
-            password
-        };
-        login(data);
-    });
+async function sendDelete(req) {
+    try {
+        // showAlert("loading", req.loadingMessage);
+        const res = await fetch(`/api/v1/${req.url}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const result = await res.json();
+        return result;
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 },{"./alert.js":"kxdiQ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kxdiQ":[function(require,module,exports) {
@@ -692,6 +783,7 @@ const showAlert = (type, message)=>{
     const markup = `<div class="status-box status-box--${type}">    
   <ion-icon class='icon-success'  name="checkmark-circle-outline"></ion-icon>
   <ion-icon  class='icon-error' name="close-circle-outline"></ion-icon>
+  <ion-icon  class='icon-warning'  name="alert-circle-outline"></ion-icon>
   <svg stroke="currentColor" class='icon-loading'  fill="#20377d" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M12 22c5.421 0 10-4.579 10-10h-2c0 4.337-3.663 8-8 8s-8-3.663-8-8c0-4.336 3.663-8 8-8V2C6.579 2 2 6.58 2 12c0 5.421 4.579 10 10 10z"></path></svg>
   <span>
   ${message}
@@ -733,7 +825,315 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"8E1QO":[function(require,module,exports) {
+},{}],"fzqhH":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "handlePestManagementPage", ()=>handlePestManagementPage);
+parcelHelpers.export(exports, "toggleLoading", ()=>toggleLoading);
+var _crudOperationsJs = require("./crudOperations.js");
+async function handlePestManagementPage() {
+    let isLoading = true;
+    const pageElements = [
+        ".row-probable-pests",
+        ".row-other-pests"
+    ];
+    toggleLoading(isLoading, pageElements);
+    const pestListsContainer = document.querySelector(".container--pest-lists");
+    const pestDetailsContainer = document.querySelector(".container--pest-details");
+    const goBackToFarmGuideMenuBtn = document.querySelector(".btn-open-farm-guide-menu");
+    goBackToFarmGuideMenuBtn.addEventListener("click", (e)=>{
+        e.preventDefault();
+        window.location.replace("/farm-guide");
+    });
+    const goBackToPestListsBtn = document.querySelector(".btn-open-pest-lists");
+    goBackToPestListsBtn.addEventListener("click", (e)=>{
+        e.preventDefault();
+        goBackToPestLists();
+    });
+    function goBackToPestLists() {
+        pestDetailsContainer.classList.add("hidden");
+        pestListsContainer.classList.remove("hidden");
+    }
+    (0, _crudOperationsJs.get)({
+        url: "farmGuide/pest-management"
+    }).then((result)=>{
+        if (result.status === "success") {
+            const pests = result.data;
+            isLoading = false;
+            toggleLoading(isLoading, [
+                ".row-other-pests"
+            ]);
+            console.log(pests);
+            renderOtherPestsList(pests);
+        }
+    });
+    function renderPestListItem(pest) {
+        const { pest_id: pestId, pest_name: pestName, pest_symptoms: symptoms, required_tools: tools, required_pesticide: pesticide, pesticide_application_procedure: pesticideApplicationProcedure } = pest;
+        const markup = ` 
+      <li class="pest">
+      <div class="pest_img-box">
+        <img
+          src="../src/Coffee-diseases/coffee-berry-disease-1.jpg"
+          alt=""
+          class="pest_image"
+        />
+      </div>
+      <span class="pest_name">${pestName}</span>
+      <button class="btn btn-primary btn-medium btn-open-more-details" id=${pestId}>
+        See more details
+      </button>
+      </li>
+
+      
+`;
+        return markup;
+    }
+    function renderOtherPestsList(otherPestsList) {
+        let otherPestsListItemsMarkup = `${otherPestsList.map((pest)=>renderPestListItem(pest)).join("")}`;
+        document.querySelector(".list-other-pests").innerHTML = "";
+        document.querySelector(".list-other-pests").insertAdjacentHTML("afterbegin", otherPestsListItemsMarkup);
+        handlePestLists(otherPestsList);
+    }
+    function handlePestLists(pestList) {
+        const openPestDetailsBtns = document.querySelectorAll(".btn-open-more-details");
+        console.log(openPestDetailsBtns);
+        openPestDetailsBtns.forEach((btn)=>{
+            btn.addEventListener("click", (e)=>{
+                e.preventDefault();
+                pestListsContainer.classList.add("hidden");
+                pestDetailsContainer.classList.remove("hidden");
+                console.log("helllooo");
+                const selectedPestId = btn.getAttribute("id") * 1;
+                const pestToShow = pestList.find((pest)=>pest.pest_id === selectedPestId);
+                renderMorePestDetails(pestToShow);
+            });
+        });
+    }
+    function renderMorePestDetails(pest) {
+        const { pest_id: pestId, pest_name: pestName, pest_symptoms: symptoms, pest_symptoms_images: symptomsImages, required_tools: requiredTools, required_pesticide: requiredPesticide, pesticide_application_procedure: pesticideApplicationProcedure } = pest;
+        const pestDetailsMarkup = `
+    <div class="row flex flex-dc">
+    <div class="flex flex-dc gap-md">
+      <div class="flex flex-dc gap-sm">
+        <p class="pest_detail">
+          <span>Pest Name</span>
+          <span>${pestName}</span>
+        </p>
+        <div class="pest_detail pest_detail-symptoms flex flex-dc gap-sm">
+          <h4>Symptoms</h4>
+          <ul class="flex flex-dc gap-sm pest_symptoms">
+               ${symptoms.map((symptom)=>`<li>
+                                  <p class="pest_symptom">
+                                  ${symptom}
+                                  </p>
+                                </li>`).join("")}
+          </ul>
+        </div>
+        <div>
+          <div class="pest_detail flex-dc flex gap-sm section-symptoms--images">
+            <h4>Symptom Images</h4>
+            <ul class="list list-activity-images list-symptoms-images">
+                  ${symptoms.map((image)=>`
+                                        <li>
+                                          <figure class="procedure_step-img">
+                                            <img
+                                              src="/src/fertilizer-application-methods/ring-method.jpg"
+                                              alt=""
+                                            />
+                                            <figcaption>Step 1</figcaption>
+                                          </figure>
+                                        </li>
+                      `).join("")}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    
+    `;
+        const pestControlDetailsMarkup = `
+    <div class="flex flex-dc gap-md">
+    <div class="flex flex-dc gap-sm">
+      <p class="instruction_detail">
+        <span>Required Pesticide</span>
+        <span
+          >${requiredPesticide}</span
+        >
+      </p>
+      <p class="instruction_detail">
+      <span>Required Tools</span>
+        <span>${requiredTools}</span>
+      </p>
+    </div>
+    <div
+      class="instruction_detail instruction_detail-procedure flex flex-dc gap-sm"
+    >
+      <h4>Procedure</h4>
+
+      <ul class="flex flex-dc gap-sm procedure_steps">
+      ${pesticideApplicationProcedure.map((step, index)=>`
+          <li>
+          <p class="procedure_step">
+        <strong>Step ${index + 1}: </strong>${step}
+        </p>
+        </li>
+          `).join("")}
+      </ul>
+      <div class="section-instructions--images">
+        <div class="row row-activity">
+          <h3>Procedure Images</h3>
+          <ul class="list list-activity-images">
+          ${symptoms.map((image)=>`
+                                <li>
+                                  <figure class="procedure_step-img">
+                                    <img
+                                      src="/src/fertilizer-application-methods/ring-method.jpg"
+                                      alt=""
+                                    />
+                                    <figcaption>Step 1</figcaption>
+                                  </figure>
+                                </li>
+              `).join("")}
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+`;
+        document.querySelector(".section-details--text").innerHTML = "";
+        document.querySelector(".pest-control--instructions").innerHTML = "";
+        document.querySelector(".section-details--text").insertAdjacentHTML("afterbegin", pestDetailsMarkup);
+        document.querySelector(".pest-control--instructions").insertAdjacentHTML("afterbegin", pestControlDetailsMarkup);
+    }
+}
+function toggleLoading(isLoading, elements) {
+    if (isLoading) elements.forEach((el)=>{
+        document.querySelectorAll(el).forEach((el)=>{
+            el.classList.add("loading");
+            el.querySelectorAll("button").forEach((btn)=>btn.disabled = true);
+            el.querySelectorAll("input").forEach((input)=>input.disabled = true);
+        });
+    });
+    else elements.forEach((el)=>{
+        document.querySelectorAll(el).forEach((el)=>{
+            el.classList.remove("loading");
+            el.querySelectorAll("button").forEach((btn)=>btn.removeAttribute("disabled"));
+            el.querySelectorAll("input").forEach((input)=>input.removeAttribute("disabled"));
+        });
+    });
+}
+
+},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4WnuJ":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "handleSignup", ()=>handleSignup);
+parcelHelpers.export(exports, "handleLogin", ()=>handleLogin);
+parcelHelpers.export(exports, "handleLogout", ()=>handleLogout);
+var _alertJs = require("./alert.js");
+var _crudOperationsJs = require("./crudOperations.js");
+async function signup(data) {
+    try {
+        (0, _alertJs.showAlert)("loading", "Creating account ...");
+        const response = await fetch("/api/v1/authentication/signup", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        console.log(result);
+        if (result.status !== "success") (0, _alertJs.showAlert)("error", result.message);
+        else {
+            (0, _alertJs.showAlert)("success", "Account created successfully");
+            window.location.assign("/");
+        }
+    } catch (error) {
+        (0, _alertJs.showAlert)("error", "Something went wrong");
+        console.error("Error:", error);
+    }
+}
+async function login(data) {
+    try {
+        (0, _alertJs.showAlert)("loading", "Logging in...");
+        const response = await fetch("/api/v1/authentication/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        console.log(result);
+        if (result.status !== "success") (0, _alertJs.showAlert)("error", result.message);
+        else {
+            (0, _alertJs.showAlert)("success", "Login successful");
+            window.location.assign("/");
+        }
+    } catch (error) {
+        (0, _alertJs.showAlert)("error", "Something went wrong");
+        console.error("Error:", error);
+    }
+}
+async function logout(data) {
+    try {
+        (0, _alertJs.showAlert)("loading", "Logging out...");
+        const response = await fetch("/api/v1/authentication/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        console.log(result);
+        if (result.status !== "success") (0, _alertJs.showAlert)("error", result.message);
+        else window.location.assign("/login");
+    } catch (error) {
+        (0, _alertJs.showAlert)("error", "Something went wrong");
+        console.error("Error:", error);
+    }
+}
+function handleSignup(signupForm) {
+    signupForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const passwordConfirm = document.getElementById("passwordConfirm").value;
+        const data = {
+            email,
+            password
+        };
+        signup(data);
+    });
+}
+function handleLogin(loginForm) {
+    const isRedirectFromAuthentication = loginForm.getAttribute("data-isRedirectFromAuthentication");
+    if (isRedirectFromAuthentication === "true") (0, _alertJs.showAlert)("warning", "You are not logged in. Login to continue");
+    loginForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const data = {
+            email,
+            password
+        };
+        login(data);
+    });
+}
+async function handleLogout(logoutBtn) {
+    logoutBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        logout();
+    });
+}
+
+},{"./alert.js":"kxdiQ","./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8E1QO":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "HandleDashboardFunctions", ()=>HandleDashboardFunctions);
@@ -745,10 +1145,14 @@ async function HandleDashboardFunctions() {
     const openDialogBtns = document.querySelectorAll(".btn-open-dialog");
     const showFarmInputBtns = document.querySelectorAll(".btn-show-farmInput");
     const closeDialogBtns = document.querySelectorAll(".btn-close-modal");
+    function closeDialog(el) {
+        el.closest("dialog").close();
+        window.location.reload();
+    }
     closeDialogBtns.forEach((btn)=>{
         btn.addEventListener("click", (e)=>{
             e.preventDefault();
-            btn.closest("dialog").close();
+            closeDialog(btn);
         });
     });
     // let openExpenseDialogAndFormBtns = document.querySelectorAll(
@@ -1613,7 +2017,7 @@ async function HandleDashboardFunctions() {
 
                           <div class="btns-row">
                             <button class="btn btn-secondary btn-large open-select-expense-form" type='button' >Back</button>
-                            <button class="btn btn-secondary btn-large">Cancel</button>
+                            <button class="btn btn-secondary btn-large btn-close-modal"  type='button' >Cancel</button>
                             <button class="btn btn-primary btn-large btn-open-confirm-expense-form">${formType === "expense" ? "Submit" : "Add to schedule"}</button>
                           </div>
                           </form>`;
@@ -1721,7 +2125,7 @@ async function HandleDashboardFunctions() {
               
              
                 <div class='popover popover--schedule hidden' id='schedule-btns--${activityId}'>
-                <button class='btn btn-small btn-icon btn-cancel-activity'>
+                <button class='btn btn-small btn-icon btn-cancel-activity btn-close-modal'>
                 <ion-icon name="trash-outline"></ion-icon>
                 
                 Cancel activity</button>
@@ -1830,8 +2234,8 @@ async function HandleDashboardFunctions() {
                                 </div>
 
                           <div class="btns-row flex">
-                                <button class="btn btn-secondary btn-large">Cancel</button>
-                                <button class="btn btn-primary btn-large btn-open-confirm-expense-form">Edit</button>
+                                <button  type='button' class="btn btn-secondary btn-large btn-close-modal">Cancel</button>
+                                <button type='button' class="btn btn-primary btn-large btn-open-confirm-expense-form">Edit</button>
                                 <button class="btn btn-primary btn-large btn-open-confirm-expense-form">Confirm</button>
                           </div>
                         </form>`;
@@ -1917,10 +2321,25 @@ async function HandleDashboardFunctions() {
         return formData;
     }
     function handleFormOpen(existingData = {}, isEditMode = false) {
+        const closeDialogBtns = document.querySelectorAll(".btn-close-modal");
+        closeDialogBtns.forEach((btn)=>{
+            btn.addEventListener("click", (e)=>{
+                e.preventDefault();
+                closeDialog(btn);
+            });
+        });
+        function addFormValidation(form) {
+            const inputElements = form.querySelectorAll("input");
+            inputElements.forEach((el)=>{
+                if (el.getAttribute("type") === "number") el.setAttribute("min", 1);
+                if (el.getAttribute("type") === "date") el.setAttribute("min", new Date().toISOString().split("T")[0]);
+            });
+        }
         const expensesForm = document.querySelector(".dialog_content--input-expense-details");
         const activityForm = document.querySelector(".dialog_content--input-activity-details");
         function editFormMarkup() {}
         if (activityForm) {
+            addFormValidation(activityForm);
             const unHideFormFieldsBtns = document.querySelectorAll(".btn-unHide-form-fields");
             const activity = document.querySelector(".input--activity").value;
             const openExpenseConfirmFormBtn = document.querySelector(".btn-open-confirm-expense-form");
@@ -2309,24 +2728,63 @@ async function HandleDashboardFunctions() {
                 const markup = dialogContentEl.insertAdjacentHTML("afterBegin", createConfirmExpensesFormMarkup(activityExpensesDataToDisplay));
             }
         }
-        if (expensesForm) expensesForm.addEventListener("submit", (e)=>{
-            e.preventDefault();
-            const formData = getFormData(expensesForm);
-            console.log("isEditMode", isEditMode);
-            if (isEditMode) {
-                if (formData.expense === "fertilizer" || formData.expense === "pesticide") {
-                    const newQuantity = existingData.currentQuantity + formData.quantity;
+        if (expensesForm) {
+            addFormValidation(expensesForm);
+            expensesForm.addEventListener("submit", (e)=>{
+                e.preventDefault();
+                const formData = getFormData(expensesForm);
+                console.log("isEditMode", isEditMode);
+                if (isEditMode) {
+                    if (formData.expense === "fertilizer" || formData.expense === "pesticide") {
+                        const newQuantity = existingData.currentQuantity + formData.quantity;
+                        const farmInputData = {
+                            quantity: newQuantity
+                        };
+                        const farmInputId = existingData.farmInputId;
+                        const farmInputUpdateRequest = {
+                            url: `farmInputs/${farmInputId}`,
+                            data: {
+                                farmInputData
+                            },
+                            loadingMessage: `Adding more ${formData.expense} to inventory...`,
+                            successMessage: `${capitilizeFirstLetter(formData.expense)} added successfully`
+                        };
+                        const expenseDetails = [
+                            {
+                                ...formData
+                            }
+                        ];
+                        const expenseData = {
+                            transaction_date: formData.transactionDate,
+                            expense_type: formData.expense,
+                            expense_details: expenseDetails,
+                            expense_total: formData.cost,
+                            farm_id: 1
+                        };
+                        const expenseCreateRequest = {
+                            url: "expenses/",
+                            data: expenseData,
+                            loadingMessage: "Creating expense...",
+                            successMessage: "Expense created successfully..."
+                        };
+                        (0, _crudOperationsJs.post)(farmInputUpdateRequest).then((result)=>{
+                            if (result.status === "success") (0, _crudOperationsJs.post)(expenseCreateRequest).then((result)=>{
+                                if (result.status === "success") {
+                                    const dialogEl = document.getElementById("dialog--expenses");
+                                    dialogEl.close();
+                                }
+                            });
+                        });
+                        return;
+                    }
+                } else if (formData.expense === "fertilizer" || formData.expense === "pesticide") {
+                    const { description, expense, quantity, measurementUnit } = formData;
                     const farmInputData = {
-                        quantity: newQuantity
-                    };
-                    const farmInputId = existingData.farmInputId;
-                    const farmInputUpdateRequest = {
-                        url: `farmInputs/${farmInputId}`,
-                        data: {
-                            farmInputData
-                        },
-                        loadingMessage: `Adding more ${formData.expense} to inventory...`,
-                        successMessage: `${capitilizeFirstLetter(formData.expense)} added successfully`
+                        description,
+                        farm_input_type: expense,
+                        quantity,
+                        measurement_unit: measurementUnit,
+                        farm_id: 1
                     };
                     const expenseDetails = [
                         {
@@ -2340,148 +2798,81 @@ async function HandleDashboardFunctions() {
                         expense_total: formData.cost,
                         farm_id: 1
                     };
+                    const farmInputCreateRequest = {
+                        url: "farmInputs/",
+                        data: farmInputData,
+                        loadingMessage: `Adding ${formData.expense} to inventory...`,
+                        successMessage: `${capitilizeFirstLetter(formData.expense)} added successfully`
+                    };
                     const expenseCreateRequest = {
                         url: "expenses/",
                         data: expenseData,
                         loadingMessage: "Creating expense...",
-                        successMessage: "Expense created successfully..."
+                        successMessage: "Expense created successfully"
                     };
-                    (0, _crudOperationsJs.post)(farmInputUpdateRequest).then((result)=>{
-                        if (result.status === "success") (0, _crudOperationsJs.post)(expenseCreateRequest).then((result)=>{
-                            if (result.status === "success") {
-                                const dialogEl = document.getElementById("dialog--expenses");
-                                dialogEl.close();
-                            }
-                        });
+                    console.log("farmInputData", farmInputData);
+                    (0, _crudOperationsJs.post)(farmInputCreateRequest).then((result)=>{
+                        if (result.status === "success") (0, _crudOperationsJs.post)(expenseCreateRequest);
                     });
-                    return;
+                } else {
+                    const { expense, cost, transactionDate } = formData;
+                    const expenseDetails = [
+                        {
+                            ...formData
+                        }
+                    ];
+                    const expenseData = {
+                        expense_type: expense,
+                        transaction_date: transactionDate,
+                        expense_details: expenseDetails,
+                        expense_total: cost
+                    };
+                    const expenseCreateRequest = {
+                        url: "expenses/",
+                        data: expenseData,
+                        loadingMessage: "Creating expense...",
+                        successMessage: "Expense created successfully"
+                    };
+                    (0, _crudOperationsJs.post)(expenseCreateRequest);
                 }
-            } else if (formData.expense === "fertilizer" || formData.expense === "pesticide") {
-                const { description, expense, quantity, measurementUnit } = formData;
-                const farmInputData = {
-                    description,
-                    farm_input_type: expense,
-                    quantity,
-                    measurement_unit: measurementUnit,
-                    farm_id: 1
-                };
-                const expenseDetails = [
-                    {
-                        ...formData
-                    }
-                ];
-                const expenseData = {
-                    transaction_date: formData.transactionDate,
-                    expense_type: formData.expense,
-                    expense_details: expenseDetails,
-                    expense_total: formData.cost,
-                    farm_id: 1
-                };
-                const farmInputCreateRequest = {
-                    url: "farmInputs/",
-                    data: farmInputData,
-                    loadingMessage: `Adding ${formData.expense} to inventory...`,
-                    successMessage: `${capitilizeFirstLetter(formData.expense)} added successfully`
-                };
-                const expenseCreateRequest = {
-                    url: "expenses/",
-                    data: expenseData,
-                    loadingMessage: "Creating expense...",
-                    successMessage: "Expense created successfully"
-                };
-                console.log("farmInputData", farmInputData);
-                (0, _crudOperationsJs.post)(farmInputCreateRequest).then((result)=>{
-                    if (result.status === "success") (0, _crudOperationsJs.post)(expenseCreateRequest);
-                });
-            } else {
-                const { expense, cost, transactionDate } = formData;
-                const expenseDetails = [
-                    {
-                        ...formData
-                    }
-                ];
-                const expenseData = {
-                    expense_type: expense,
-                    transaction_date: transactionDate,
-                    expense_details: expenseDetails,
-                    expense_total: cost
-                };
-                const expenseCreateRequest = {
-                    url: "expenses/",
-                    data: expenseData,
-                    loadingMessage: "Creating expense...",
-                    successMessage: "Expense created successfully"
-                };
-                (0, _crudOperationsJs.post)(expenseCreateRequest);
-            }
-        });
-    }
-}
-
-},{"./alert.js":"kxdiQ","./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2nPvR":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "post", ()=>post);
-parcelHelpers.export(exports, "get", ()=>get);
-parcelHelpers.export(exports, "sendDelete", ()=>sendDelete);
-var _alertJs = require("./alert.js");
-async function post(req) {
-    const data = JSON.stringify(req.data);
-    console.log(data);
-    try {
-        (0, _alertJs.showAlert)("loading", req.loadingMessage);
-        const res = await fetch(`/api/v1/${req.url}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: data
-        });
-        const result = await res.json();
-        if (result.status === "success") {
-            (0, _alertJs.showAlert)("success", req.successMessage);
-            return result;
-        } else {
-            (0, _alertJs.showAlert)("error", result.message);
-            return result;
+            });
         }
-    } catch (err) {
-        console.log("err", err);
     }
-}
-async function get(req) {
-    console.log(req);
-    try {
-        const res = await fetch(`/api/v1/${req.url}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
+    function handleCoffeeHarvestForm() {
+        const harvestForm = document.querySelector(".form--coffee-harvest");
+        let formData = {};
+        harvestForm.querySelectorAll("input").forEach((input)=>{
+            input.addEventListener("change", (e)=>{
+                const label = input.getAttribute("id");
+                const type = input.getAttribute("type");
+                const value = type === "number" ? parseFloat(input.value) : input.value;
+                formData = {
+                    ...formData,
+                    [label]: value
+                };
+            });
         });
-        const result = await res.json();
-        if (result.status === "success") return result;
-        else return {};
-    } catch (err) {
-        console.log(err);
-    }
-}
-async function sendDelete(req) {
-    try {
-        // showAlert("loading", req.loadingMessage);
-        const res = await fetch(`/api/v1/${req.url}`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            }
+        harvestForm.addEventListener("submit", (e)=>{
+            e.preventDefault();
+            const { harvestQuantity: harvest_amount_kg, harvestDate: harvest_date } = formData;
+            const harvestData = {
+                harvest_amount_kg,
+                harvest_date
+            };
+            (0, _crudOperationsJs.post)({
+                url: "farmProduce/coffee-yield",
+                data: harvestData,
+                loadingMessage: "Adding yield records...",
+                successMessage: "Coffee yield recorded successfully"
+            }).then((result)=>{
+                if (result.status === "success") closeDialog(harvestForm);
+            });
         });
-        const result = await res.json();
-        return result;
-    } catch (err) {
-        console.log(err);
     }
+    handleCoffeeHarvestForm();
 }
 
-},{"./alert.js":"kxdiQ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"h1yDZ":[function(require,module,exports) {
+},{"./alert.js":"kxdiQ","./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"h1yDZ":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "handleExpenseAndYieldInput", ()=>handleExpenseAndYieldInput);
@@ -2495,6 +2886,17 @@ function handleExpenseAndYieldInput() {
     const selectExpenseForm = document.querySelector(".dialog_content--select-expense");
     const inputExpenseDetailsForm = document.querySelector(".dialog_content--input-expense-details");
     const openExpenseFormBtns = document.querySelectorAll(".btn-open-expense-form");
+    const closeDialogBtns = document.querySelectorAll(".btn-close-modal");
+    function closeDialog(btn) {
+        btn.closest("dialog").close();
+        window.location.reload();
+    }
+    closeDialogBtns.forEach((btn)=>{
+        btn.addEventListener("click", (e)=>{
+            e.preventDefault();
+            closeDialog(btn);
+        });
+    });
     showHarvestDialogBtn.addEventListener("click", ()=>{
         harvestDialog.showModal();
     });
@@ -2703,7 +3105,95 @@ function handleExpenseAndYieldInput() {
     });
 }
 
-},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11str":[function(require,module,exports) {
+},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lO1Ft":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "handleFarmProfilePage", ()=>handleFarmProfilePage);
+var _crudOperationsJs = require("./crudOperations.js");
+var _pestManagementJs = require("./pestManagement.js");
+async function handleFarmProfilePage() {
+    let isLoading = true;
+    const elementsWaitingForData = [
+        ".row--details"
+    ];
+    (0, _pestManagementJs.toggleLoading)(isLoading, elementsWaitingForData);
+    (0, _crudOperationsJs.get)({
+        url: "farmProduce/farm-profile"
+    }).then((result)=>{
+        if (result.status === "success") {
+            const profileData = result.data[0];
+            const farmId = profileData.farm_id;
+            isLoading = false;
+            renderProfileDetails(profileData);
+            handleProfileDetailsForm(farmId);
+            (0, _pestManagementJs.toggleLoading)(isLoading, elementsWaitingForData);
+            console.log(profileData);
+        }
+    });
+    function handleProfileDetailsForm(farmId) {
+        const farmProfileDetailsForm = document.querySelector(".form--farm-profile");
+        const inputEls = farmProfileDetailsForm.querySelectorAll("input");
+        let formData = {};
+        inputEls.forEach((el)=>{
+            el.addEventListener("change", (e)=>{
+                e.preventDefault();
+                el.closest("section").querySelector(".btns-row").classList.remove("hidden");
+                const inputElId = el.getAttribute("id");
+                const inputType = el.getAttribute("type");
+                let value = el.value;
+                value = inputType === "number" ? value * 1 : value;
+                formData = {
+                    ...formData,
+                    [inputElId]: value
+                };
+            });
+        });
+        farmProfileDetailsForm.querySelectorAll(".btn-cancel").forEach((btn)=>{
+            btn.addEventListener("click", ()=>{
+                btn.closest(".btns-row").classList.add("hidden");
+            });
+        });
+        farmProfileDetailsForm.addEventListener("submit", (e)=>{
+            e.preventDefault();
+            const farmProfileData = renameObjectKeys(formData, "snakeCase");
+            console.log(farmProfileData);
+            (0, _crudOperationsJs.post)({
+                url: `farmProduce/farm-profile/${farmId}`,
+                data: farmProfileData,
+                loadingMessage: "Updating details",
+                successMessage: "Details updated"
+            });
+        });
+    }
+    function renderProfileDetails(profileData) {
+        const { farm_id: farmId, farmer_name: farmerName, coffee_variety: coffeeVariety, farm_size: farmSize, number_of_coffee_trees: numberOfCoffeeTrees, expected_yearly_yield: expectedYearlyYield, coffee_price_per_kg: coffeePricePerKg } = profileData;
+        const formData = renameObjectKeys(profileData, "camelCase");
+        const inputEls = document.querySelector(".form--farm-profile").querySelectorAll("input");
+        console.log(inputEls);
+        inputEls.forEach((el)=>{
+            const inputElId = el.getAttribute("id");
+            console.log(inputElId);
+            console.log(formData);
+            el.value = formData[inputElId];
+        });
+    }
+    function renameObjectKeys(oldObject, namingConvention) {
+        const newObject = {};
+        if (Object.keys(oldObject).length > 0) for(const key in oldObject){
+            let newKey;
+            if (namingConvention === "camelCase") newKey = key.replace(/_([a-z])/g, function(match, letter) {
+                return letter.toUpperCase();
+            });
+            if (namingConvention === "snakeCase") newKey = key.replace(/[A-Z]/g, function(match) {
+                return "_" + match.toLowerCase();
+            });
+            newObject[newKey] = oldObject[key];
+        }
+        return newObject;
+    }
+}
+
+},{"./crudOperations.js":"2nPvR","./pestManagement.js":"fzqhH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"11str":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "handleFertilizerApplicationGuidePage", ()=>handleFertilizerApplicationGuidePage);
@@ -2822,6 +3312,7 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "handleFinancesPage", ()=>handleFinancesPage);
 var _crudOperationsJs = require("./crudOperations.js");
+var _pestManagementJs = require("./pestManagement.js");
 function handleFinancesPage() {
     const toggleExpenseDetailsBtns = document.querySelectorAll(".btn-toggle--expense-details");
     const expensesSectionEl = document.querySelector(".section-expenses");
@@ -2841,11 +3332,207 @@ function handleFinancesPage() {
             });
         });
     }
+    async function renderFinancesOverview() {
+        let isLoading = true;
+        const elementsWaitingForData = [
+            ".row-widgets"
+        ];
+        (0, _pestManagementJs.toggleLoading)(isLoading, elementsWaitingForData);
+        function createFinancesOverviewMarkup(financesData) {
+            const { total_revenue: income = 0, total_expenses: expensesTotal = 0, profit = 0, budget_amount: budgetAmount = 0, budget_remaining: remainingBudgetAmount = 0 } = financesData || {};
+            const markup = `
+      <h2 class="heading-secondary">Overview</h2>
+
+      <div class="row row-widgets">
+                <div class="widget widget--income">
+                  <span class="widget-label">Income</span>
+                  <div class="widget-details">
+                    <span class="widget-value">${formatCurrency(income)}</span>
+                  </div>
+                </div>
+                <div class="widget widget--expenses">
+                  <span class="widget-label">Expenses</span>
+                  <div class="widget-details">
+                    <span class="widget-value"> ${formatCurrency(expensesTotal)}</span>
+                  </div>
+                </div>
+                <div class="widget widget--profit">
+                  <span class="widget-label">Profit</span>
+                  <div class="widget-details">
+                    <span class="widget-value">${formatCurrency(profit)}</span>
+                  </div>
+                </div>
+                <div class="widget widget--budget">
+                  <span class="widget-label">Budget</span>
+                  <div class="widget-details">
+                    <span class="widget-value">Yearly budget: ${formatCurrency(budgetAmount)}</span>
+                    <span class="widget-value"
+                      >Remaining Amount: ${formatCurrency(remainingBudgetAmount)}</span
+                    >
+                  </div>
+                </div>
+              </div>`;
+            return markup;
+        }
+        (0, _crudOperationsJs.get)({
+            url: "farmProduce/finances-overview"
+        }).then((result)=>{
+            if (result.status === "success") {
+                isLoading = false;
+                const financesData = result.data[0];
+                const financesOverviewMarkup = createFinancesOverviewMarkup(financesData);
+                document.querySelector(".section--overview").innerHTML = "";
+                document.querySelector(".section--overview").insertAdjacentHTML("afterbegin", financesOverviewMarkup);
+                (0, _pestManagementJs.toggleLoading)(isLoading, elementsWaitingForData);
+            }
+        });
+    }
+    renderFinancesOverview();
+    function formatCurrency(number) {
+        return new Intl.NumberFormat("ke-KE", {
+            style: "currency",
+            currency: "KSH"
+        }).format(number);
+    }
+    function renderIncomeDetails() {
+        let isLoading = true;
+        const elementsWaitingForData = [
+            ".row-income"
+        ];
+        (0, _pestManagementJs.toggleLoading)(isLoading, elementsWaitingForData);
+        function createIncomeDetailsMarkup(incomeData) {
+            const { total_harvest_amount_kg: totalYield = 0, coffee_price_per_kg: pricePerKg = 0, total_revenue: expectedRevenue = 0 } = incomeData || {};
+            const markup = `
+      <h3 class="sub-heading">Coffee Sales</h3>
+                <div class="sales-details">
+                  <div class="sales-detail sales-detail--price">
+                    <span class="label label-price">Price per Kg</span>
+                    <span class="value value-price">${formatCurrency(pricePerKg)}</span>
+                  </div>
+
+                  <div class="sales-detail sales-detail--yield">
+                    <span class="label label-yield">Total Yield</span>
+                    <span class="value value-yield">${totalYield} Kg</span>
+                  </div>
+
+                  <div class="sales-detail sales-detail--amount">
+                    <span class="label label-amount">Expected revenue</span>
+                    <span class="value value-amount">${formatCurrency(expectedRevenue)}</span>
+                  </div>
+      
+      `;
+            return markup;
+        }
+        (0, _crudOperationsJs.get)({
+            url: "farmProduce/income"
+        }).then((result)=>{
+            if (result.status === "success") {
+                isLoading = false;
+                const incomeData = result.data[0];
+                const incomeDetailsMarkup = createIncomeDetailsMarkup(incomeData);
+                document.querySelector(".row-income").innerHTML = "";
+                document.querySelector(".row-income").insertAdjacentHTML("afterbegin", incomeDetailsMarkup);
+                (0, _pestManagementJs.toggleLoading)(isLoading, elementsWaitingForData);
+            }
+        });
+    }
+    renderIncomeDetails();
+    async function renderBugdetChart() {
+        const budgetSection = document.querySelector(".section-budget");
+        let expenseTotals = [];
+        const expenseWidgetEls = document.querySelectorAll(".expense");
+        function showExpenseBudgetStatus(budget) {
+            expenseWidgetEls.forEach((el)=>{
+                const exepenseType = el.getAttribute("data-expense-type");
+                const expenseTotal = parseFloat(el.querySelector(".expense_cost-value").getAttribute("data-expense-total"));
+                if (budget[exepenseType]) {
+                    if (budget[exepenseType] < expenseTotal) {
+                        const amountOverBudget = expenseTotal - budget[exepenseType];
+                        el.querySelector(".expense_status").textContent = `Over-Budget -- ${formatCurrency(amountOverBudget)}`;
+                        el.querySelector(".expense_status").classList.add("expense_status--over-budget");
+                    } else {
+                        el.querySelector(".expense_status").textContent = "On-Budget";
+                        el.querySelector(".expense_status").classList.add("expense_status--on-budget");
+                    }
+                }
+            });
+        }
+        (0, _crudOperationsJs.get)({
+            url: "expenses/budget"
+        }).then((result)=>{
+            if (result.status === "success") {
+                const budget = result.data[0] ?? {};
+                const { fertilizer = 0, labour = 0, pesticide = 0, miscelleneous = 0 } = budget || {};
+                const budgetChartData = [
+                    fertilizer,
+                    labour,
+                    pesticide,
+                    miscelleneous
+                ];
+                const isGreaterThanOne = (currentValue)=>currentValue < 1;
+                const isCreateMode = Object.keys(budget).map((key)=>budget[key]).every(isGreaterThanOne);
+                if (!isCreateMode) {
+                    const budgetForm = document.querySelector(".form--budget");
+                    budgetForm.setAttribute("data-is-edit-mode", true);
+                    budgetForm.querySelector("h2").textContent = "Edit budget";
+                    document.querySelector(".btn-open-budget-form").textContent = "Edit budget";
+                }
+                showExpenseBudgetStatus(budget);
+                populateBudgetForm(budget);
+                const ctx = document.getElementById("myChart");
+                new Chart(ctx, {
+                    type: "doughnut",
+                    data: {
+                        labels: [
+                            "Fertilizer",
+                            "Labour",
+                            "Pesticides",
+                            "Miscellaneous"
+                        ],
+                        datasets: [
+                            {
+                                label: "Allocated amount",
+                                data: budgetChartData,
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                position: "right"
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
+    renderBugdetChart();
+    function populateBudgetForm(budget) {
+        const inputEls = document.querySelectorAll(".input");
+        console.log(budget);
+        inputEls.forEach((el)=>{
+            const key = el.getAttribute("id");
+            console.log(key);
+            el.value = budget[key] ?? 0;
+        });
+    }
     function handleEditCreateBudget() {
         const budgetDialog = document.querySelector(".dialog-budget");
         const budgetForm = document.querySelector(".form--budget");
         const inputEls = document.querySelectorAll(".input");
         const openBudgetDialogBtn = document.querySelector(".btn-open-budget-form");
+        const closeDialogBtns = document.querySelectorAll(".btn-close-modal");
+        console.log(closeDialogBtns);
+        const isEditMode = budgetForm.getAttribute("data-is-edit-mode");
+        console.log(isEditMode);
+        closeDialogBtns.forEach((btn)=>{
+            btn.addEventListener("click", (e)=>{
+                e.preventDefault();
+                btn.closest("dialog").close();
+            });
+        });
         openBudgetDialogBtn.addEventListener("click", (e)=>{
             e.preventDefault();
             budgetDialog.showModal();
@@ -2871,304 +3558,10 @@ function handleFinancesPage() {
             console.log(formData);
         });
     }
-    handleEditCreateBudget();
+    handleEditCreateBudget(budget);
     toggleExpenseDetails();
 }
 
-},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fzqhH":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "handlePestManagementPage", ()=>handlePestManagementPage);
-parcelHelpers.export(exports, "toggleLoading", ()=>toggleLoading);
-var _crudOperationsJs = require("./crudOperations.js");
-async function handlePestManagementPage() {
-    let isLoading = true;
-    const pageElements = [
-        ".row-probable-pests",
-        ".row-other-pests"
-    ];
-    toggleLoading(isLoading, pageElements);
-    const pestListsContainer = document.querySelector(".container--pest-lists");
-    const pestDetailsContainer = document.querySelector(".container--pest-details");
-    const goBackToFarmGuideMenuBtn = document.querySelector(".btn-open-farm-guide-menu");
-    goBackToFarmGuideMenuBtn.addEventListener("click", (e)=>{
-        e.preventDefault();
-        window.location.replace("/farm-guide");
-    });
-    const goBackToPestListsBtn = document.querySelector(".btn-open-pest-lists");
-    goBackToPestListsBtn.addEventListener("click", (e)=>{
-        e.preventDefault();
-        goBackToPestLists();
-    });
-    function goBackToPestLists() {
-        pestDetailsContainer.classList.add("hidden");
-        pestListsContainer.classList.remove("hidden");
-    }
-    (0, _crudOperationsJs.get)({
-        url: "farmGuide/pest-management"
-    }).then((result)=>{
-        if (result.status === "success") {
-            const pests = result.data;
-            isLoading = false;
-            toggleLoading(isLoading, [
-                ".row-other-pests"
-            ]);
-            console.log(pests);
-            renderOtherPestsList(pests);
-        }
-    });
-    function renderPestListItem(pest) {
-        const { pest_id: pestId, pest_name: pestName, pest_symptoms: symptoms, required_tools: tools, required_pesticide: pesticide, pesticide_application_procedure: pesticideApplicationProcedure } = pest;
-        const markup = ` 
-      <li class="pest">
-      <div class="pest_img-box">
-        <img
-          src="../src/Coffee-diseases/coffee-berry-disease-1.jpg"
-          alt=""
-          class="pest_image"
-        />
-      </div>
-      <span class="pest_name">${pestName}</span>
-      <button class="btn btn-primary btn-medium btn-open-more-details" id=${pestId}>
-        See more details
-      </button>
-      </li>
-
-      
-`;
-        return markup;
-    }
-    function renderOtherPestsList(otherPestsList) {
-        let otherPestsListItemsMarkup = `${otherPestsList.map((pest)=>renderPestListItem(pest)).join("")}`;
-        document.querySelector(".list-other-pests").innerHTML = "";
-        document.querySelector(".list-other-pests").insertAdjacentHTML("afterbegin", otherPestsListItemsMarkup);
-        handlePestLists(otherPestsList);
-    }
-    function handlePestLists(pestList) {
-        const openPestDetailsBtns = document.querySelectorAll(".btn-open-more-details");
-        console.log(openPestDetailsBtns);
-        openPestDetailsBtns.forEach((btn)=>{
-            btn.addEventListener("click", (e)=>{
-                e.preventDefault();
-                pestListsContainer.classList.add("hidden");
-                pestDetailsContainer.classList.remove("hidden");
-                console.log("helllooo");
-                const selectedPestId = btn.getAttribute("id") * 1;
-                const pestToShow = pestList.find((pest)=>pest.pest_id === selectedPestId);
-                renderMorePestDetails(pestToShow);
-            });
-        });
-    }
-    function renderMorePestDetails(pest) {
-        const { pest_id: pestId, pest_name: pestName, pest_symptoms: symptoms, pest_symptoms_images: symptomsImages, required_tools: requiredTools, required_pesticide: requiredPesticide, pesticide_application_procedure: pesticideApplicationProcedure } = pest;
-        const pestDetailsMarkup = `
-    <div class="row flex flex-dc">
-    <div class="flex flex-dc gap-md">
-      <div class="flex flex-dc gap-sm">
-        <p class="pest_detail">
-          <span>Pest Name</span>
-          <span>${pestName}</span>
-        </p>
-        <div class="pest_detail pest_detail-symptoms flex flex-dc gap-sm">
-          <h4>Symptoms</h4>
-          <ul class="flex flex-dc gap-sm pest_symptoms">
-               ${symptoms.map((symptom)=>`<li>
-                                  <p class="pest_symptom">
-                                  ${symptom}
-                                  </p>
-                                </li>`).join("")}
-          </ul>
-        </div>
-        <div>
-          <div class="pest_detail flex-dc flex gap-sm section-symptoms--images">
-            <h4>Symptom Images</h4>
-            <ul class="list list-activity-images list-symptoms-images">
-                  ${symptoms.map((image)=>`
-                                        <li>
-                                          <figure class="procedure_step-img">
-                                            <img
-                                              src="/src/fertilizer-application-methods/ring-method.jpg"
-                                              alt=""
-                                            />
-                                            <figcaption>Step 1</figcaption>
-                                          </figure>
-                                        </li>
-                      `).join("")}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-    
-    `;
-        const pestControlDetailsMarkup = `
-    <div class="flex flex-dc gap-md">
-    <div class="flex flex-dc gap-sm">
-      <p class="instruction_detail">
-        <span>Required Pesticide</span>
-        <span
-          >${requiredPesticide}</span
-        >
-      </p>
-      <p class="instruction_detail">
-      <span>Required Tools</span>
-        <span>${requiredTools}</span>
-      </p>
-    </div>
-    <div
-      class="instruction_detail instruction_detail-procedure flex flex-dc gap-sm"
-    >
-      <h4>Procedure</h4>
-
-      <ul class="flex flex-dc gap-sm procedure_steps">
-      ${pesticideApplicationProcedure.map((step, index)=>`
-          <li>
-          <p class="procedure_step">
-        <strong>Step ${index + 1}: </strong>${step}
-        </p>
-        </li>
-          `).join("")}
-      </ul>
-      <div class="section-instructions--images">
-        <div class="row row-activity">
-          <h3>Procedure Images</h3>
-          <ul class="list list-activity-images">
-          ${symptoms.map((image)=>`
-                                <li>
-                                  <figure class="procedure_step-img">
-                                    <img
-                                      src="/src/fertilizer-application-methods/ring-method.jpg"
-                                      alt=""
-                                    />
-                                    <figcaption>Step 1</figcaption>
-                                  </figure>
-                                </li>
-              `).join("")}
-            
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-`;
-        document.querySelector(".section-details--text").innerHTML = "";
-        document.querySelector(".pest-control--instructions").innerHTML = "";
-        document.querySelector(".section-details--text").insertAdjacentHTML("afterbegin", pestDetailsMarkup);
-        document.querySelector(".pest-control--instructions").insertAdjacentHTML("afterbegin", pestControlDetailsMarkup);
-    }
-}
-function toggleLoading(isLoading, elements) {
-    if (isLoading) elements.forEach((el)=>{
-        document.querySelector(el).classList.add("loading");
-        document.querySelector(el).querySelectorAll("button").forEach((btn)=>btn.disabled = true);
-    });
-    else elements.forEach((el)=>{
-        document.querySelector(el).classList.remove("loading");
-        document.querySelector(el).querySelectorAll("button").forEach((btn)=>btn.removeAttribute("disabled"));
-    });
-}
-
-},{"./crudOperations.js":"2nPvR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"jdlzQ":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "handleActivityInstructions", ()=>handleActivityInstructions);
-var _crudOperationsJs = require("./crudOperations.js");
-var _pestManagementJs = require("./pestManagement.js");
-async function handleActivityInstructions() {
-    const currentUrl = window.location.href;
-    const activityName = currentUrl.split("farm-guide/")[1];
-    const goBackToFarmGuideMenuBtn = document.querySelector(".btn-open-farm-guide-menu");
-    goBackToFarmGuideMenuBtn.addEventListener("click", (e)=>{
-        e.preventDefault();
-        window.location.replace("/farm-guide");
-    });
-    console.log(activityName);
-    let isLoading = true;
-    const pageElements = [
-        ".section-instructions--images",
-        ".section-instructions--text"
-    ];
-    (0, _pestManagementJs.toggleLoading)(isLoading, pageElements);
-    (0, _crudOperationsJs.get)({
-        url: `farmGuide/${activityName}`
-    }).then((result)=>{
-        if (result.status === "success") {
-            const activityDetails = result.data[0];
-            isLoading = false;
-            renderActivityInstructionDetails(activityDetails);
-            (0, _pestManagementJs.toggleLoading)(isLoading, pageElements);
-        }
-    });
-    function renderActivityInstructionDetails(activityDetails) {
-        const { activity_name: activityName, required_tools: requiredTools, activity_procedure: activityProcedure, procedure_images: procedureImages } = activityDetails;
-        console.log(activityDetails.activity_procedure);
-        const markup = `
-    <div class="row row-activity">
-    <div class="flex flex-dc gap-md">
-      <div class="flex flex-dc gap-sm">
-        <p class="instruction_detail">
-          <span>Activity</span>
-          <span>${activityName}</span>
-        </p>
-        <p class="instruction_detail">
-          <span>Purpose</span>
-          <span
-            >Lorem ipsum dolor sit amet consectetur adipisicing
-            elit.</span
-          >
-        </p>
-        <p class="instruction_detail">
-          <span>Tools</span> <span>${requiredTools}</span>
-        </p>
-      </div>
-      <div
-        class="instruction_detail instruction_detail-procedure flex flex-dc gap-sm"
-      >
-        <h4>Procedure</h4>
-
-        <ul class="flex flex-dc gap-sm procedure_steps">
-        ${activityProcedure.map((step, index)=>`
-        <li>
-        <div class='flex gap-sm' >
-        <span><strong>${index + 1}.</strong></span>
-        <p class="procedure_step">
-         ${step}
-        </p>
-        </div>
-        </li>
-        `).join("")}
-
-        </ul>
-        <div class="section-instructions--images">
-          <div class="row row-activity">
-            <h3>Procedure Images</h3>
-            <ul class="list list-activity-images">            
-            ${activityProcedure.map((image)=>`
-                                  <li>
-                                    <figure class="procedure_step-img">
-                                      <img
-                                        src="/src/fertilizer-application-methods/ring-method.jpg"
-                                        alt=""
-                                      />
-                                      <figcaption>Step 1</figcaption>
-                                    </figure>
-                                  </li>
-                `).join("")}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-    `;
-        document.querySelector(".section-instructions--text").innerHTML = "";
-        document.querySelector(".section-instructions--text").insertAdjacentHTML("afterbegin", markup);
-    }
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./crudOperations.js":"2nPvR"}]},["1jZC8","f2QDv"], "f2QDv", "parcelRequiref6bb")
+},{"./crudOperations.js":"2nPvR","./pestManagement.js":"fzqhH","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["1jZC8","f2QDv"], "f2QDv", "parcelRequiref6bb")
 
 //# sourceMappingURL=index.js.map

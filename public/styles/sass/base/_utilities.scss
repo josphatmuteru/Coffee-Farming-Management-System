@@ -65,11 +65,21 @@ a {
 .mt-tiny {
   margin-top: 0.4rem;
 }
+.mt-md {
+  margin-top: 0.8rem;
+}
+
+.text-align-center {
+  width: 100%;
+  text-align: center;
+}
 
 .loading {
   & p,
   span,
-  button {
+  button,
+  input,
+  label {
     // background: linear-gradient(to left, #ddd, #bbb);
     width: fit-content;
     color: transparent !important;
@@ -81,9 +91,9 @@ a {
     transition: background-color 5s;
   }
 
-  & button {
-    width: 100%;
-  }
+  // & button {
+  //   width: 100%;
+  // }
   & figcaption {
     display: none;
   }
@@ -95,6 +105,11 @@ a {
     // transition: background-color 5s;
     border-radius: $border-radius-md;
   }
+
+  & .widget {
+    background-color: $color-white-500 !important;
+  }
+
   & img {
     opacity: 0;
   }
